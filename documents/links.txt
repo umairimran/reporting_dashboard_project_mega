@@ -1,0 +1,19 @@
+Scope of Work Doc:
+
+https://docs.google.com/document/d/1GjHHOPg_Px2cUQFBtS7KO2_YNgOVudsEf6Vf8MSINok/edit?usp=sharing
+
+
+
+Tech Architecture (Proposed) Doc:
+
+https://docs.google.com/document/d/1Hh3D7nvo3WHzY5uq4vgMXIa20U4lH_cuzv3uQHRUeDo/edit?usp=sharing
+
+
+Data Ingestion & CPM Logic Doc:
+
+https://docs.google.com/document/d/1YgT_7Kg-4HzFQeQxGXzMmGhh6lQsn-SobUUFnpKuFsk/edit?usp=sharing
+
+
+Database proposed setup doc
+
+https://docs.google.com/document/d/12cgXSKcnkszZfjI1rTK8sZkqAb_vVgxhdIFHNOnAmWs/edit?usp=sharing

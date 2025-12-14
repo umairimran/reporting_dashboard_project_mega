@@ -11,16 +11,17 @@ from app.core.exceptions import ValidationError
 class VibeParser:
     """Parser for Vibe API CSV responses."""
     
+    # Required columns (commenting out fields awaiting confirmation/implementation)
     REQUIRED_COLUMNS = [
-        'date',
+        'impression_date',  # Vibe returns 'impression_date', not 'date'
         'campaign_name',
         'strategy_name',
-        'placement_name',
-        'creative_name',
+        # 'placement_name',  # TODO: Verify column name from actual Vibe API response
+        # 'creative_name',  # TODO: Verify column name from actual Vibe API response
         'impressions',
-        'clicks',
-        'conversions',
-        'revenue'
+        # 'clicks',  # TODO: Awaiting client confirmation
+        # 'conversions',  # TODO: Awaiting client confirmation
+        # 'revenue'  # TODO: Awaiting client confirmation
     ]
     
     @staticmethod
@@ -41,7 +42,11 @@ class VibeParser:
             # Read CSV from bytes
             df = pd.read_csv(io.BytesIO(csv_content))
             
+            # Normalize column names to lowercase for case-insensitive matching
+            df.columns = df.columns.str.lower().str.strip()
+            
             logger.info(f"Read {len(df)} rows from Vibe CSV")
+            logger.debug(f"Vibe CSV columns: {list(df.columns)}")
             
             # Validate columns
             missing_columns = [col for col in VibeParser.REQUIRED_COLUMNS if col not in df.columns]

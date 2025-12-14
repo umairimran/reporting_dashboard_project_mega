@@ -6,6 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from typing import Optional, Tuple
 import uuid
 from app.campaigns.models import Campaign, Strategy, Placement, Creative
+from app.campaigns.schemas import CampaignUpdate, StrategyUpdate, PlacementUpdate, CreativeUpdate
 from app.core.logging import logger
 from app.core.exceptions import ValidationError
 
@@ -51,6 +52,35 @@ class CampaignService:
         return campaign
     
     @staticmethod
+    def update_campaign(
+        db: Session,
+        campaign_id: uuid.UUID,
+        campaign_data: CampaignUpdate
+    ) -> Optional[Campaign]:
+        """Update a campaign."""
+        campaign = CampaignService.get_campaign_by_id(db, campaign_id)
+        if not campaign:
+            return None
+        
+        if campaign_data.name:
+            campaign.name = campaign_data.name
+        
+        db.commit()
+        db.refresh(campaign)
+        return campaign
+
+    @staticmethod
+    def delete_campaign(db: Session, campaign_id: uuid.UUID) -> bool:
+        """Delete a campaign."""
+        campaign = CampaignService.get_campaign_by_id(db, campaign_id)
+        if not campaign:
+            return False
+            
+        db.delete(campaign)
+        db.commit()
+        return True
+
+    @staticmethod
     def find_or_create_strategy(
         db: Session,
         campaign_id: uuid.UUID,
@@ -84,6 +114,35 @@ class CampaignService:
         return strategy
     
     @staticmethod
+    def update_strategy(
+        db: Session,
+        strategy_id: uuid.UUID,
+        strategy_data: StrategyUpdate
+    ) -> Optional[Strategy]:
+        """Update a strategy."""
+        strategy = CampaignService.get_strategy_by_id(db, strategy_id)
+        if not strategy:
+            return None
+        
+        if strategy_data.name:
+            strategy.name = strategy_data.name
+            
+        db.commit()
+        db.refresh(strategy)
+        return strategy
+
+    @staticmethod
+    def delete_strategy(db: Session, strategy_id: uuid.UUID) -> bool:
+        """Delete a strategy."""
+        strategy = CampaignService.get_strategy_by_id(db, strategy_id)
+        if not strategy:
+            return False
+            
+        db.delete(strategy)
+        db.commit()
+        return True
+
+    @staticmethod
     def find_or_create_placement(
         db: Session,
         strategy_id: uuid.UUID,
@@ -116,6 +175,35 @@ class CampaignService:
         
         return placement
     
+    @staticmethod
+    def update_placement(
+        db: Session,
+        placement_id: uuid.UUID,
+        placement_data: PlacementUpdate
+    ) -> Optional[Placement]:
+        """Update a placement."""
+        placement = CampaignService.get_placement_by_id(db, placement_id)
+        if not placement:
+            return None
+        
+        if placement_data.name:
+            placement.name = placement_data.name
+            
+        db.commit()
+        db.refresh(placement)
+        return placement
+
+    @staticmethod
+    def delete_placement(db: Session, placement_id: uuid.UUID) -> bool:
+        """Delete a placement."""
+        placement = CampaignService.get_placement_by_id(db, placement_id)
+        if not placement:
+            return False
+            
+        db.delete(placement)
+        db.commit()
+        return True
+
     @staticmethod
     def find_or_create_creative(
         db: Session,
@@ -152,6 +240,37 @@ class CampaignService:
         
         return creative
     
+    @staticmethod
+    def update_creative(
+        db: Session,
+        creative_id: uuid.UUID,
+        creative_data: CreativeUpdate
+    ) -> Optional[Creative]:
+        """Update a creative."""
+        creative = CampaignService.get_creative_by_id(db, creative_id)
+        if not creative:
+            return None
+        
+        if creative_data.name:
+            creative.name = creative_data.name
+        if creative_data.preview_url is not None:
+            creative.preview_url = creative_data.preview_url
+            
+        db.commit()
+        db.refresh(creative)
+        return creative
+
+    @staticmethod
+    def delete_creative(db: Session, creative_id: uuid.UUID) -> bool:
+        """Delete a creative."""
+        creative = CampaignService.get_creative_by_id(db, creative_id)
+        if not creative:
+            return False
+            
+        db.delete(creative)
+        db.commit()
+        return True
+
     @staticmethod
     def create_full_hierarchy(
         db: Session,

@@ -406,9 +406,12 @@ CREATE TABLE vibe_report_requests (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     client_id UUID NOT NULL REFERENCES clients(id) ON UPDATE CASCADE ON DELETE CASCADE,
     report_id UUID NOT NULL,
-    status VARCHAR(20) NOT NULL CHECK (status IN ('created', 'processing', 'done', 'error')),
+    status VARCHAR(20) NOT NULL CHECK (status IN ('created', 'processing', 'done', 'failed')),
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
     request_params JSONB,
     download_url TEXT,
+    error_message TEXT,
     url_expiration TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
@@ -429,13 +432,14 @@ CREATE TABLE uploaded_files (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     client_id UUID NOT NULL REFERENCES clients(id) ON UPDATE CASCADE ON DELETE CASCADE,
     source VARCHAR(50) NOT NULL DEFAULT 'facebook',
-    original_filename VARCHAR(500) NOT NULL,
+    file_name VARCHAR(255) NOT NULL,
     file_size INTEGER,
-    file_path VARCHAR(1000),
+    file_path TEXT,
     uploaded_by UUID REFERENCES users(id) ON UPDATE CASCADE ON DELETE SET NULL,
     upload_status VARCHAR(50) NOT NULL DEFAULT 'pending',
     processed_at TIMESTAMP,
     error_message TEXT,
+    records_count INTEGER,
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
@@ -445,6 +449,8 @@ CREATE INDEX idx_uploaded_files_uploaded_by ON uploaded_files(uploaded_by);
 CREATE INDEX idx_uploaded_files_source ON uploaded_files(source);
 
 COMMENT ON TABLE uploaded_files IS 'Tracks manually uploaded files (Facebook, etc.)';
+COMMENT ON COLUMN uploaded_files.file_name IS 'Original filename of the uploaded file';
+COMMENT ON COLUMN uploaded_files.records_count IS 'Number of records parsed from the file';
 
 -- ============================================================================
 -- SECTION 10: AUDIT LOGGING

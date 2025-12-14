@@ -16,6 +16,7 @@ from app.metrics.router import router as metrics_router
 from app.dashboard.router import router as dashboard_router
 from app.exports.router import router as exports_router
 from app.facebook.router import router as facebook_router
+from app.vibe.router import router as vibe_router
 
 # Scheduler for background jobs
 scheduler = AsyncIOScheduler()
@@ -95,6 +96,7 @@ app.include_router(metrics_router, prefix="/api/v1")
 app.include_router(dashboard_router, prefix="/api/v1")
 app.include_router(exports_router, prefix="/api/v1")
 app.include_router(facebook_router, prefix="/api/v1")
+app.include_router(vibe_router, prefix="/api/v1")
 
 
 @app.get("/")

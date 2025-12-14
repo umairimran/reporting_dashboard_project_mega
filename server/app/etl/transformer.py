@@ -171,21 +171,21 @@ class TransformerService:
         Transform Vibe API record to standard format.
         
         Args:
-            raw_record: Raw record from Vibe API
+            raw_record: Raw record from Vibe API (with lowercase column names)
             
         Returns:
             Transformed record
         """
         return {
-            'date': TransformerService.parse_date(raw_record.get('date')),
+            'date': TransformerService.parse_date(raw_record.get('impression_date')),  # Vibe uses 'impression_date'
             'campaign_name': TransformerService.normalize_string(raw_record.get('campaign_name', '')),
             'strategy_name': TransformerService.normalize_string(raw_record.get('strategy_name', '')) or "General Strategy",
             'placement_name': TransformerService.normalize_string(raw_record.get('placement_name', '')) or "General Placement",
             'creative_name': TransformerService.normalize_string(raw_record.get('creative_name', '')) or "General Creative",
             'impressions': TransformerService.parse_number(raw_record.get('impressions', 0)),
-            'clicks': TransformerService.parse_number(raw_record.get('clicks', 0)),
-            'conversions': TransformerService.parse_number(raw_record.get('conversions', 0)),
-            'conversion_revenue': TransformerService.parse_decimal(raw_record.get('revenue', 0)),
+            'clicks': TransformerService.parse_number(raw_record.get('clicks', 0)),  # TODO: Verify availability
+            'conversions': TransformerService.parse_number(raw_record.get('conversions', 0)),  # TODO: Verify availability
+            'conversion_revenue': TransformerService.parse_decimal(raw_record.get('revenue', 0)),  # TODO: Verify availability
             'ctr': None  # Will be calculated
         }
     
@@ -194,31 +194,52 @@ class TransformerService:
         """
         Transform Facebook upload record to standard format.
         
-        Facebook structure: Campaign Name, Ad Set Name, Ad Name
-        Mapping: Campaign Name → Campaign, Ad Set Name → Strategy, Ad Name → Placement + Creative
+        Facebook structure: Campaign name, Ad set name, Ad name
+        Mapping: Campaign name → Campaign, Ad set name → Strategy, Ad name → Placement + Creative
+        
+        Note: Column names are expected to be lowercase (normalized by parser)
+        Regional data is handled by appending region to placement name for differentiation.
         
         Args:
-            raw_record: Raw record from Facebook upload
+            raw_record: Raw record from Facebook upload (with lowercase column names)
             
         Returns:
             Transformed record
         """
-        ad_name = TransformerService.normalize_string(raw_record.get('Ad Name', ''))
+        ad_name = TransformerService.normalize_string(raw_record.get('ad name', ''))
+        campaign_name = TransformerService.normalize_string(raw_record.get('campaign name', ''))
+        ad_set_name = TransformerService.normalize_string(raw_record.get('ad set name', ''))
+        region = TransformerService.normalize_string(raw_record.get('region', ''))
         
-        # Split Ad Name into Placement and Creative (use first part as placement, full name as creative)
-        placement_name = ad_name.split('-')[0].strip() if '-' in ad_name else ad_name
+        # Use Ad name for both placement and creative
+        # If region exists and is not 'Unknown', append to placement for differentiation
+        placement_name = ad_name
+        if region and region.lower() not in ['unknown', '']:
+            placement_name = f"{ad_name} - {region}"
+        
         creative_name = ad_name
         
         return {
-            'date': TransformerService.parse_date(raw_record.get('Date')),
-            'campaign_name': TransformerService.normalize_string(raw_record.get('Campaign Name', '')),
-            'strategy_name': TransformerService.normalize_string(raw_record.get('Ad Set Name', '')) or "General Strategy",
+            # TODO: Date field - awaiting client confirmation on which field to use
+            'date': TransformerService.parse_date(raw_record.get('reporting starts')),
+            # 'date': TransformerService.parse_date(raw_record.get('reporting ends')),  # Alternative
+            
+            'campaign_name': campaign_name,
+            'strategy_name': ad_set_name or "General Strategy",
             'placement_name': placement_name or "General Placement",
             'creative_name': creative_name or "General Creative",
-            'impressions': TransformerService.parse_number(raw_record.get('Impressions', 0)),
-            'clicks': TransformerService.parse_number(raw_record.get('Clicks', 0)),
-            'conversions': TransformerService.parse_number(raw_record.get('Conversions', 0)),
-            'conversion_revenue': TransformerService.parse_decimal(raw_record.get('Revenue', 0)),
+            'impressions': TransformerService.parse_number(raw_record.get('impressions', 0)),
+            
+            # TODO: Clicks field - awaiting client confirmation (link clicks vs clicks (all))
+            'clicks': TransformerService.parse_number(raw_record.get('link clicks', 0)),
+            # 'clicks': TransformerService.parse_number(raw_record.get('clicks (all)', 0)),  # Alternative
+            
+            # TODO: Conversions - not in current CSV, awaiting client confirmation
+            'conversions': TransformerService.parse_number(raw_record.get('conversions', 0)),
+            
+            # TODO: Revenue - not in current CSV, awaiting client confirmation
+            'conversion_revenue': TransformerService.parse_decimal(raw_record.get('revenue', 0)),
+            
             'ctr': None  # Will be calculated
         }
     

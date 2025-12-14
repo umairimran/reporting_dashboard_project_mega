@@ -129,11 +129,14 @@ class FacebookUploadHandler:
             )
             
             # Update status based on ETL result
-            if ingestion_log.status == 'completed':
+            if ingestion_log.status == 'success':
                 uploaded_file.upload_status = 'processed'
+            elif ingestion_log.status == 'partial':
+                uploaded_file.upload_status = 'processed'
+                uploaded_file.error_message = f"Partial success: {ingestion_log.message}"
             else:
                 uploaded_file.upload_status = 'failed'
-                uploaded_file.error_message = f"ETL failed: {ingestion_log.error_message}"
+                uploaded_file.error_message = f"ETL failed: {ingestion_log.message}"
             
             uploaded_file.processed_at = datetime.utcnow()
             

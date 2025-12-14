@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     S3_BUCKET_NAME: str
     
     # Vibe API
-    VIBE_API_BASE_URL: str = "https://api.vibe.co"
+    VIBE_API_BASE_URL: str = "https://clear-platform.vibe.co"
     VIBE_API_KEY: Optional[str] = None
     VIBE_ADVERTISER_ID: Optional[str] = None
     VIBE_RATE_LIMIT_PER_HOUR: int = 15

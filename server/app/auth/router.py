@@ -8,8 +8,9 @@ from datetime import timedelta
 from app.core.database import get_db
 from app.core.config import settings
 from app.auth.models import User
+from typing import List
 from app.auth.schemas import (
-    UserLogin, UserCreate, UserResponse, Token, 
+    UserLogin, UserCreate, UserResponse, UserUpdate, Token, 
     PasswordChange, PasswordReset
 )
 from app.auth.security import (
@@ -227,3 +228,90 @@ async def reset_user_password(
     db.commit()
     
     return {"message": "Password reset successfully"}
+
+
+@router.get("/users", response_model=List[UserResponse])
+async def get_all_users(
+    skip: int = 0,
+    limit: int = 100,
+    admin: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """
+    Get all users (admin only).
+    """
+    users = db.query(User).offset(skip).limit(limit).all()
+    return users
+
+
+@router.get("/users/{user_id}", response_model=UserResponse)
+async def get_user(
+    user_id: str,
+    admin: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """
+    Get user by ID (admin only).
+    """
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    return user
+
+
+@router.put("/users/{user_id}", response_model=UserResponse)
+async def update_user(
+    user_id: str,
+    user_data: UserUpdate,
+    admin: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """
+    Update user details (admin only).
+    """
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    if user_data.email:
+        # Check if email is taken by another user
+        existing = db.query(User).filter(User.email == user_data.email, User.id != user_id).first()
+        if existing:
+            raise HTTPException(status_code=400, detail="Email already registered")
+        user.email = user_data.email
+        
+    if user_data.role:
+        user.role = user_data.role
+        
+    if user_data.is_active is not None:
+        user.is_active = user_data.is_active
+        
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+@router.delete("/users/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_user(
+    user_id: str,
+    admin: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """
+    Delete a user (admin only).
+    """
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+        
+    db.delete(user)
+    db.commit()

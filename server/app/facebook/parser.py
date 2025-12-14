@@ -11,21 +11,25 @@ from app.core.exceptions import ValidationError
 class FacebookParser:
     """Parser for Facebook CSV/XLSX files."""
     
+    # Required columns (normalized to lowercase for case-insensitive matching)
     REQUIRED_COLUMNS = [
-        'Date',
-        'Campaign Name',
-        'Ad Set Name',
-        'Ad Name',
-        'Impressions',
-        'Clicks',
-        'Conversions',
-        'Revenue'
+        # 'reporting starts',  # TODO: Awaiting client confirmation on date field
+        'campaign name',
+        'ad set name',
+        'ad name',
+        'impressions',
+        # 'link clicks',  # TODO: Awaiting client confirmation (Link clicks vs Clicks (all))
+        # 'conversions',  # TODO: Not in current CSV - awaiting client confirmation
+        # 'revenue'  # TODO: Not in current CSV - awaiting client confirmation
     ]
     
     @staticmethod
     def validate_columns(df: pd.DataFrame):
-        """Validate that all required columns are present."""
-        missing_columns = [col for col in FacebookParser.REQUIRED_COLUMNS if col not in df.columns]
+        """Validate that all required columns are present (case-insensitive)."""
+        # Normalize column names to lowercase for comparison
+        df_columns_lower = [col.lower() for col in df.columns]
+        
+        missing_columns = [col for col in FacebookParser.REQUIRED_COLUMNS if col not in df_columns_lower]
         
         if missing_columns:
             raise ValidationError(
@@ -58,11 +62,17 @@ class FacebookParser:
             else:
                 raise ValidationError(f"Unsupported file format: {path.suffix}")
             
+            # Normalize column names to lowercase for case-insensitive matching
+            df.columns = df.columns.str.lower()
+            
             # Validate columns
             FacebookParser.validate_columns(df)
             
             # Remove empty rows
             df = df.dropna(how='all')
+            
+            # Remove summary/totals rows (rows with empty campaign name)
+            df = df[df['campaign name'].notna() & (df['campaign name'] != '')]
             
             # Convert to list of dictionaries
             records = df.to_dict('records')

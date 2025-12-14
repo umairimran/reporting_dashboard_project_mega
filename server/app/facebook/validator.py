@@ -14,15 +14,16 @@ class FacebookValidator:
     ALLOWED_EXTENSIONS = ['.csv', '.xlsx', '.xls']
     MAX_FILE_SIZE = settings.MAX_UPLOAD_SIZE  # 50MB
     
+    # Required columns (normalized to lowercase for case-insensitive matching)
     REQUIRED_COLUMNS = [
-        'Date',
-        'Campaign Name',
-        'Ad Set Name',
-        'Ad Name',
-        'Impressions',
-        'Clicks',
-        'Conversions',
-        'Revenue'
+        # 'reporting starts',  # TODO: Awaiting client confirmation on date field
+        'campaign name',
+        'ad set name',
+        'ad name',
+        'impressions',
+        # 'link clicks',  # TODO: Awaiting client confirmation (Link clicks vs Clicks (all))
+        # 'conversions',  # TODO: Not in current CSV - awaiting client confirmation
+        # 'revenue'  # TODO: Not in current CSV - awaiting client confirmation
     ]
     
     @staticmethod

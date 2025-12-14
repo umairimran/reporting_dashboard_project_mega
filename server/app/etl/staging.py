@@ -4,7 +4,9 @@ Staging table operations for ETL pipeline.
 from sqlalchemy.orm import Session
 from typing import List, Dict
 import uuid
-from datetime import datetime
+from datetime import datetime, date
+from decimal import Decimal
+import json
 from app.metrics.models import StagingMediaRaw
 from app.core.logging import logger
 
@@ -16,6 +18,22 @@ class StagingService:
     def create_ingestion_run_id() -> uuid.UUID:
         """Generate a unique ingestion run ID."""
         return uuid.uuid4()
+    
+    @staticmethod
+    def _serialize_for_json(obj):
+        """Convert non-JSON-serializable objects to JSON-serializable format."""
+        if isinstance(obj, (date, datetime)):
+            return obj.isoformat()
+        elif isinstance(obj, Decimal):
+            return float(obj)
+        elif isinstance(obj, uuid.UUID):
+            return str(obj)
+        elif isinstance(obj, dict):
+            return {key: StagingService._serialize_for_json(value) for key, value in obj.items()}
+        elif isinstance(obj, list):
+            return [StagingService._serialize_for_json(item) for item in obj]
+        else:
+            return obj
     
     @staticmethod
     def insert_staging_records(
@@ -41,6 +59,9 @@ class StagingService:
         staging_records = []
         
         for record in records:
+            # Serialize the raw_data to make it JSON-compatible
+            serialized_raw_data = StagingService._serialize_for_json(record)
+            
             staging_record = StagingMediaRaw(
                 ingestion_run_id=ingestion_run_id,
                 client_id=client_id,
@@ -55,7 +76,7 @@ class StagingService:
                 ctr=record.get('ctr'),
                 conversions=record.get('conversions', 0),
                 conversion_revenue=record.get('conversion_revenue', 0),
-                raw_data=record  # Store original data as JSON
+                raw_data=serialized_raw_data  # Store serialized data as JSON
             )
             staging_records.append(staging_record)
         

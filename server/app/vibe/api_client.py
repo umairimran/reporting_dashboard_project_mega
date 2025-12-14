@@ -1,9 +1,10 @@
 """
 Vibe API HTTP client for async report workflow.
+Based on official Vibe API documentation: https://help.vibe.co/en/articles/8943325-vibe-api-reporting
 """
 import httpx
 import asyncio
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 from datetime import datetime, date
 import uuid
 from app.core.config import settings
@@ -27,11 +28,11 @@ class VibeAPIClient:
         self.base_url = settings.VIBE_API_BASE_URL
         self.rate_limit_per_hour = settings.VIBE_RATE_LIMIT_PER_HOUR
         
-        # Async HTTP client
+        # Async HTTP client with correct authentication header
         self.client = httpx.AsyncClient(
             timeout=30.0,
             headers={
-                'Authorization': f'Bearer {self.api_key}',
+                'X-API-KEY': self.api_key,
                 'Content-Type': 'application/json'
             }
         )
@@ -54,7 +55,12 @@ class VibeAPIClient:
         Raises:
             VibeAPIError: If API request fails
         """
-        url = f"{self.base_url}/reporting/v1/std/reports"
+        url = f"{self.base_url}/rest/reporting/v1/create_async_report"
+        
+        # Map internal metrics to Vibe API metrics
+        # Note: 'clicks' is not supported by Vibe API (CTV focus). 
+        # 'conversions' -> 'number_of_purchases'
+        # 'revenue' -> 'amount_of_purchases'
         
         payload = {
             'advertiser_id': self.advertiser_id,
@@ -62,17 +68,20 @@ class VibeAPIClient:
             'end_date': end_date.isoformat(),
             'metrics': [
                 'impressions',
-                'clicks',
-                'conversions',
-                'revenue'
+                'spend',
+                'number_of_purchases',  # conversions
+                'amount_of_purchases',  # revenue
             ],
             'dimensions': [
-                'date',
                 'campaign_name',
                 'strategy_name',
-                'placement_name',
                 'creative_name'
-            ]
+                # 'date' is handled by granularity="day"
+                # 'placement_name' is not supported by Vibe
+            ],
+            'filters': [],  # Required field
+            'format': 'CSV',  # Required field
+            'granularity': 'day'
         }
         
         try:
@@ -84,7 +93,7 @@ class VibeAPIClient:
             
             return {
                 'report_id': data.get('report_id'),
-                'status': data.get('status', 'created')
+                'status': data.get('status', 'CREATED')
             }
             
         except httpx.HTTPStatusError as e:
@@ -107,10 +116,11 @@ class VibeAPIClient:
         Raises:
             VibeAPIError: If API request fails
         """
-        url = f"{self.base_url}/reporting/v1/std/reports/{report_id}"
+        url = f"{self.base_url}/rest/reporting/v1/get_report_status"
+        params = {'report_id': report_id}
         
         try:
-            response = await self.client.get(url)
+            response = await self.client.get(url, params=params)
             response.raise_for_status()
             
             data = response.json()
@@ -133,7 +143,7 @@ class VibeAPIClient:
         Download report CSV from download URL.
         
         Args:
-            download_url: URL to download report from
+            download_url: Pre-signed S3 URL to download report from
             
         Returns:
             CSV content as bytes
@@ -142,8 +152,10 @@ class VibeAPIClient:
             VibeAPIError: If download fails
         """
         try:
-            response = await self.client.get(download_url)
-            response.raise_for_status()
+            # Use a fresh client without auth headers since download_url is pre-signed
+            async with httpx.AsyncClient() as client:
+                response = await client.get(download_url)
+                response.raise_for_status()
             
             logger.info(f"Downloaded report CSV ({len(response.content)} bytes)")
             return response.content
@@ -159,7 +171,7 @@ class VibeAPIClient:
         self,
         report_id: str,
         max_wait_seconds: int = 600,
-        poll_interval: int = 30
+        poll_interval: int = 10
     ) -> str:
         """
         Wait for report to be ready and return download URL.
@@ -167,7 +179,7 @@ class VibeAPIClient:
         Args:
             report_id: Report UUID
             max_wait_seconds: Maximum time to wait (default 10 minutes)
-            poll_interval: Seconds between status checks
+            poll_interval: Seconds between status checks (default 10s)
             
         Returns:
             Download URL when report is ready
@@ -185,23 +197,71 @@ class VibeAPIClient:
             
             # Check report status
             status_info = await self.check_report_status(report_id)
-            status = status_info['status']
+            status = status_info.get('status')
             
-            if status == 'done':
+            if status == 'DONE':
                 logger.info(f"Report {report_id} is ready")
                 return status_info['download_url']
             
-            elif status == 'failed':
+            elif status == 'FAILED':
                 error_msg = status_info.get('error_message', 'Unknown error')
                 raise VibeAPIError(f"Report failed: {error_msg}")
             
-            elif status in ['created', 'processing']:
-                logger.debug(f"Report {report_id} status: {status}, waiting...")
+            elif status in ['CREATED', 'PROCESSING']:
+                logger.debug(f"Report {report_id} status: {status}, waiting {poll_interval}s...")
                 await asyncio.sleep(poll_interval)
             
             else:
                 raise VibeAPIError(f"Unknown report status: {status}")
     
+    async def get_advertiser_ids(self) -> list:
+        """
+        Get list of advertisers.
+        
+        Returns:
+            List of dictionaries with advertiser_id and advertiser_name
+        """
+        url = f"{self.base_url}/rest/reporting/v1/get_advertiser_ids"
+        
+        try:
+            response = await self.client.get(url)
+            response.raise_for_status()
+            return response.json()
+            
+        except httpx.HTTPStatusError as e:
+            logger.error(f"Vibe API error: {e.response.status_code}")
+            raise VibeAPIError(f"Failed to get advertisers: {e.response.text}")
+        except Exception as e:
+            logger.error(f"Unexpected error getting advertisers: {str(e)}")
+            raise VibeAPIError(f"Failed to get advertisers: {str(e)}")
+
+    async def get_app_ids(self, advertiser_id: str) -> list:
+        """
+        Get list of app IDs for an advertiser.
+        
+        Args:
+            advertiser_id: Advertiser UUID
+            
+        Returns:
+            List of app ID strings
+        """
+        url = f"{self.base_url}/rest/reporting/v1/get_app_ids"
+        params = {'advertiser_id': advertiser_id}
+        
+        try:
+            response = await self.client.get(url, params=params)
+            response.raise_for_status()
+            
+            data = response.json()
+            return data.get('app_ids', [])
+            
+        except httpx.HTTPStatusError as e:
+            logger.error(f"Vibe API error: {e.response.status_code}")
+            raise VibeAPIError(f"Failed to get app IDs: {e.response.text}")
+        except Exception as e:
+            logger.error(f"Unexpected error getting app IDs: {str(e)}")
+            raise VibeAPIError(f"Failed to get app IDs: {str(e)}")
+
     async def close(self):
         """Close HTTP client."""
         await self.client.aclose()

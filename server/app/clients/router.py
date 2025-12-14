@@ -67,6 +67,47 @@ async def get_clients(
     return {"total": total, "clients": clients}
 
 
+@router.get("/id-by-name-and-user")
+async def get_client_id_by_name_and_user(
+    name: str = Query(..., description="Client name"),
+    user_id: uuid.UUID = Query(..., description="User ID associated with the client"),
+    admin: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """
+    Get client ID by name and user ID (admin only).
+    
+    Args:
+        name: Client name
+        user_id: User ID associated with the client
+        admin: Current admin user
+        db: Database session
+        
+    Returns:
+        Client ID, name, user_id, and status
+        
+    Raises:
+        HTTPException: If client not found
+    """
+    client = db.query(Client).filter(
+        Client.name == name,
+        Client.user_id == user_id
+    ).first()
+    
+    if not client:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Client with name '{name}' and user_id '{user_id}' not found"
+        )
+    
+    return {
+        "id": str(client.id),
+        "name": client.name,
+        "user_id": str(client.user_id),
+        "status": client.status
+    }
+
+
 @router.get("/{client_id}", response_model=ClientWithSettings)
 async def get_client(
     client_id: uuid.UUID,

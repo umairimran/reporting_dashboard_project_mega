@@ -156,6 +156,42 @@ async def change_password(
     return {"message": "Password changed successfully"}
 
 
+@router.get("/user-id-by-email")
+async def get_user_id_by_email(
+    email: str,
+    admin: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """
+    Get user ID by email (admin only).
+    
+    Args:
+        email: User email address
+        admin: Current admin user
+        db: Database session
+        
+    Returns:
+        User ID and email
+        
+    Raises:
+        HTTPException: If user not found
+    """
+    user = db.query(User).filter(User.email == email).first()
+    
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with email '{email}' not found"
+        )
+    
+    return {
+        "id": str(user.id),
+        "email": user.email,
+        "role": user.role,
+        "is_active": user.is_active
+    }
+
+
 @router.post("/reset-password/{user_id}")
 async def reset_user_password(
     user_id: str,

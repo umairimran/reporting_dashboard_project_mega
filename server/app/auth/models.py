@@ -23,8 +23,9 @@ class User(Base):
     updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     # Relationships
-    clients = relationship("Client", back_populates="user")
-    audit_logs = relationship("AuditLog", back_populates="user")
+    clients = relationship("Client", back_populates="user", lazy="select")
+    audit_logs = relationship("AuditLog", back_populates="user",lazy="select")
+    
     
     def is_admin(self) -> bool:
         """Check if user is an admin."""

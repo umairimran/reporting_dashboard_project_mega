@@ -88,7 +88,7 @@ cd C:\Users\shame\Desktop\mega\server
 ```
 
 ### 2.2 Create Virtual Environment
-
+using python 3.11
 ```powershell
 python -m venv venv
 ```

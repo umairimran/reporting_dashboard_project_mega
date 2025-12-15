@@ -5,6 +5,7 @@
 The Dashboard module (`app/dashboard/`) provides comprehensive analytics and visualization data for client performance monitoring through structured API endpoints.
 
 ### **Purpose**
+
 - Provide unified dashboard view with all key metrics
 - Break down performance by campaigns and data sources
 - Show daily trends and time-series data
@@ -13,6 +14,7 @@ The Dashboard module (`app/dashboard/`) provides comprehensive analytics and vis
 - Enable quick stats views (today, this week, this month)
 
 ### **Key Components**
+
 - **Router** (`router.py`): API endpoints for dashboard views
 - **Service** (`service.py`): Complex queries and data aggregation logic
 - **Schemas** (`schemas.py`): Response models for dashboard data structures
@@ -22,6 +24,7 @@ The Dashboard module (`app/dashboard/`) provides comprehensive analytics and vis
 ## **Available Endpoints**
 
 ### **1. Get Complete Dashboard**
+
 ```
 GET /api/v1/dashboard/
 ```
@@ -30,6 +33,7 @@ GET /api/v1/dashboard/
 **Includes:** Summary, campaigns, sources, trends, top performers
 
 **Query Parameters:**
+
 - `start_date` (required): YYYY-MM-DD
 - `end_date` (required): YYYY-MM-DD
 - `client_id` (optional): Client UUID (admin only)
@@ -39,6 +43,7 @@ GET /api/v1/dashboard/
 ---
 
 ### **2. Get Dashboard Summary**
+
 ```
 GET /api/v1/dashboard/summary
 ```
@@ -46,25 +51,27 @@ GET /api/v1/dashboard/summary
 **Purpose:** High-level KPIs and aggregated metrics
 
 **Response Structure:**
+
 ```json
 {
-    "total_impressions": 500000,
-    "total_clicks": 12500,
-    "total_conversions": 180,
-    "total_revenue": 9000.00,
-    "total_spend": 6250.00,
-    "overall_ctr": 2.50,
-    "overall_cpc": 0.50,
-    "overall_cpa": 34.72,
-    "overall_roas": 1.44,
-    "active_campaigns": 5,
-    "data_sources": ["surfside", "vibe", "facebook"]
+  "total_impressions": 500000,
+  "total_clicks": 12500,
+  "total_conversions": 180,
+  "total_revenue": 9000.0,
+  "total_spend": 6250.0,
+  "overall_ctr": 2.5,
+  "overall_cpc": 0.5,
+  "overall_cpa": 34.72,
+  "overall_roas": 1.44,
+  "active_campaigns": 5,
+  "data_sources": ["surfside", "vibe", "facebook"]
 }
 ```
 
 ---
 
 ### **3. Get Campaign Breakdown**
+
 ```
 GET /api/v1/dashboard/campaigns
 ```
@@ -72,10 +79,12 @@ GET /api/v1/dashboard/campaigns
 **Purpose:** Performance metrics grouped by campaign
 
 **Query Parameters:**
+
 - `start_date`, `end_date`, `client_id`
 - `limit` (default: 10, max: 50): Top N campaigns
 
 **Response Structure:**
+
 ```json
 [
     {
@@ -99,6 +108,7 @@ GET /api/v1/dashboard/campaigns
 ---
 
 ### **4. Get Source Breakdown**
+
 ```
 GET /api/v1/dashboard/sources
 ```
@@ -106,6 +116,7 @@ GET /api/v1/dashboard/sources
 **Purpose:** Performance comparison across data sources
 
 **Response Structure:**
+
 ```json
 [
     {
@@ -134,6 +145,7 @@ GET /api/v1/dashboard/sources
 ---
 
 ### **5. Get Daily Trends**
+
 ```
 GET /api/v1/dashboard/trends
 ```
@@ -141,6 +153,7 @@ GET /api/v1/dashboard/trends
 **Purpose:** Time-series data for charting
 
 **Response Structure:**
+
 ```json
 [
     {
@@ -168,6 +181,7 @@ GET /api/v1/dashboard/trends
 ---
 
 ### **6. Get Top Performers**
+
 ```
 GET /api/v1/dashboard/top-performers
 ```
@@ -175,10 +189,12 @@ GET /api/v1/dashboard/top-performers
 **Purpose:** Best performing entities across multiple dimensions
 
 **Query Parameters:**
+
 - `start_date`, `end_date`, `client_id`
 - `limit` (default: 5, max: 20): Top N per category
 
 **Response Structure:**
+
 ```json
 {
     "top_campaigns_by_roas": [
@@ -198,6 +214,7 @@ GET /api/v1/dashboard/top-performers
 ---
 
 ### **7. Get Quick Stats**
+
 ```
 GET /api/v1/dashboard/quick-stats
 ```
@@ -205,6 +222,7 @@ GET /api/v1/dashboard/quick-stats
 **Purpose:** Snapshot of current performance periods
 
 **Response Structure:**
+
 ```json
 {
     "today": {
@@ -232,11 +250,13 @@ GET /api/v1/dashboard/quick-stats
 ### **Prerequisites**
 
 1. **Setup Test Data:**
+
    - Ensure Surfside data uploaded for date range
    - Multiple campaigns with varying performance
    - Data spanning multiple days for trends
 
 2. **Authentication:**
+
    - POST `/api/v1/auth/login`
    - Store access_token
 
@@ -248,16 +268,19 @@ GET /api/v1/dashboard/quick-stats
 ### **Test 1: Get Complete Dashboard**
 
 **Request:**
+
 ```
 GET http://localhost:8000/api/v1/dashboard/?start_date=2025-11-01&end_date=2025-11-30&client_id=<uuid>
 ```
 
 **Headers:**
+
 ```
 Authorization: Bearer <token>
 ```
 
 **Expected Response (200 OK):**
+
 ```json
 {
     "summary": {
@@ -307,6 +330,7 @@ Authorization: Bearer <token>
 ```
 
 **Verification:**
+
 - All 5 sections present
 - Summary metrics match sum of daily_metrics
 - Campaigns sorted by spend
@@ -318,30 +342,33 @@ Authorization: Bearer <token>
 ### **Test 2: Dashboard Summary Only**
 
 **Request:**
+
 ```
 GET http://localhost:8000/api/v1/dashboard/summary?start_date=2025-11-01&end_date=2025-11-30
 ```
 
 **Expected Response:**
+
 ```json
 {
-    "total_impressions": 500000,
-    "total_clicks": 12500,
-    "total_conversions": 180,
-    "total_revenue": 9000.00,
-    "total_spend": 6250.00,
-    "overall_ctr": 2.50,
-    "overall_cpc": 0.50,
-    "overall_cpa": 34.72,
-    "overall_roas": 1.44,
-    "active_campaigns": 5,
-    "data_sources": ["surfside", "vibe"]
+  "total_impressions": 500000,
+  "total_clicks": 12500,
+  "total_conversions": 180,
+  "total_revenue": 9000.0,
+  "total_spend": 6250.0,
+  "overall_ctr": 2.5,
+  "overall_cpc": 0.5,
+  "overall_cpa": 34.72,
+  "overall_roas": 1.44,
+  "active_campaigns": 5,
+  "data_sources": ["surfside", "vibe"]
 }
 ```
 
 **Verification:**
+
 - Aggregated totals accurate
-- CTR = (12500 / 500000) * 100 = 2.50%
+- CTR = (12500 / 500000) \* 100 = 2.50%
 - CPC = 6250 / 12500 = 0.50
 - CPA = 6250 / 180 = 34.72
 - ROAS = 9000 / 6250 = 1.44
@@ -353,11 +380,13 @@ GET http://localhost:8000/api/v1/dashboard/summary?start_date=2025-11-01&end_dat
 ### **Test 3: Campaign Breakdown**
 
 **Request:**
+
 ```
 GET http://localhost:8000/api/v1/dashboard/campaigns?start_date=2025-11-01&end_date=2025-11-30&limit=10
 ```
 
 **Expected Response:**
+
 ```json
 [
     {
@@ -382,6 +411,7 @@ GET http://localhost:8000/api/v1/dashboard/campaigns?start_date=2025-11-01&end_d
 ```
 
 **Verification:**
+
 - Campaigns sorted by total_spend DESC
 - Maximum 10 campaigns returned
 - Each campaign shows aggregated metrics
@@ -392,53 +422,56 @@ GET http://localhost:8000/api/v1/dashboard/campaigns?start_date=2025-11-01&end_d
 ### **Test 4: Source Breakdown**
 
 **Request:**
+
 ```
 GET http://localhost:8000/api/v1/dashboard/sources?start_date=2025-11-01&end_date=2025-11-30
 ```
 
 **Expected Response:**
+
 ```json
 [
-    {
-        "source": "surfside",
-        "total_impressions": 300000,
-        "total_clicks": 7500,
-        "total_conversions": 108,
-        "total_revenue": 5400.00,
-        "total_spend": 3750.00,
-        "ctr": 2.50,
-        "cpc": 0.50,
-        "cpa": 34.72,
-        "roas": 1.44
-    },
-    {
-        "source": "vibe",
-        "total_impressions": 150000,
-        "total_clicks": 3750,
-        "total_conversions": 54,
-        "total_revenue": 2700.00,
-        "total_spend": 1875.00,
-        "ctr": 2.50,
-        "cpc": 0.50,
-        "cpa": 34.72,
-        "roas": 1.44
-    },
-    {
-        "source": "facebook",
-        "total_impressions": 50000,
-        "total_clicks": 1250,
-        "total_conversions": 18,
-        "total_revenue": 900.00,
-        "total_spend": 625.00,
-        "ctr": 2.50,
-        "cpc": 0.50,
-        "cpa": 34.72,
-        "roas": 1.44
-    }
+  {
+    "source": "surfside",
+    "total_impressions": 300000,
+    "total_clicks": 7500,
+    "total_conversions": 108,
+    "total_revenue": 5400.0,
+    "total_spend": 3750.0,
+    "ctr": 2.5,
+    "cpc": 0.5,
+    "cpa": 34.72,
+    "roas": 1.44
+  },
+  {
+    "source": "vibe",
+    "total_impressions": 150000,
+    "total_clicks": 3750,
+    "total_conversions": 54,
+    "total_revenue": 2700.0,
+    "total_spend": 1875.0,
+    "ctr": 2.5,
+    "cpc": 0.5,
+    "cpa": 34.72,
+    "roas": 1.44
+  },
+  {
+    "source": "facebook",
+    "total_impressions": 50000,
+    "total_clicks": 1250,
+    "total_conversions": 18,
+    "total_revenue": 900.0,
+    "total_spend": 625.0,
+    "ctr": 2.5,
+    "cpc": 0.5,
+    "cpa": 34.72,
+    "roas": 1.44
+  }
 ]
 ```
 
 **Verification:**
+
 - All active sources included
 - Metrics aggregated per source
 - Sum of sources = overall summary totals
@@ -448,11 +481,13 @@ GET http://localhost:8000/api/v1/dashboard/sources?start_date=2025-11-01&end_dat
 ### **Test 5: Daily Trends**
 
 **Request:**
+
 ```
 GET http://localhost:8000/api/v1/dashboard/trends?start_date=2025-11-01&end_date=2025-11-07
 ```
 
 **Expected Response:**
+
 ```json
 [
     {
@@ -476,6 +511,7 @@ GET http://localhost:8000/api/v1/dashboard/trends?start_date=2025-11-01&end_date
 ```
 
 **Verification:**
+
 - One entry per date in range
 - Ordered chronologically
 - Use for line chart: X-axis = date, Y-axis = spend/revenue/etc
@@ -485,11 +521,13 @@ GET http://localhost:8000/api/v1/dashboard/trends?start_date=2025-11-01&end_date
 ### **Test 6: Top Performers**
 
 **Request:**
+
 ```
 GET http://localhost:8000/api/v1/dashboard/top-performers?start_date=2025-11-01&end_date=2025-11-30&limit=5
 ```
 
 **Expected Response:**
+
 ```json
 {
     "top_campaigns_by_roas": [
@@ -533,6 +571,7 @@ GET http://localhost:8000/api/v1/dashboard/top-performers?start_date=2025-11-01&
 ```
 
 **Verification:**
+
 - Each category shows top N (limit param)
 - Sorted DESC by respective metric
 - Helpful for quick performance insights
@@ -542,56 +581,59 @@ GET http://localhost:8000/api/v1/dashboard/top-performers?start_date=2025-11-01&
 ### **Test 7: Quick Stats**
 
 **Request:**
+
 ```
 GET http://localhost:8000/api/v1/dashboard/quick-stats
 ```
 
 **Expected Response:**
+
 ```json
 {
-    "today": {
-        "total_impressions": 5000,
-        "total_clicks": 125,
-        "total_conversions": 2,
-        "total_revenue": 100.00,
-        "total_spend": 62.50,
-        "overall_ctr": 2.50,
-        "overall_cpc": 0.50,
-        "overall_cpa": 31.25,
-        "overall_roas": 1.60,
-        "active_campaigns": 3,
-        "data_sources": ["surfside"]
-    },
-    "this_week": {
-        "total_impressions": 35000,
-        "total_clicks": 875,
-        "total_conversions": 14,
-        "total_revenue": 700.00,
-        "total_spend": 437.50,
-        "overall_ctr": 2.50,
-        "overall_cpc": 0.50,
-        "overall_cpa": 31.25,
-        "overall_roas": 1.60,
-        "active_campaigns": 4,
-        "data_sources": ["surfside", "vibe"]
-    },
-    "this_month": {
-        "total_impressions": 125000,
-        "total_clicks": 3125,
-        "total_conversions": 45,
-        "total_revenue": 2250.00,
-        "total_spend": 1562.50,
-        "overall_ctr": 2.50,
-        "overall_cpc": 0.50,
-        "overall_cpa": 34.72,
-        "overall_roas": 1.44,
-        "active_campaigns": 5,
-        "data_sources": ["surfside", "vibe", "facebook"]
-    }
+  "today": {
+    "total_impressions": 5000,
+    "total_clicks": 125,
+    "total_conversions": 2,
+    "total_revenue": 100.0,
+    "total_spend": 62.5,
+    "overall_ctr": 2.5,
+    "overall_cpc": 0.5,
+    "overall_cpa": 31.25,
+    "overall_roas": 1.6,
+    "active_campaigns": 3,
+    "data_sources": ["surfside"]
+  },
+  "this_week": {
+    "total_impressions": 35000,
+    "total_clicks": 875,
+    "total_conversions": 14,
+    "total_revenue": 700.0,
+    "total_spend": 437.5,
+    "overall_ctr": 2.5,
+    "overall_cpc": 0.5,
+    "overall_cpa": 31.25,
+    "overall_roas": 1.6,
+    "active_campaigns": 4,
+    "data_sources": ["surfside", "vibe"]
+  },
+  "this_month": {
+    "total_impressions": 125000,
+    "total_clicks": 3125,
+    "total_conversions": 45,
+    "total_revenue": 2250.0,
+    "total_spend": 1562.5,
+    "overall_ctr": 2.5,
+    "overall_cpc": 0.5,
+    "overall_cpa": 34.72,
+    "overall_roas": 1.44,
+    "active_campaigns": 5,
+    "data_sources": ["surfside", "vibe", "facebook"]
+  }
 }
 ```
 
 **Verification:**
+
 - Today = current date
 - This week = Monday to today
 - This month = 1st of month to today
@@ -602,9 +644,10 @@ GET http://localhost:8000/api/v1/dashboard/quick-stats
 ## **Database Verification**
 
 ### **Verify Summary Calculations:**
+
 ```sql
 -- Manual aggregation to compare
-SELECT 
+SELECT
     SUM(impressions) as total_impressions,
     SUM(clicks) as total_clicks,
     SUM(conversions) as total_conversions,
@@ -620,8 +663,9 @@ WHERE client_id = '<client-uuid>'
 **Should match dashboard summary totals**
 
 ### **Verify Campaign Breakdown:**
+
 ```sql
-SELECT 
+SELECT
     campaign_name,
     SUM(impressions) as total_impressions,
     SUM(clicks) as total_clicks,
@@ -639,8 +683,9 @@ LIMIT 10;
 **Should match dashboard campaigns array**
 
 ### **Verify Daily Trends:**
+
 ```sql
-SELECT 
+SELECT
     date,
     SUM(impressions) as impressions,
     SUM(clicks) as clicks,
@@ -661,16 +706,19 @@ ORDER BY date;
 ## **Access Control Testing**
 
 ### **Admin User Tests:**
+
 - [ ] Can access dashboard for any client via client_id param
 - [ ] Can see all campaigns across all clients
 - [ ] Quick stats show all data sources
 
 ### **Client User Tests:**
+
 - [ ] Automatically filtered to own client (client_id ignored)
 - [ ] Cannot see other clients' data
 - [ ] Quick stats show only own client's sources
 
 ### **Test Forbidden Access:**
+
 ```
 GET /dashboard/?client_id=<other-client-uuid>
 (Logged in as client user)
@@ -683,22 +731,26 @@ GET /dashboard/?client_id=<other-client-uuid>
 ## **Performance Testing**
 
 ### **Large Date Ranges:**
+
 ```
 GET /dashboard/?start_date=2024-01-01&end_date=2025-12-31
 ```
 
 **Expected:**
+
 - Query completes in < 3 seconds
 - Aggregations accurate
 - No timeout errors
 
 ### **Many Campaigns:**
+
 ```
 GET /dashboard/campaigns?limit=50
 (For client with 100+ active campaigns)
 ```
 
 **Expected:**
+
 - Returns top 50 by spend
 - Query optimized with proper indexes
 - Response time < 2 seconds
@@ -708,6 +760,7 @@ GET /dashboard/campaigns?limit=50
 ## **Error Handling Tests**
 
 ### **Test: Missing Date Range**
+
 ```
 GET /dashboard/
 ```
@@ -715,6 +768,7 @@ GET /dashboard/
 **Expected:** 422 Unprocessable Entity (start_date and end_date required)
 
 ### **Test: Invalid Date Format**
+
 ```
 GET /dashboard/?start_date=2025-13-45&end_date=2025-11-30
 ```
@@ -722,6 +776,7 @@ GET /dashboard/?start_date=2025-13-45&end_date=2025-11-30
 **Expected:** 422 Unprocessable Entity
 
 ### **Test: Client Not Found**
+
 ```
 GET /dashboard/?start_date=2025-11-01&end_date=2025-11-30&client_id=<invalid-uuid>
 ```
@@ -729,11 +784,13 @@ GET /dashboard/?start_date=2025-11-01&end_date=2025-11-30&client_id=<invalid-uui
 **Expected:** 404 Not Found (client not found)
 
 ### **Test: No Data for Date Range**
+
 ```
 GET /dashboard/?start_date=2020-01-01&end_date=2020-01-31
 ```
 
 **Expected Response:**
+
 ```json
 {
     "summary": {
@@ -761,61 +818,61 @@ GET /dashboard/?start_date=2020-01-01&end_date=2020-01-31
 ### **React Dashboard Component:**
 
 ```javascript
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 function Dashboard() {
-    const [data, setData] = useState(null);
-    
-    useEffect(() => {
-        fetch('/api/v1/dashboard/?start_date=2025-11-01&end_date=2025-11-30', {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        })
-        .then(res => res.json())
-        .then(setData);
-    }, []);
-    
-    if (!data) return <div>Loading...</div>;
-    
-    return (
-        <div>
-            <h1>Dashboard</h1>
-            
-            {/* Summary Cards */}
-            <div className="summary">
-                <Card label="Impressions" value={data.summary.total_impressions} />
-                <Card label="Clicks" value={data.summary.total_clicks} />
-                <Card label="Spend" value={`$${data.summary.total_spend}`} />
-                <Card label="ROAS" value={data.summary.overall_roas} />
-            </div>
-            
-            {/* Campaign Table */}
-            <table>
-                <thead>
-                    <tr>
-                        <th>Campaign</th>
-                        <th>Spend</th>
-                        <th>Conversions</th>
-                        <th>ROAS</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {data.campaigns.map(c => (
-                        <tr key={c.campaign_name}>
-                            <td>{c.campaign_name}</td>
-                            <td>${c.total_spend}</td>
-                            <td>{c.total_conversions}</td>
-                            <td>{c.roas}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-            
-            {/* Chart */}
-            <LineChart data={data.daily_trends} />
-        </div>
-    );
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    fetch("/api/v1/dashboard/?start_date=2025-11-01&end_date=2025-11-30", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then(setData);
+  }, []);
+
+  if (!data) return <div>Loading...</div>;
+
+  return (
+    <div>
+      <h1>Dashboard</h1>
+
+      {/* Summary Cards */}
+      <div className="summary">
+        <Card label="Impressions" value={data.summary.total_impressions} />
+        <Card label="Clicks" value={data.summary.total_clicks} />
+        <Card label="Spend" value={`$${data.summary.total_spend}`} />
+        <Card label="ROAS" value={data.summary.overall_roas} />
+      </div>
+
+      {/* Campaign Table */}
+      <table>
+        <thead>
+          <tr>
+            <th>Campaign</th>
+            <th>Spend</th>
+            <th>Conversions</th>
+            <th>ROAS</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.campaigns.map((c) => (
+            <tr key={c.campaign_name}>
+              <td>{c.campaign_name}</td>
+              <td>${c.total_spend}</td>
+              <td>{c.total_conversions}</td>
+              <td>{c.roas}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Chart */}
+      <LineChart data={data.daily_trends} />
+    </div>
+  );
 }
 ```
 
@@ -824,26 +881,31 @@ function Dashboard() {
 ## **Common Use Cases**
 
 ### **1. Executive Summary:**
+
 - GET `/dashboard/summary` for current month
 - Display KPIs: Impressions, Spend, ROAS
 - Show month-over-month comparison
 
 ### **2. Campaign Optimization:**
-- GET `/dashboard/campaigns` 
+
+- GET `/dashboard/campaigns`
 - Identify underperformers (low ROAS, high CPA)
 - Pause or adjust campaigns
 
 ### **3. Budget Allocation:**
+
 - GET `/dashboard/sources`
 - Compare Surfside vs Vibe vs Facebook performance
 - Shift budget to best performing source
 
 ### **4. Trend Analysis:**
+
 - GET `/dashboard/trends` for last 90 days
 - Plot in line chart
 - Identify seasonal patterns or anomalies
 
 ### **5. Performance Highlights:**
+
 - GET `/dashboard/top-performers`
 - Show in weekly stakeholder report
 - Highlight wins to celebrate
@@ -853,20 +915,23 @@ function Dashboard() {
 ## **Production Recommendations**
 
 1. **Caching:**
+
    - Cache dashboard data for 5-15 minutes
    - Use Redis with TTL
    - Invalidate on new data ingestion
 
 2. **Real-Time Updates:**
+
    - WebSocket connection for live updates
    - Auto-refresh every 5 minutes
    - Show "last updated" timestamp
 
 3. **Materialized Views:**
+
 ```sql
 -- Create for faster queries
 CREATE MATERIALIZED VIEW campaign_daily_summary AS
-SELECT 
+SELECT
     client_id,
     date,
     campaign_name,
@@ -881,6 +946,7 @@ REFRESH MATERIALIZED VIEW campaign_daily_summary;
 ```
 
 4. **Query Optimization:**
+
    - Add covering indexes
    - Denormalize frequently queried data
    - Partition large tables by date
@@ -895,6 +961,7 @@ REFRESH MATERIALIZED VIEW campaign_daily_summary;
 ## **Expected Test Results Summary**
 
 ✅ **All Tests Passing:**
+
 - Complete dashboard returns all 5 sections
 - Summary shows accurate aggregated totals
 - Campaign breakdown sorted by spend

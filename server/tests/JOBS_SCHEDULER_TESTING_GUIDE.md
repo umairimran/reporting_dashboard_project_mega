@@ -5,6 +5,7 @@
 The Jobs module (`app/jobs/`) handles automated background tasks for data ingestion and aggregation using APScheduler.
 
 ### **Purpose**
+
 - Automatically ingest data from Surfside and Vibe daily
 - Aggregate weekly performance summaries
 - Aggregate monthly performance summaries
@@ -12,6 +13,7 @@ The Jobs module (`app/jobs/`) handles automated background tasks for data ingest
 - Run tasks on schedule without manual intervention
 
 ### **Key Components**
+
 - **Scheduler** (`scheduler.py`): APScheduler configuration and job registration
 - **Daily Ingestion** (`daily_ingestion.py`): Automated Surfside + Vibe data pulls
 - **Summaries** (`summaries.py`): Weekly and monthly aggregation jobs
@@ -21,6 +23,7 @@ The Jobs module (`app/jobs/`) handles automated background tasks for data ingest
 ## **Scheduled Jobs**
 
 ### **1. Daily Data Ingestion**
+
 - **Schedule:** Every day at 5:00 AM (configurable)
 - **Job ID:** `daily_data_ingestion`
 - **Function:** `run_all_daily_ingestions()`
@@ -31,6 +34,7 @@ The Jobs module (`app/jobs/`) handles automated background tasks for data ingest
   4. Sends email alerts on failures
 
 ### **2. Weekly Aggregation**
+
 - **Schedule:** Every Sunday at 7:00 AM
 - **Job ID:** `weekly_aggregation`
 - **Function:** `run_weekly_aggregation()`
@@ -40,6 +44,7 @@ The Jobs module (`app/jobs/`) handles automated background tasks for data ingest
   3. Calculates week-over-week comparisons
 
 ### **3. Monthly Aggregation**
+
 - **Schedule:** 1st of each month at 8:00 AM
 - **Job ID:** `monthly_aggregation`
 - **Function:** `run_monthly_aggregation()`
@@ -82,6 +87,7 @@ uvicorn app.main:app --reload
 ```
 
 **Expected Startup Logs:**
+
 ```
 INFO:     Starting PAID MEDIA PERFORMANCE DASHBOARD API
 INFO:     ✓ Database connection successful
@@ -120,7 +126,7 @@ async def trigger_daily_ingestion(
     """Manually trigger daily ingestion (admin only)."""
     if current_user.role != 'admin':
         raise HTTPException(status_code=403, detail="Admin only")
-    
+
     await run_all_daily_ingestions()
     return {"status": "completed"}
 
@@ -131,7 +137,7 @@ async def trigger_weekly_aggregation(
     """Manually trigger weekly aggregation (admin only)."""
     if current_user.role != 'admin':
         raise HTTPException(status_code=403, detail="Admin only")
-    
+
     await run_weekly_aggregation()
     return {"status": "completed"}
 
@@ -142,7 +148,7 @@ async def trigger_monthly_aggregation(
     """Manually trigger monthly aggregation (admin only)."""
     if current_user.role != 'admin':
         raise HTTPException(status_code=403, detail="Admin only")
-    
+
     await run_monthly_aggregation()
     return {"status": "completed"}
 
@@ -153,11 +159,12 @@ async def get_jobs_status(
     """Get status of all scheduled jobs."""
     from app.main import scheduler
     from app.jobs.scheduler import get_scheduler_status
-    
+
     return get_scheduler_status(scheduler)
 ```
 
 **Register router in `app/main.py`:**
+
 ```python
 from app.jobs.router import router as jobs_router
 app.include_router(jobs_router, prefix="/api/v1")
@@ -166,49 +173,53 @@ app.include_router(jobs_router, prefix="/api/v1")
 #### **Step 2: Test with Postman**
 
 **Get Job Status:**
+
 ```
 GET http://localhost:8000/api/v1/jobs/status
 Authorization: Bearer <token>
 ```
 
 **Expected Response:**
+
 ```json
 {
-    "running": true,
-    "jobs_count": 3,
-    "jobs": [
-        {
-            "id": "daily_data_ingestion",
-            "name": "run_all_daily_ingestions",
-            "next_run_time": "2025-12-16T05:00:00",
-            "trigger": "cron[hour='5', minute='0']"
-        },
-        {
-            "id": "weekly_aggregation",
-            "name": "run_weekly_aggregation",
-            "next_run_time": "2025-12-21T07:00:00",
-            "trigger": "cron[day_of_week='sun', hour='7']"
-        },
-        {
-            "id": "monthly_aggregation",
-            "name": "run_monthly_aggregation",
-            "next_run_time": "2026-01-01T08:00:00",
-            "trigger": "cron[day='1', hour='8']"
-        }
-    ]
+  "running": true,
+  "jobs_count": 3,
+  "jobs": [
+    {
+      "id": "daily_data_ingestion",
+      "name": "run_all_daily_ingestions",
+      "next_run_time": "2025-12-16T05:00:00",
+      "trigger": "cron[hour='5', minute='0']"
+    },
+    {
+      "id": "weekly_aggregation",
+      "name": "run_weekly_aggregation",
+      "next_run_time": "2025-12-21T07:00:00",
+      "trigger": "cron[day_of_week='sun', hour='7']"
+    },
+    {
+      "id": "monthly_aggregation",
+      "name": "run_monthly_aggregation",
+      "next_run_time": "2026-01-01T08:00:00",
+      "trigger": "cron[day='1', hour='8']"
+    }
+  ]
 }
 ```
 
 **Trigger Daily Ingestion:**
+
 ```
 POST http://localhost:8000/api/v1/jobs/trigger/daily-ingestion
 Authorization: Bearer <admin_token>
 ```
 
 **Expected Response:**
+
 ```json
 {
-    "status": "completed"
+  "status": "completed"
 }
 ```
 
@@ -250,6 +261,7 @@ if __name__ == "__main__":
 ```
 
 **Run:**
+
 ```powershell
 cd c:\Users\shame\Desktop\mega\server
 python test_jobs.py
@@ -274,6 +286,7 @@ scheduler.add_job(
 ```
 
 **Watch logs to see job execute:**
+
 ```
 INFO:     ======================================
 INFO:     STARTING ALL DAILY DATA INGESTIONS
@@ -287,12 +300,14 @@ INFO:     Target date: 2025-12-14
 ## **Verification Checklist**
 
 ### **Scheduler Health**
+
 - [ ] Scheduler starts successfully on app startup
 - [ ] All 3 jobs registered (daily, weekly, monthly)
 - [ ] Next run times calculated correctly
 - [ ] Scheduler shows `running: true` status
 
 ### **Daily Ingestion Job**
+
 - [ ] Runs at configured time (5 AM default)
 - [ ] Processes all active Surfside clients
 - [ ] Processes all active Vibe clients
@@ -301,12 +316,14 @@ INFO:     Target date: 2025-12-14
 - [ ] Logs show success/failure counts
 
 ### **Weekly Aggregation Job**
+
 - [ ] Runs on Sundays at 7 AM
 - [ ] Aggregates previous week (Monday-Sunday)
 - [ ] Creates entries in weekly_summaries table
 - [ ] Calculates metrics correctly
 
 ### **Monthly Aggregation Job**
+
 - [ ] Runs on 1st of month at 8 AM
 - [ ] Aggregates previous month
 - [ ] Creates entries in monthly_summaries table
@@ -317,8 +334,9 @@ INFO:     Target date: 2025-12-14
 ## **Database Verification**
 
 ### **Check Ingestion Logs:**
+
 ```sql
-SELECT 
+SELECT
     id,
     client_id,
     source,
@@ -335,13 +353,15 @@ LIMIT 10;
 ```
 
 **Expected Results:**
+
 - New entries created daily at 5 AM
 - `status` = 'success' or 'failed'
 - `records_loaded` shows count of processed records
 
 ### **Check Weekly Summaries:**
+
 ```sql
-SELECT 
+SELECT
     id,
     client_id,
     week_start,
@@ -356,13 +376,15 @@ LIMIT 5;
 ```
 
 **Expected Results:**
+
 - New entries every Sunday
 - Week spans Monday-Sunday
 - Aggregated metrics match daily_metrics sum
 
 ### **Check Monthly Summaries:**
+
 ```sql
-SELECT 
+SELECT
     id,
     client_id,
     year,
@@ -377,6 +399,7 @@ LIMIT 5;
 ```
 
 **Expected Results:**
+
 - New entries on 1st of each month
 - Month/year correct
 - Aggregated metrics match daily_metrics sum
@@ -388,11 +411,13 @@ LIMIT 5;
 ### **Real-time Log Monitoring:**
 
 **PowerShell (watch logs):**
+
 ```powershell
 Get-Content -Path "logs/app.log" -Wait -Tail 50
 ```
 
 **Filter for job logs:**
+
 ```powershell
 Get-Content logs/app.log | Select-String "INGESTION|AGGREGATION"
 ```
@@ -400,6 +425,7 @@ Get-Content logs/app.log | Select-String "INGESTION|AGGREGATION"
 ### **Key Log Messages:**
 
 **Success:**
+
 ```
 INFO: ✓ Surfside successful for Test Client
 INFO: ✓ Vibe successful for Test Client
@@ -408,6 +434,7 @@ INFO: Monthly aggregation completed: 5 summaries created
 ```
 
 **Failures:**
+
 ```
 ERROR: ✗ Surfside failed for Test Client: S3 file not found
 ERROR: ✗ Vibe failed for Test Client: API authentication failed
@@ -418,44 +445,56 @@ ERROR: ✗ Vibe failed for Test Client: API authentication failed
 ## **Troubleshooting**
 
 ### **Issue: Jobs Not Running**
+
 **Symptoms:** Scheduler says jobs are registered but never execute
 **Diagnosis:**
+
 ```python
 # Check scheduler state
 from app.main import scheduler
 print(scheduler.running)  # Should be True
 print(scheduler.get_jobs())  # Should show 3 jobs
 ```
+
 **Solutions:**
+
 - Verify scheduler.start() called in lifespan
 - Check for exceptions in job functions
 - Ensure server stays running (not restarting)
 
 ### **Issue: Daily Ingestion Fails**
+
 **Symptoms:** Job runs but all clients fail
 **Diagnosis:** Check logs for error messages
 **Common Causes:**
+
 - S3 credentials invalid → Fix AWS_ACCESS_KEY_ID/SECRET
 - Vibe API down → Check VIBE_API_BASE_URL
 - No active clients → Verify clients.status = 'active'
 - Database connection lost → Check DATABASE_URL
 
 ### **Issue: Wrong Schedule**
+
 **Symptoms:** Jobs run at unexpected times
 **Diagnosis:**
+
 ```python
 job = scheduler.get_job('daily_data_ingestion')
 print(job.next_run_time)  # Check next execution
 ```
+
 **Solutions:**
+
 - Verify SURFSIDE_CRON_HOUR environment variable
 - Check server timezone vs expected timezone
 - Adjust cron expression in scheduler.py
 
 ### **Issue: Duplicate Executions**
+
 **Symptoms:** Same job runs multiple times simultaneously
 **Diagnosis:** Check `max_instances` setting
 **Solution:**
+
 ```python
 scheduler.add_job(
     ...,
@@ -464,14 +503,18 @@ scheduler.add_job(
 ```
 
 ### **Issue: Aggregations Missing Data**
+
 **Symptoms:** Weekly/monthly summaries have zero metrics
 **Diagnosis:**
+
 ```sql
 -- Check if daily_metrics exist for the period
 SELECT COUNT(*) FROM daily_metrics
 WHERE date BETWEEN '2025-12-08' AND '2025-12-14';
 ```
+
 **Solution:**
+
 - Ensure daily ingestion ran successfully first
 - Manually run aggregation for specific period
 - Check aggregation logic in summaries.py
@@ -481,6 +524,7 @@ WHERE date BETWEEN '2025-12-08' AND '2025-12-14';
 ## **Performance Considerations**
 
 ### **Daily Ingestion:**
+
 - **Duration:** 2-10 minutes per client (depends on data volume)
 - **Concurrency:** Processes clients sequentially (not parallel)
 - **Memory:** ~100MB per client during processing
@@ -490,6 +534,7 @@ WHERE date BETWEEN '2025-12-08' AND '2025-12-14';
   - Add timeout handling for stuck jobs
 
 ### **Aggregations:**
+
 - **Weekly:** < 30 seconds per client
 - **Monthly:** < 2 minutes per client
 - **Database impact:** Read-heavy queries on daily_metrics
@@ -503,6 +548,7 @@ WHERE date BETWEEN '2025-12-08' AND '2025-12-14';
 ## **Production Deployment**
 
 ### **1. Job Monitoring**
+
 ```python
 # Add Sentry/DataDog integration
 from sentry_sdk import capture_exception
@@ -515,13 +561,16 @@ except Exception as e:
 ```
 
 ### **2. Job Status Dashboard**
+
 Create admin page showing:
+
 - Last run time per job
 - Success/failure status
 - Average duration
 - Next scheduled run
 
 ### **3. Retry Logic**
+
 ```python
 from tenacity import retry, stop_after_attempt, wait_exponential
 
@@ -531,12 +580,15 @@ async def run_with_retry():
 ```
 
 ### **4. Alerting**
+
 - Slack webhook on job failures
 - PagerDuty escalation if 3+ failures
 - Email digest of daily job results
 
 ### **5. Scaling**
+
 For many clients (> 50):
+
 - Use Celery for distributed task processing
 - Parallel client processing with asyncio.gather()
 - Split jobs by client tier (premium clients first)
@@ -546,6 +598,7 @@ For many clients (> 50):
 ## **Expected Test Results**
 
 ### **Successful Daily Ingestion:**
+
 ```
 ==================================================
 STARTING ALL DAILY DATA INGESTIONS
@@ -584,6 +637,7 @@ Total: 5 success, 0 failed
 ```
 
 ### **Successful Weekly Aggregation:**
+
 ```
 ==================================================
 STARTING WEEKLY AGGREGATION
@@ -595,6 +649,7 @@ Weekly aggregation completed: 5 summaries created
 ```
 
 ### **Successful Monthly Aggregation:**
+
 ```
 ==================================================
 STARTING MONTHLY AGGREGATION
@@ -610,6 +665,7 @@ Monthly aggregation completed: 5 summaries created
 ## **Manual Testing Scenarios**
 
 ### **Scenario 1: Test Daily Ingestion**
+
 1. Configure Surfside S3 bucket with test file
 2. Configure Vibe API credentials
 3. Trigger job manually via API
@@ -618,18 +674,21 @@ Monthly aggregation completed: 5 summaries created
 6. Check email for success/failure alerts
 
 ### **Scenario 2: Test Weekly Aggregation**
+
 1. Ensure daily_metrics exist for past week
 2. Trigger weekly aggregation
 3. Query weekly_summaries table
 4. Verify metrics sum matches daily totals
 
 ### **Scenario 3: Test Monthly Aggregation**
+
 1. Ensure daily_metrics exist for past month
 2. Trigger monthly aggregation
 3. Query monthly_summaries table
 4. Verify metrics sum matches daily totals
 
 ### **Scenario 4: Test Failure Handling**
+
 1. Temporarily break S3 credentials
 2. Trigger daily ingestion
 3. Verify email alert sent to admins

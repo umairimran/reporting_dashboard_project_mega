@@ -5,12 +5,14 @@
 The Email module (`app/core/email.py`) provides SMTP email functionality for sending automated alerts and notifications to administrators and users.
 
 ### **Purpose**
+
 - Send ingestion failure alerts when data processing fails
 - Send missing file alerts when expected data is not received
 - Send validation error alerts when data quality issues are detected
 - Support async/non-blocking email sending
 
 ### **Key Components**
+
 - **EmailService class**: Main email sender using `aiosmtplib`
 - **Configuration**: SMTP settings from environment variables
 - **Templates**: HTML email templates for different alert types
@@ -43,6 +45,7 @@ SMTP_FROM_NAME=Performance Dashboard Alert
 ### **3. Alternative SMTP Providers**
 
 **SendGrid:**
+
 ```env
 SMTP_HOST=smtp.sendgrid.net
 SMTP_PORT=587
@@ -51,6 +54,7 @@ SMTP_PASSWORD=your-sendgrid-api-key
 ```
 
 **AWS SES:**
+
 ```env
 SMTP_HOST=email-smtp.us-east-1.amazonaws.com
 SMTP_PORT=587
@@ -59,6 +63,7 @@ SMTP_PASSWORD=your-ses-password
 ```
 
 **Mailgun:**
+
 ```env
 SMTP_HOST=smtp.mailgun.org
 SMTP_PORT=587
@@ -82,20 +87,20 @@ from datetime import date
 async def test_basic_email():
     """Test basic email sending."""
     print("Testing basic email...")
-    
+
     result = await email_service.send_email(
         to=["your-test-email@gmail.com"],
         subject="Test Email from Dashboard",
         body="This is a test email. If you receive this, SMTP is working!",
         html=False
     )
-    
+
     print(f"Email sent: {result}")
 
 async def test_ingestion_failure_alert():
     """Test ingestion failure alert."""
     print("Testing ingestion failure alert...")
-    
+
     result = await email_service.send_ingestion_failure_alert(
         client_name="Test Client",
         source="surfside",
@@ -103,19 +108,19 @@ async def test_ingestion_failure_alert():
         error_message="Database connection timeout after 30 seconds",
         admin_emails=["your-admin-email@gmail.com"]
     )
-    
+
     print(f"Alert sent: {result}")
 
 async def test_validation_error_alert():
     """Test validation error alert."""
     print("Testing validation error alert...")
-    
+
     errors = [
         "Row 5: Missing required column 'Campaign'",
         "Row 12: Invalid date format '2025-13-45'",
         "Row 18: Impressions must be positive integer"
     ]
-    
+
     result = await email_service.send_validation_error_alert(
         client_name="Test Client",
         source="facebook",
@@ -123,20 +128,20 @@ async def test_validation_error_alert():
         errors=errors,
         admin_emails=["your-admin-email@gmail.com"]
     )
-    
+
     print(f"Validation alert sent: {result}")
 
 async def test_missing_file_alert():
     """Test missing file alert."""
     print("Testing missing file alert...")
-    
+
     result = await email_service.send_missing_file_alert(
         client_name="Test Client",
         source="vibe",
         expected_date=date.today(),
         admin_emails=["your-admin-email@gmail.com"]
     )
-    
+
     print(f"Missing file alert sent: {result}")
 
 async def run_all_tests():
@@ -144,19 +149,19 @@ async def run_all_tests():
     print("=" * 60)
     print("SMTP EMAIL MODULE TESTS")
     print("=" * 60)
-    
+
     await test_basic_email()
     print()
-    
+
     await test_ingestion_failure_alert()
     print()
-    
+
     await test_validation_error_alert()
     print()
-    
+
     await test_missing_file_alert()
     print()
-    
+
     print("=" * 60)
     print("ALL TESTS COMPLETED")
     print("=" * 60)
@@ -166,6 +171,7 @@ if __name__ == "__main__":
 ```
 
 **Run the test:**
+
 ```powershell
 cd c:\Users\shame\Desktop\mega\server
 python test_email.py
@@ -180,6 +186,7 @@ Since email alerts are triggered by events, you can test them by triggering thos
 #### **Test 1: Trigger Ingestion Failure**
 
 1. Upload a corrupted Surfside file:
+
    ```csv
    Invalid,Headers,Here
    Bad,Data,Values
@@ -218,18 +225,19 @@ async def test_email(
     """Test email sending (admin only)."""
     if current_user.role != 'admin':
         raise HTTPException(status_code=403, detail="Admin only")
-    
+
     result = await email_service.send_email(
         to=[email],
         subject="Test Email from Dashboard",
         body="SMTP configuration is working correctly!",
         html=False
     )
-    
+
     return {"sent": result, "to": email}
 ```
 
 **Postman Test:**
+
 - POST `http://localhost:8000/api/v1/system/test-email?email=your@email.com`
 - Headers: `Authorization: Bearer <your_token>`
 
@@ -238,12 +246,14 @@ async def test_email(
 ## **Verification Checklist**
 
 ### **Pre-Test Checks**
+
 - [ ] SMTP credentials configured in `.env`
 - [ ] Server running: `uvicorn app.main:app --reload`
 - [ ] Valid test email address available
 - [ ] Gmail App Password generated (if using Gmail)
 
 ### **Email Delivery Checks**
+
 - [ ] Basic email received successfully
 - [ ] HTML formatting preserved in alerts
 - [ ] Subject line correct
@@ -252,6 +262,7 @@ async def test_email(
 - [ ] All recipient addresses received email
 
 ### **Alert Content Checks**
+
 - [ ] Ingestion failure alert includes: client name, source, date, error message
 - [ ] Validation error alert includes: client name, source, error list
 - [ ] Missing file alert includes: client name, source, expected date
@@ -262,35 +273,45 @@ async def test_email(
 ## **Troubleshooting**
 
 ### **Error: "SMTPAuthenticationError"**
+
 **Cause:** Invalid credentials or 2FA not enabled for Gmail
 **Solution:**
+
 - Enable 2-Factor Authentication in Google Account
 - Generate App Password
 - Use App Password in SMTP_PASSWORD (not regular password)
 
 ### **Error: "Connection refused"**
+
 **Cause:** Wrong host or port
 **Solution:**
+
 - Verify SMTP_HOST and SMTP_PORT
 - For Gmail: smtp.gmail.com:587
 - Check firewall settings
 
 ### **Error: "Timeout"**
+
 **Cause:** Network or firewall blocking SMTP
 **Solution:**
+
 - Test with telnet: `telnet smtp.gmail.com 587`
 - Check corporate firewall settings
 - Try port 465 (SSL) instead of 587 (TLS)
 
 ### **Emails Going to Spam**
+
 **Solution:**
+
 - Add sender to contact list
 - Configure SPF/DKIM records for your domain
 - Use authenticated SMTP provider (SendGrid, AWS SES)
 
 ### **Error: "Sender address rejected"**
+
 **Cause:** FROM_EMAIL doesn't match authenticated account
 **Solution:**
+
 - Use same email as SMTP_USERNAME
 - Or verify domain ownership with provider
 
@@ -299,21 +320,25 @@ async def test_email(
 ## **Production Recommendations**
 
 1. **Use Professional SMTP Service**
+
    - SendGrid (99.9% uptime SLA)
    - AWS SES (high deliverability)
    - Mailgun (developer-friendly)
 
 2. **Email Monitoring**
+
    - Log all email attempts
    - Track delivery failures
    - Set up dead letter queue for retries
 
 3. **Rate Limiting**
+
    - Implement exponential backoff for retries
    - Batch emails when possible
    - Respect provider rate limits
 
 4. **Templates**
+
    - Use HTML templates with CSS
    - Include company branding
    - Add unsubscribe links (if marketing emails)
@@ -329,6 +354,7 @@ async def test_email(
 ## **Expected Test Results**
 
 ### **Successful Test Output:**
+
 ```
 ==========================================================
 SMTP EMAIL MODULE TESTS
@@ -351,6 +377,7 @@ ALL TESTS COMPLETED
 ```
 
 ### **Sample Email (HTML Alert):**
+
 ```html
 Subject: Data Ingestion Failed: surfside - Test Client
 
@@ -367,11 +394,14 @@ Subject: Data Ingestion Failed: surfside - Test Client
 ## **Integration Points**
 
 Emails are automatically sent from:
+
 1. **ETL Orchestrator** (`app/etl/orchestrator.py`)
+
    - On pipeline failures
    - On validation errors
 
 2. **Daily Ingestion Jobs** (`app/jobs/daily_ingestion.py`)
+
    - When Surfside/Vibe ingestion fails
    - When expected files are missing
 

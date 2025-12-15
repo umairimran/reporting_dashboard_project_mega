@@ -5,12 +5,14 @@
 The Exports module (`app/exports/`) provides functionality to export performance data in CSV and PDF formats for reporting and analysis.
 
 ### **Purpose**
+
 - Export daily metrics to CSV for Excel analysis
 - Export campaign summaries to CSV
 - Generate PDF dashboard reports with charts and tables
 - Support date range filtering and client-specific exports
 
 ### **Key Components**
+
 - **CSV Export Service** (`csv_export.py`): Generates CSV files
 - **PDF Export Service** (`pdf_export.py`): Generates PDF reports with ReportLab
 - **Router** (`router.py`): API endpoints for downloading exports
@@ -20,11 +22,13 @@ The Exports module (`app/exports/`) provides functionality to export performance
 ## **Available Endpoints**
 
 ### **1. Export Daily Metrics to CSV**
+
 ```
 GET /api/v1/exports/csv/daily-metrics
 ```
 
 **Query Parameters:**
+
 - `start_date` (required): Start date (YYYY-MM-DD)
 - `end_date` (required): End date (YYYY-MM-DD)
 - `client_id` (optional): Filter by client (admin only)
@@ -33,11 +37,13 @@ GET /api/v1/exports/csv/daily-metrics
 **Response:** CSV file download
 
 ### **2. Export Campaign Summary to CSV**
+
 ```
 GET /api/v1/exports/csv/campaign-summary
 ```
 
 **Query Parameters:**
+
 - `start_date` (required): Start date
 - `end_date` (required): End date
 - `client_id` (optional): Filter by client (admin only)
@@ -45,11 +51,13 @@ GET /api/v1/exports/csv/campaign-summary
 **Response:** Aggregated campaign CSV
 
 ### **3. Export Dashboard Report to PDF**
+
 ```
 GET /api/v1/exports/pdf/dashboard-report
 ```
 
 **Query Parameters:**
+
 - `start_date` (required): Start date
 - `end_date` (required): End date
 - `client_id` (optional): Filter by client (admin only)
@@ -61,12 +69,14 @@ GET /api/v1/exports/pdf/dashboard-report
 ## **CSV Export Structure**
 
 ### **Daily Metrics CSV Columns:**
+
 ```csv
 Date,Campaign,Strategy,Placement,Creative,Source,Impressions,Clicks,Conversions,Revenue,CTR (%),Spend,CPC,CPA,ROAS
 2025-12-14,Holiday Campaign,Retargeting,Banner Ad,Creative A,surfside,50000,1250,45,2250.00,2.50,625.00,0.50,13.89,3.60
 ```
 
 ### **Campaign Summary CSV Columns:**
+
 ```csv
 Campaign,Total Impressions,Total Clicks,Total Conversions,Total Revenue,Total Spend,CTR (%),CPC,CPA,ROAS
 Holiday Campaign,500000,12500,450,22500.00,6250.00,2.50,0.50,13.89,3.60
@@ -77,24 +87,30 @@ Holiday Campaign,500000,12500,450,22500.00,6250.00,2.50,0.50,13.89,3.60
 ## **PDF Report Structure**
 
 ### **Report Sections:**
+
 1. **Header**
+
    - Client name and logo
    - Date range
    - Report generation timestamp
 
 2. **Summary Section**
+
    - Total impressions, clicks, conversions
    - Total spend and revenue
    - Overall CTR, CPC, CPA, ROAS
 
 3. **Campaign Breakdown Table**
+
    - Top 10 campaigns by spend
    - Performance metrics per campaign
 
 4. **Source Breakdown**
+
    - Performance by data source (Surfside, Vibe, Facebook)
 
 5. **Daily Trends Chart**
+
    - Line graph showing daily metrics over time
 
 6. **Top Performers**
@@ -121,16 +137,18 @@ Holiday Campaign,500000,12500,450,22500.00,6250.00,2.50,0.50,13.89,3.60
    - `start_date`: 2025-12-01
    - `end_date`: 2025-12-15
    - `client_id`: <your_client_uuid>
-   - `source`: surfside *(optional)*
+   - `source`: surfside _(optional)_
 3. **Auth:** Bearer Token (paste access_token)
 4. **Send**
 
 **Expected Response:**
+
 - Status: 200 OK
 - Headers: `Content-Disposition: attachment; filename=daily_metrics_2025-12-01_2025-12-15.csv`
 - Body: CSV content (viewable in Postman or downloads as file)
 
 **Postman Tips:**
+
 - Click "Send and Download" to save file
 - Or view response in "Preview" tab as formatted table
 
@@ -145,6 +163,7 @@ Holiday Campaign,500000,12500,450,22500.00,6250.00,2.50,0.50,13.89,3.60
 4. **Send and Download**
 
 **Expected Response:**
+
 - CSV with aggregated campaign data
 - One row per campaign
 - Sorted by total spend (descending)
@@ -160,6 +179,7 @@ Holiday Campaign,500000,12500,450,22500.00,6250.00,2.50,0.50,13.89,3.60
 4. **Send and Download**
 
 **Expected Response:**
+
 - Status: 200 OK
 - Headers: `Content-Type: application/pdf`
 - Headers: `Content-Disposition: attachment; filename=dashboard_report_2025-12-01_2025-12-15.pdf`
@@ -170,6 +190,7 @@ Holiday Campaign,500000,12500,450,22500.00,6250.00,2.50,0.50,13.89,3.60
 ## **Testing with cURL (Command Line)**
 
 ### **Export CSV:**
+
 ```powershell
 $token = "your_access_token_here"
 $url = "http://localhost:8000/api/v1/exports/csv/daily-metrics?start_date=2025-12-01&end_date=2025-12-15&client_id=<uuid>"
@@ -180,6 +201,7 @@ Invoke-WebRequest -Uri $url `
 ```
 
 ### **Export PDF:**
+
 ```powershell
 $token = "your_access_token_here"
 $url = "http://localhost:8000/api/v1/exports/pdf/dashboard-report?start_date=2025-12-01&end_date=2025-12-15&client_id=<uuid>"
@@ -194,6 +216,7 @@ Invoke-WebRequest -Uri $url `
 ## **Verification Checklist**
 
 ### **CSV Export Checks**
+
 - [ ] File downloads successfully
 - [ ] CSV opens in Excel/Google Sheets
 - [ ] All columns present and labeled correctly
@@ -206,6 +229,7 @@ Invoke-WebRequest -Uri $url `
 - [ ] Special characters don't break formatting
 
 ### **PDF Export Checks**
+
 - [ ] PDF opens without errors
 - [ ] Client name displays correctly
 - [ ] Date range shown in header
@@ -222,6 +246,7 @@ Invoke-WebRequest -Uri $url `
 ## **Common Export Scenarios**
 
 ### **Scenario 1: Full Month Export**
+
 ```
 start_date: 2025-12-01
 end_date: 2025-12-31
@@ -229,7 +254,9 @@ Result: All December data for client
 ```
 
 ### **Scenario 2: Week-over-Week Comparison**
+
 Export two CSVs:
+
 ```
 Week 1: 2025-12-01 to 2025-12-07
 Week 2: 2025-12-08 to 2025-12-15
@@ -237,6 +264,7 @@ Compare in Excel pivot table
 ```
 
 ### **Scenario 3: Multi-Source Analysis**
+
 ```
 Export 1: source=surfside
 Export 2: source=vibe
@@ -245,6 +273,7 @@ Compare source performance
 ```
 
 ### **Scenario 4: Campaign Deep Dive**
+
 ```
 1. Export campaign summary CSV
 2. Identify top campaign
@@ -260,7 +289,7 @@ Before exporting, verify data exists:
 
 ```sql
 -- Check daily metrics for date range
-SELECT 
+SELECT
     date,
     source,
     COUNT(*) as record_count,
@@ -285,41 +314,53 @@ If count is 0, upload test data first!
 ## **Troubleshooting**
 
 ### **Error: "No data found for export"**
+
 **Cause:** No metrics in database for date range
 **Solution:**
+
 - Upload Facebook/Surfside data
 - Adjust date range to match available data
 - Verify client_id is correct
 
 ### **Error: "Client not found"**
+
 **Cause:** Invalid client_id UUID
 **Solution:**
+
 - GET `/api/v1/clients` to get valid client IDs
 - Ensure UUID format is correct
 
 ### **Error: 403 Forbidden**
+
 **Cause:** Client user trying to export another client's data
 **Solution:**
+
 - Login as admin, OR
 - Omit client_id parameter (will use current user's client)
 
 ### **CSV Opens as Gibberish in Excel**
+
 **Cause:** Encoding issue
 **Solution:**
+
 - Save file with UTF-8 encoding
 - Use Excel "Data → From Text/CSV" import wizard
 - Specify UTF-8 encoding during import
 
 ### **PDF Generation Fails**
+
 **Cause:** ReportLab library missing or corrupted
 **Solution:**
+
 ```powershell
 pip install --upgrade reportlab
 ```
 
 ### **PDF Charts Not Rendering**
+
 **Cause:** Missing chart implementation (may be TODO)
 **Solution:**
+
 - Check if charts are implemented in PDF service
 - For now, rely on tabular data only
 
@@ -328,16 +369,20 @@ pip install --upgrade reportlab
 ## **Performance Considerations**
 
 ### **Large Exports:**
+
 For exports > 100,000 records:
+
 - Expect 5-15 second generation time
 - CSV generation is faster than PDF
 - Consider pagination or splitting by month
 
 ### **Memory Usage:**
+
 - CSV: ~1MB per 10,000 records
 - PDF: ~2-3MB per 10,000 records (with styling)
 
 ### **Optimization Tips:**
+
 - Use date range filtering
 - Filter by source if only need one
 - Export campaigns separately if needed
@@ -350,6 +395,7 @@ For exports > 100,000 records:
 After exporting CSV, you can:
 
 ### **1. Pivot Table Analysis**
+
 ```
 Rows: Campaign
 Columns: Date
@@ -357,16 +403,19 @@ Values: Sum of Spend, Sum of Conversions
 ```
 
 ### **2. Chart Creation**
+
 - Select date and spend columns
 - Insert → Line Chart
 - Shows spend trend over time
 
 ### **3. Conditional Formatting**
+
 - Highlight ROAS > 3.0 in green
 - Highlight CPA > 20 in red
 - Shows performance at a glance
 
 ### **4. Formulas**
+
 ```excel
 =AVERAGE(K:K)  // Average CTR
 =SUM(L:L)      // Total Spend
@@ -388,7 +437,7 @@ TOKEN = "your_access_token"
 
 def download_daily_export():
     yesterday = date.today() - timedelta(days=1)
-    
+
     response = requests.get(
         f"{API_URL}/exports/csv/daily-metrics",
         params={
@@ -398,10 +447,10 @@ def download_daily_export():
         },
         headers={"Authorization": f"Bearer {TOKEN}"}
     )
-    
+
     with open(f"metrics_{yesterday}.csv", "wb") as f:
         f.write(response.content)
-    
+
     print(f"Downloaded metrics for {yesterday}")
 
 download_daily_export()
@@ -412,20 +461,24 @@ download_daily_export()
 ## **Production Recommendations**
 
 1. **Caching**
+
    - Cache frequently requested exports (24h TTL)
    - Use Redis for caching large CSVs
    - Invalidate cache on new data ingestion
 
 2. **Compression**
+
    - GZIP compress large CSV files
    - Reduce download size by 80%+
 
 3. **Async Generation**
+
    - For exports > 50MB, use background tasks
    - Email download link when ready
    - Show progress indicator
 
 4. **Access Control**
+
    - Log all export requests
    - Rate limit to prevent abuse
    - Audit trail for compliance
@@ -440,6 +493,7 @@ download_daily_export()
 ## **Expected Test Results**
 
 ### **Successful CSV Export:**
+
 ```csv
 Date,Campaign,Strategy,Placement,Creative,Source,Impressions,Clicks,Conversions,Revenue,CTR (%),Spend,CPC,CPA,ROAS
 2025-12-14,Prospecting,Audience | Cannabis Consumers,Ad Placement,Creative 2,surfside,8865,6,0,0.00,0.07,110.81,18.47,,0.00
@@ -447,6 +501,7 @@ Date,Campaign,Strategy,Placement,Creative,Source,Impressions,Clicks,Conversions,
 ```
 
 ### **Successful PDF Report:**
+
 - File size: 150KB - 500KB
 - Multiple pages with proper formatting
 - Logo and branding present
@@ -458,21 +513,25 @@ Date,Campaign,Strategy,Placement,Creative,Source,Impressions,Clicks,Conversions,
 ## **Client Use Cases**
 
 ### **Monthly Board Report:**
+
 1. Export PDF dashboard report for previous month
 2. Includes all visualizations and summaries
 3. Present to executives/stakeholders
 
 ### **Campaign Optimization:**
+
 1. Export campaign summary CSV
 2. Identify underperforming campaigns (high CPA, low ROAS)
 3. Pause or adjust targeting
 
 ### **Budget Reconciliation:**
+
 1. Export daily metrics CSV for billing period
 2. Sum spend column in Excel
 3. Match against invoices from ad platforms
 
 ### **Trend Analysis:**
+
 1. Export last 90 days to CSV
 2. Create line charts in Excel
 3. Identify seasonal patterns or anomalies

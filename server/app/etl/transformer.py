@@ -172,17 +172,23 @@ class TransformerService:
         """
         strategy_name = TransformerService.normalize_string(raw_record.get('Strategy Name', ''))
         
+        impressions = TransformerService.parse_number(raw_record.get('Impressions', 0))
+        clicks = TransformerService.parse_number(raw_record.get('Clicks', 0))
+        
+        # Calculate CTR: (Clicks / Impressions) * 100
+        ctr = (clicks / impressions * 100) if impressions > 0 else 0
+        
         return {
             'date': TransformerService.parse_date(raw_record.get('Event Date')),
             'campaign_name': strategy_name or "Surfside Campaign",  # Use Strategy Name as Campaign
             'strategy_name': strategy_name or "General Strategy",
             'placement_name': TransformerService.normalize_string(raw_record.get('Placement Name', '')) or "General Placement",
             'creative_name': TransformerService.normalize_string(raw_record.get('Creative Name', '')) or "General Creative",
-            'impressions': TransformerService.parse_number(raw_record.get('Impressions', 0)),
-            'clicks': TransformerService.parse_number(raw_record.get('Clicks', 0)),
+            'impressions': impressions,
+            'clicks': clicks,
             'conversions': TransformerService.parse_number(raw_record.get('Conversions', 0)),
             'conversion_revenue': TransformerService.parse_decimal(raw_record.get('Conversion Value', 0)),
-            'ctr': None  # Will be calculated
+            'ctr': ctr
         }
     
     @staticmethod
@@ -190,23 +196,40 @@ class TransformerService:
         """
         Transform Vibe API record to standard format.
         
+        Vibe API Column Mappings:
+        - impression_date → date
+        - campaign_name → campaign_name
+        - strategy_name → strategy_name  
+        - channel_name → placement_name (MAPPED)
+        - creative_name → creative_name
+        - impressions → impressions
+        - installs → clicks (MAPPED)
+        - number_of_purchases → conversions (MAPPED)
+        - amount_of_purchases → revenue/conversion_revenue (MAPPED)
+        
         Args:
             raw_record: Raw record from Vibe API (with lowercase column names)
             
         Returns:
             Transformed record
         """
+        impressions = TransformerService.parse_number(raw_record.get('impressions', 0))
+        clicks = TransformerService.parse_number(raw_record.get('installs', 0))  # Vibe: installs → clicks
+        
+        # Calculate CTR: (Clicks / Impressions) * 100
+        ctr = (clicks / impressions * 100) if impressions > 0 else 0
+        
         return {
-            'date': TransformerService.parse_date(raw_record.get('impression_date')),  # Vibe uses 'impression_date'
+            'date': TransformerService.parse_date(raw_record.get('impression_date')),
             'campaign_name': TransformerService.normalize_string(raw_record.get('campaign_name', '')),
             'strategy_name': TransformerService.normalize_string(raw_record.get('strategy_name', '')) or "General Strategy",
-            'placement_name': TransformerService.normalize_string(raw_record.get('placement_name', '')) or "General Placement",
+            'placement_name': TransformerService.normalize_string(raw_record.get('channel_name', '')) or "General Placement",  # Vibe: channel_name → placement_name
             'creative_name': TransformerService.normalize_string(raw_record.get('creative_name', '')) or "General Creative",
-            'impressions': TransformerService.parse_number(raw_record.get('impressions', 0)),
-            'clicks': TransformerService.parse_number(raw_record.get('clicks', 0)),  # TODO: Verify availability
-            'conversions': TransformerService.parse_number(raw_record.get('conversions', 0)),  # TODO: Verify availability
-            'conversion_revenue': TransformerService.parse_decimal(raw_record.get('revenue', 0)),  # TODO: Verify availability
-            'ctr': None  # Will be calculated
+            'impressions': impressions,
+            'clicks': clicks,  # Vibe: installs → clicks
+            'conversions': TransformerService.parse_number(raw_record.get('number_of_purchases', 0)),  # Vibe: number_of_purchases → conversions
+            'conversion_revenue': TransformerService.parse_decimal(raw_record.get('amount_of_purchases', 0)),  # Vibe: amount_of_purchases → revenue
+            'ctr': ctr
         }
     
     @staticmethod
@@ -239,6 +262,14 @@ class TransformerService:
         
         creative_name = ad_name
         
+        impressions = TransformerService.parse_number(raw_record.get('impressions', 0))
+        # TODO: Clicks field - awaiting client confirmation (link clicks vs clicks (all))
+        clicks = TransformerService.parse_number(raw_record.get('link clicks', 0))
+        # clicks = TransformerService.parse_number(raw_record.get('clicks (all)', 0))  # Alternative
+        
+        # Calculate CTR: (Clicks / Impressions) * 100
+        ctr = (clicks / impressions * 100) if impressions > 0 else 0
+        
         return {
             # TODO: Date field - awaiting client confirmation on which field to use
             'date': TransformerService.parse_date(raw_record.get('reporting starts')),
@@ -248,19 +279,15 @@ class TransformerService:
             'strategy_name': ad_set_name or "General Strategy",
             'placement_name': placement_name or "General Placement",
             'creative_name': creative_name or "General Creative",
-            'impressions': TransformerService.parse_number(raw_record.get('impressions', 0)),
-            
-            # TODO: Clicks field - awaiting client confirmation (link clicks vs clicks (all))
-            'clicks': TransformerService.parse_number(raw_record.get('link clicks', 0)),
-            # 'clicks': TransformerService.parse_number(raw_record.get('clicks (all)', 0)),  # Alternative
+            'impressions': impressions,
+            'clicks': clicks,
             
             # TODO: Conversions - not in current CSV, awaiting client confirmation
             'conversions': TransformerService.parse_number(raw_record.get('conversions', 0)),
             
             # TODO: Revenue - not in current CSV, awaiting client confirmation
             'conversion_revenue': TransformerService.parse_decimal(raw_record.get('revenue', 0)),
-            
-            'ctr': None  # Will be calculated
+            'ctr': ctr
         }
     
     @staticmethod

@@ -28,58 +28,71 @@ class VibeETL:
         end_date: date,
         admin_emails: Optional[List[str]] = None
     ):
-        """Run Vibe ETL for a specific client."""
+        """Run complete Vibe ETL cycle for a specific client."""
         logger.info(f"Starting Vibe ETL for {client_name} ({start_date} to {end_date})")
         
         # Get API client
         api_client = VibeService.get_api_client(self.db, client_id)
         
         try:
-            # Create report
+            # Step 1: Create report via Vibe API
             logger.info(f"Creating Vibe report for {client_name}")
             report_info = await api_client.create_report(start_date, end_date)
             report_id = report_info['report_id']
             
-            # Track report request
+            # Track report request in database
             report_request = VibeReportRequest(
                 client_id=client_id,
                 report_id=report_id,
                 status='created',
                 start_date=start_date,
-                end_date=end_date
+                end_date=end_date,
+               
             )
             self.db.add(report_request)
             self.db.commit()
             
-            # Wait for report to be ready
+            # Step 2: Wait for report to be ready (polling)
             logger.info(f"Waiting for Vibe report {report_id} to be ready")
+            report_request.status = 'processing'
+            self.db.commit()
+            
             download_url = await api_client.wait_for_report(report_id)
             
+            # Update report request with download URL
             report_request.download_url = download_url
             report_request.status = 'done'
             self.db.commit()
             
-            # Download CSV
+            # Step 3: Download CSV from pre-signed S3 URL
             logger.info(f"Downloading Vibe report {report_id}")
             csv_content = await api_client.download_report(download_url)
             
-            # Parse CSV
+            # Step 4: Parse CSV data
             logger.info(f"Parsing Vibe CSV data")
             raw_records = VibeParser.parse_csv(csv_content)
-            
             logger.info(f"Parsed {len(raw_records)} records from Vibe")
             
-            # Run ETL pipeline
+            # Step 5: Run complete ETL pipeline (Transform → Stage → Load)
+            # This includes:
+            # - Transformation (column mapping, data cleaning)
+            # - Validation
+            # - Staging (staging_media_raw table)
+            # - Campaign hierarchy creation
+            # - Metrics calculation with client CPM
+            # - Loading to daily_metrics table
+            logger.info(f"Running complete ETL pipeline for Vibe data")
             ingestion_log = await self.orchestrator.run_etl_pipeline(
                 client_id=client_id,
                 client_name=client_name,
                 raw_records=raw_records,
                 source='vibe',
                 run_date=end_date,
+                file_name=f"vibe_report_{report_id}.csv",
                 admin_emails=admin_emails
             )
             
-            logger.info(f"Vibe ETL completed: {ingestion_log.status}")
+            logger.info(f"Vibe ETL completed: {ingestion_log.status} - {ingestion_log.records_loaded} records loaded")
             return ingestion_log
             
         except Exception as e:
@@ -88,6 +101,7 @@ class VibeETL:
             # Update report request status if it exists
             if 'report_request' in locals():
                 report_request.status = 'failed'
+                report_request.error_message = str(e)
                 self.db.commit()
             
             raise VibeAPIError(f"Vibe ETL failed: {str(e)}")

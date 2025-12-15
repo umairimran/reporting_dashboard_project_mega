@@ -1,6 +1,7 @@
 """
 Data loader service for ETL pipeline.
 """
+from decimal import Decimal
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from typing import List, Dict
@@ -45,9 +46,10 @@ class LoaderService:
                 cpm_settings = ClientService.get_current_cpm(db, client_id, record['date'])
                 
                 if not cpm_settings:
-                    logger.error(f"No CPM settings found for client {client_id} on {record['date']}")
-                    failed += 1
-                    continue
+                    cpm = Decimal('17.00')  # Default from documentation
+                    logger.warning(f"Using default CPM $17 for client {client_id}")
+                else:
+                    cpm = cpm_settings.cpm
                 
                 # Create campaign hierarchy
                 campaign, strategy, placement, creative = CampaignService.create_full_hierarchy(
@@ -66,7 +68,7 @@ class LoaderService:
                     clicks=record['clicks'],
                     conversions=record['conversions'],
                     revenue=record['conversion_revenue'],
-                    cpm=cpm_settings.cpm
+                    cpm=cpm
                 )
                 
                 # Check if record already exists (duplicate detection)

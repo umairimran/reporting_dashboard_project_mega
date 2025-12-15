@@ -11,17 +11,27 @@ from app.core.exceptions import ValidationError
 class VibeParser:
     """Parser for Vibe API CSV responses."""
     
-    # Required columns (commenting out fields awaiting confirmation/implementation)
+    # Required columns from Vibe API
+    # Column Mappings (Vibe API → Our System):
+    # - impression_date → date
+    # - campaign_name → campaign_name
+    # - strategy_name → strategy_name
+    # - channel_name → placement_name (MAPPED)
+    # - creative_name → creative_name
+    # - impressions → impressions
+    # - installs → clicks (MAPPED)
+    # - number_of_purchases → conversions (MAPPED)
+    # - amount_of_purchases → revenue (MAPPED)
     REQUIRED_COLUMNS = [
-        'impression_date',  # Vibe returns 'impression_date', not 'date'
+        'impression_date',
         'campaign_name',
         'strategy_name',
-        # 'placement_name',  # TODO: Verify column name from actual Vibe API response
-        # 'creative_name',  # TODO: Verify column name from actual Vibe API response
+        'channel_name',      # Maps to placement_name
+        'creative_name',
         'impressions',
-        # 'clicks',  # TODO: Awaiting client confirmation
-        # 'conversions',  # TODO: Awaiting client confirmation
-        # 'revenue'  # TODO: Awaiting client confirmation
+        'installs',          # Maps to clicks
+        'number_of_purchases',  # Maps to conversions
+        'amount_of_purchases'   # Maps to revenue
     ]
     
     @staticmethod

@@ -57,10 +57,18 @@ class VibeAPIClient:
         """
         url = f"{self.base_url}/rest/reporting/v1/create_async_report"
         
-        # Map internal metrics to Vibe API metrics
-        # Note: 'clicks' is not supported by Vibe API (CTV focus). 
-        # 'conversions' -> 'number_of_purchases'
-        # 'revenue' -> 'amount_of_purchases'
+        # Vibe API Column Mappings (to match parser requirements):
+        # Metrics:
+        # - impressions -> impressions
+        # - installs -> clicks (MAPPED)
+        # - number_of_purchases -> conversions (MAPPED)
+        # - amount_of_purchases -> conversion_revenue (MAPPED)
+        # Dimensions:
+        # - campaign_name -> campaign_name
+        # - strategy_name -> strategy_name
+        # - channel_name -> placement_name (MAPPED)
+        # - creative_name -> creative_name
+        # - impression_date is added via granularity="day"
         
         payload = {
             'advertiser_id': self.advertiser_id,
@@ -68,20 +76,19 @@ class VibeAPIClient:
             'end_date': end_date.isoformat(),
             'metrics': [
                 'impressions',
-                'spend',
-                'number_of_purchases',  # conversions
-                'amount_of_purchases',  # revenue
+                'installs',              # Maps to clicks
+                'number_of_purchases',   # Maps to conversions
+                'amount_of_purchases'    # Maps to conversion_revenue
             ],
             'dimensions': [
                 'campaign_name',
                 'strategy_name',
+                'channel_name',          # Maps to placement_name
                 'creative_name'
-                # 'date' is handled by granularity="day"
-                # 'placement_name' is not supported by Vibe
             ],
-            'filters': [],  # Required field
-            'format': 'CSV',  # Required field
-            'granularity': 'day'
+            'filters': [],
+            'format': 'csv',
+            'granularity': 'day'  # Adds impression_date column
         }
         
         try:

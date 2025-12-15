@@ -42,10 +42,11 @@ class Settings(BaseSettings):
     UPLOAD_DIR: str = "/tmp/uploads"
     MAX_UPLOAD_SIZE: int = 52428800  # 50MB in bytes
     
-    # Scheduler
-    SURFSIDE_CRON_HOUR: int = 5
-    VIBE_CRON_HOUR: int = 6
-    AGGREGATION_CRON_HOUR: int = 7
+    # Scheduler (all times in Eastern Time per documentation)
+    DAILY_INGESTION_HOUR: int = 3      # 3:30 AM Eastern (documentation: 3-4 AM)
+    DAILY_INGESTION_MINUTE: int = 30
+    WEEKLY_AGGREGATION_HOUR: int = 5   # Monday 5:00 AM Eastern
+    MONTHLY_AGGREGATION_HOUR: int = 5  # 1st of month 5:00 AM Eastern
     
     class Config:
         env_file = ".env"

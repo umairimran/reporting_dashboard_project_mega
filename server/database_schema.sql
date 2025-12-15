@@ -493,10 +493,84 @@ ALTER TABLE strategies ENABLE ROW LEVEL SECURITY;
 ALTER TABLE placements ENABLE ROW LEVEL SECURITY;
 ALTER TABLE creatives ENABLE ROW LEVEL SECURITY;
 
--- Example RLS policy (implement after auth system is ready)
--- CREATE POLICY client_isolation ON daily_metrics
---     FOR SELECT
---     USING (client_id = current_setting('app.current_client_id')::uuid);
+-- RLS Policies for Client Data Isolation
+-- Clients can only see their own data; admins can see everything
+
+-- Daily Metrics Policy
+CREATE POLICY client_isolation_daily_metrics ON daily_metrics
+    FOR ALL
+    USING (
+        client_id = current_setting('app.current_client_id', true)::uuid
+        OR current_setting('app.current_user_role', true) = 'admin'
+    );
+
+-- Weekly Summaries Policy
+CREATE POLICY client_isolation_weekly_summaries ON weekly_summaries
+    FOR ALL
+    USING (
+        client_id = current_setting('app.current_client_id', true)::uuid
+        OR current_setting('app.current_user_role', true) = 'admin'
+    );
+
+-- Monthly Summaries Policy
+CREATE POLICY client_isolation_monthly_summaries ON monthly_summaries
+    FOR ALL
+    USING (
+        client_id = current_setting('app.current_client_id', true)::uuid
+        OR current_setting('app.current_user_role', true) = 'admin'
+    );
+
+-- Campaigns Policy
+CREATE POLICY client_isolation_campaigns ON campaigns
+    FOR ALL
+    USING (
+        client_id = current_setting('app.current_client_id', true)::uuid
+        OR current_setting('app.current_user_role', true) = 'admin'
+    );
+
+-- Strategies Policy (via campaigns)
+CREATE POLICY client_isolation_strategies ON strategies
+    FOR ALL
+    USING (
+        campaign_id IN (
+            SELECT id FROM campaigns
+            WHERE client_id = current_setting('app.current_client_id', true)::uuid
+        )
+        OR current_setting('app.current_user_role', true) = 'admin'
+    );
+
+-- Placements Policy (via strategies -> campaigns)
+CREATE POLICY client_isolation_placements ON placements
+    FOR ALL
+    USING (
+        strategy_id IN (
+            SELECT s.id FROM strategies s
+            JOIN campaigns c ON s.campaign_id = c.id
+            WHERE c.client_id = current_setting('app.current_client_id', true)::uuid
+        )
+        OR current_setting('app.current_user_role', true) = 'admin'
+    );
+
+-- Creatives Policy (via placements -> strategies -> campaigns)
+CREATE POLICY client_isolation_creatives ON creatives
+    FOR ALL
+    USING (
+        placement_id IN (
+            SELECT p.id FROM placements p
+            JOIN strategies s ON p.strategy_id = s.id
+            JOIN campaigns c ON s.campaign_id = c.id
+            WHERE c.client_id = current_setting('app.current_client_id', true)::uuid
+        )
+        OR current_setting('app.current_user_role', true) = 'admin'
+    );
+
+COMMENT ON POLICY client_isolation_daily_metrics ON daily_metrics IS 'Clients can only access their own data; admins see all';
+COMMENT ON POLICY client_isolation_weekly_summaries ON weekly_summaries IS 'Clients can only access their own data; admins see all';
+COMMENT ON POLICY client_isolation_monthly_summaries ON monthly_summaries IS 'Clients can only access their own data; admins see all';
+COMMENT ON POLICY client_isolation_campaigns ON campaigns IS 'Clients can only access their own data; admins see all';
+COMMENT ON POLICY client_isolation_strategies ON strategies IS 'Clients can only access their own data via campaign ownership; admins see all';
+COMMENT ON POLICY client_isolation_placements ON placements IS 'Clients can only access their own data via campaign ownership; admins see all';
+COMMENT ON POLICY client_isolation_creatives ON creatives IS 'Clients can only access their own data via campaign ownership; admins see all';
 
 -- ============================================================================
 -- SECTION 12: UTILITY VIEWS (OPTIONAL)

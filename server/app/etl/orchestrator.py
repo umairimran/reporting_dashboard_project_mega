@@ -84,11 +84,16 @@ class ETLOrchestrator:
             if not valid_records:
                 raise Exception("No valid records to process")
             
+            # Step 1.5: Aggregate records with same dimensions (important for Surfside)
+            # This prevents duplicate key violations when multiple rows exist for same
+            # date/campaign/strategy/placement/creative (e.g., different creative sizes)
+            aggregated_records = TransformerService.aggregate_records(valid_records)
+            
             # Step 2: Stage records
             staged_count = StagingService.insert_staging_records(
                 db=self.db,
                 ingestion_run_id=ingestion_run_id,
-                records=valid_records,
+                records=aggregated_records,
                 client_id=client_id,
                 source=source
             )
@@ -98,7 +103,7 @@ class ETLOrchestrator:
             loaded, failed = LoaderService.load_daily_metrics(
                 db=self.db,
                 client_id=client_id,
-                records=valid_records,
+                records=aggregated_records,
                 source=source
             )
             

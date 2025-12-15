@@ -109,9 +109,19 @@ class TransformerService:
             return Decimal(str(default))
         
         try:
-            # Remove commas and currency symbols
+            # Remove commas, currency symbols, and extra whitespace
             if isinstance(value, str):
+                # Handle special cases like "$ -" or just "-" for zero
+                value = value.strip()
+                if value in ['-', '$ -', '$-']:
+                    return Decimal('0')
+                
+                # Remove currency symbols and commas
                 value = value.replace(',', '').replace('$', '').strip()
+                
+                # Handle empty string after cleaning
+                if not value or value == '-':
+                    return Decimal('0')
             
             return Decimal(str(value))
         except (ValueError, TypeError):
@@ -146,23 +156,33 @@ class TransformerService:
         """
         Transform Surfside raw record to standard format.
         
+        Surfside Structure:
+        - Event Date → date
+        - Strategy Name → both campaign_name and strategy_name (no separate Campaign column)
+        - Placement Name → placement_name
+        - Creative Name → creative_name
+        - Conversion Value → conversion_revenue
+        - Media Spend → available but not used (we calculate spend from impressions * CPM)
+        
         Args:
-            raw_record: Raw record from Surfside CSV
+            raw_record: Raw record from Surfside CSV (with actual column names)
             
         Returns:
             Transformed record
         """
+        strategy_name = TransformerService.normalize_string(raw_record.get('Strategy Name', ''))
+        
         return {
-            'date': TransformerService.parse_date(raw_record.get('Date')),
-            'campaign_name': TransformerService.normalize_string(raw_record.get('Campaign', '')),
-            'strategy_name': TransformerService.normalize_string(raw_record.get('Strategy', '')) or "General Strategy",
-            'placement_name': TransformerService.normalize_string(raw_record.get('Placement', '')) or "General Placement",
-            'creative_name': TransformerService.normalize_string(raw_record.get('Creative', '')) or "General Creative",
+            'date': TransformerService.parse_date(raw_record.get('Event Date')),
+            'campaign_name': strategy_name or "Surfside Campaign",  # Use Strategy Name as Campaign
+            'strategy_name': strategy_name or "General Strategy",
+            'placement_name': TransformerService.normalize_string(raw_record.get('Placement Name', '')) or "General Placement",
+            'creative_name': TransformerService.normalize_string(raw_record.get('Creative Name', '')) or "General Creative",
             'impressions': TransformerService.parse_number(raw_record.get('Impressions', 0)),
             'clicks': TransformerService.parse_number(raw_record.get('Clicks', 0)),
             'conversions': TransformerService.parse_number(raw_record.get('Conversions', 0)),
-            'conversion_revenue': TransformerService.parse_decimal(raw_record.get('Conversion Revenue', 0)),
-            'ctr': TransformerService.parse_decimal(raw_record.get('CTR', 0))
+            'conversion_revenue': TransformerService.parse_decimal(raw_record.get('Conversion Value', 0)),
+            'ctr': None  # Will be calculated
         }
     
     @staticmethod
@@ -301,3 +321,58 @@ class TransformerService:
         logger.info(f"Transformed {len(valid_records)} valid records, {len(invalid_records)} invalid records")
         
         return valid_records, invalid_records
+    
+    @staticmethod
+    def aggregate_records(records: List[Dict]) -> List[Dict]:
+        """
+        Aggregate records that have the same dimension keys (date, campaign, strategy, placement, creative).
+        This is necessary for sources like Surfside that provide multiple rows for the same dimensions
+        (e.g., different creative sizes).
+        
+        Args:
+            records: List of transformed records
+            
+        Returns:
+            List of aggregated records with summed metrics
+        """
+        from collections import defaultdict
+        from decimal import Decimal
+        
+        # Group records by dimension keys
+        aggregated = defaultdict(lambda: {
+            'impressions': 0,
+            'clicks': 0,
+            'conversions': 0,
+            'conversion_revenue': Decimal('0')
+        })
+        
+        for record in records:
+            # Create dimension key
+            key = (
+                str(record['date']),
+                record['campaign_name'],
+                record['strategy_name'],
+                record['placement_name'],
+                record['creative_name']
+            )
+            
+            # Aggregate metrics
+            aggregated[key]['impressions'] += record['impressions']
+            aggregated[key]['clicks'] += record['clicks']
+            aggregated[key]['conversions'] += record['conversions']
+            aggregated[key]['conversion_revenue'] += record['conversion_revenue']
+            
+            # Store dimension values (same for all records with this key)
+            aggregated[key]['date'] = record['date']
+            aggregated[key]['campaign_name'] = record['campaign_name']
+            aggregated[key]['strategy_name'] = record['strategy_name']
+            aggregated[key]['placement_name'] = record['placement_name']
+            aggregated[key]['creative_name'] = record['creative_name']
+            aggregated[key]['ctr'] = None  # Will be recalculated
+        
+        # Convert back to list
+        result = list(aggregated.values())
+        
+        logger.info(f"Aggregated {len(records)} records into {len(result)} unique dimension combinations")
+        
+        return result

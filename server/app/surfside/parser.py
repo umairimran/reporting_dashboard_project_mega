@@ -11,19 +11,19 @@ from app.core.exceptions import ValidationError
 class SurfsideParser:
     """Parser for Surfside CSV/XLSX files."""
     
+    # Actual Surfside column names from their reports
     REQUIRED_COLUMNS = [
-        'Date',
-        'Campaign',
-        'Strategy',
-        'Placement',
-        'Creative',
+        'Event Date',
+        'Strategy Name',
+        'Placement Name',
+        'Creative Name',
         'Impressions',
         'Clicks',
         'Conversions',
-        'Conversion Revenue'
+        'Conversion Value'  # This is their revenue column
     ]
     
-    OPTIONAL_COLUMNS = ['CTR']
+    OPTIONAL_COLUMNS = ['Creative Size', 'Media Spend', 'ROAS']
     
     @staticmethod
     def validate_columns(df: pd.DataFrame) -> None:
@@ -36,9 +36,13 @@ class SurfsideParser:
         Raises:
             ValidationError: If required columns are missing
         """
+        # Strip whitespace from column names
+        df.columns = df.columns.str.strip()
+        
         missing_columns = [col for col in SurfsideParser.REQUIRED_COLUMNS if col not in df.columns]
         
         if missing_columns:
+            logger.error(f"Available columns: {list(df.columns)}")
             raise ValidationError(
                 f"Missing required columns in Surfside file: {', '.join(missing_columns)}"
             )
@@ -71,7 +75,11 @@ class SurfsideParser:
             else:
                 raise ValidationError(f"Unsupported file format: {path.suffix}")
             
+            # Strip whitespace from column names
+            df.columns = df.columns.str.strip()
+            
             logger.info(f"Read {len(df)} rows from {file_path}")
+            logger.debug(f"Surfside file columns: {list(df.columns)}")
             
             # Validate columns
             SurfsideParser.validate_columns(df)

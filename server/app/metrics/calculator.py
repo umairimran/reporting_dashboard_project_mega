@@ -34,19 +34,19 @@ class MetricsCalculator:
         """
         Calculate Click-Through Rate (CTR).
         
-        Formula: CTR = (clicks / impressions) * 100
+        Formula: CTR = (clicks / impressions) 
         
         Args:
             impressions: Number of impressions
             clicks: Number of clicks
             
         Returns:
-            CTR as percentage or None if impressions is 0
+            CTR  or None if impressions is 0
         """
         if impressions == 0:
             return None
         
-        ctr = (Decimal(clicks) / Decimal(impressions)) * Decimal(100)
+        ctr = (Decimal(clicks) / Decimal(impressions)) 
         return ctr.quantize(Decimal('0.000001'))
     
     @staticmethod

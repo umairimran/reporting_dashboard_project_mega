@@ -14,16 +14,16 @@ class SurfsideParser:
     # Actual Surfside column names from their reports
     REQUIRED_COLUMNS = [
         'Event Date',
+        # campaign_name
         'Strategy Name',
         'Placement Name',
         'Creative Name',
         'Impressions',
         'Clicks',
+        # CTR
         'Conversions',
         'Conversion Value'  # This is their revenue column
     ]
-    
-    OPTIONAL_COLUMNS = ['Creative Size', 'Media Spend', 'ROAS']
     
     @staticmethod
     def validate_columns(df: pd.DataFrame) -> None:
@@ -87,11 +87,6 @@ class SurfsideParser:
             # Clean data
             df = df.dropna(how='all')  # Remove completely empty rows
             
-            # Fill missing optional columns with defaults
-            for col in SurfsideParser.OPTIONAL_COLUMNS:
-                if col not in df.columns:
-                    df[col] = None
-            
             # Convert to list of dictionaries
             records = df.to_dict('records')
             
@@ -124,7 +119,7 @@ class SurfsideParser:
             
             return {
                 'total_rows': len(records),
-                'columns': SurfsideParser.REQUIRED_COLUMNS + SurfsideParser.OPTIONAL_COLUMNS,
+                'columns': SurfsideParser.REQUIRED_COLUMNS,
                 'preview': records[:num_rows]
             }
         except Exception as e:

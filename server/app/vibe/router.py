@@ -95,7 +95,7 @@ async def trigger_client_ingestion(
     
     try:
         # Run ETL synchronously for immediate feedback in testing
-        await etl.run_for_client(
+        ingestion_log = await etl.run_for_client(
             client_id=client_id,
             client_name=client.name,
             start_date=start_date,
@@ -107,7 +107,7 @@ async def trigger_client_ingestion(
             status="success",
             client_id=client_id,
             message=f"Successfully ingested Vibe data for {start_date.strftime('%Y-%m-%d')}",
-            records_processed=0  # ETL doesn't return count
+            records_processed=ingestion_log.records_loaded if ingestion_log else 0
         )
 
     except Exception as e:

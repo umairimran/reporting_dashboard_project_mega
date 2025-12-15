@@ -206,11 +206,11 @@ CREATE TABLE daily_metrics (
     conversion_revenue DECIMAL(12,2) NOT NULL DEFAULT 0,
     
     -- Calculated metrics
-    ctr DECIMAL(12,6),
-    spend DECIMAL(12,2),
-    cpc DECIMAL(12,4),
-    cpa DECIMAL(12,4),
-    roas DECIMAL(12,4),
+    ctr DECIMAL(12,6) NOT NULL DEFAULT 0,
+    spend DECIMAL(12,2) NOT NULL DEFAULT 0,
+    cpc DECIMAL(12,4) NOT NULL DEFAULT 0,
+    cpa DECIMAL(12,4) NOT NULL DEFAULT 0,
+    roas DECIMAL(12,4) NOT NULL DEFAULT 0,
     
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -234,6 +234,10 @@ CREATE TRIGGER update_daily_metrics_updated_at
 COMMENT ON TABLE daily_metrics IS 'Daily performance metrics from all sources';
 COMMENT ON COLUMN daily_metrics.source IS 'Data source: surfside, vibe, or facebook';
 COMMENT ON COLUMN daily_metrics.spend IS 'CPM-adjusted spend: (impressions / 1000) * client_cpm';
+COMMENT ON COLUMN daily_metrics.ctr IS 'Click-through rate: (clicks / impressions) * 100 - defaults to 0';
+COMMENT ON COLUMN daily_metrics.cpc IS 'Cost per click: spend / clicks - defaults to 0';
+COMMENT ON COLUMN daily_metrics.cpa IS 'Cost per acquisition: spend / conversions - defaults to 0';
+COMMENT ON COLUMN daily_metrics.roas IS 'Return on ad spend: (revenue / spend) * 100 - defaults to 0';
 
 -- Weekly summaries table
 CREATE TABLE weekly_summaries (
@@ -250,10 +254,10 @@ CREATE TABLE weekly_summaries (
     spend DECIMAL(12,2) NOT NULL DEFAULT 0,
     
     -- Calculated metrics
-    ctr DECIMAL(12,6),
-    cpc DECIMAL(12,4),
-    cpa DECIMAL(12,4),
-    roas DECIMAL(12,4),
+    ctr DECIMAL(12,6) NOT NULL DEFAULT 0,
+    cpc DECIMAL(12,4) NOT NULL DEFAULT 0,
+    cpa DECIMAL(12,4) NOT NULL DEFAULT 0,
+    roas DECIMAL(12,4) NOT NULL DEFAULT 0,
     
     -- Top performers
     top_campaigns JSONB,
@@ -283,10 +287,10 @@ CREATE TABLE monthly_summaries (
     spend DECIMAL(12,2) NOT NULL DEFAULT 0,
     
     -- Calculated metrics
-    ctr DECIMAL(12,6),
-    cpc DECIMAL(12,4),
-    cpa DECIMAL(12,4),
-    roas DECIMAL(12,4),
+    ctr DECIMAL(12,6) NOT NULL DEFAULT 0,
+    cpc DECIMAL(12,4) NOT NULL DEFAULT 0,
+    cpa DECIMAL(12,4) NOT NULL DEFAULT 0,
+    roas DECIMAL(12,4) NOT NULL DEFAULT 0,
     
     -- Top performers
     top_campaigns JSONB,

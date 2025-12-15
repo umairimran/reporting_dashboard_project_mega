@@ -37,11 +37,11 @@ class DailyMetrics(Base):
     conversion_revenue = Column(Numeric(12, 2), nullable=False, default=0)
     
     # Calculated metrics
-    ctr = Column(Numeric(12, 6))
-    spend = Column(Numeric(12, 2))
-    cpc = Column(Numeric(12, 4))
-    cpa = Column(Numeric(12, 4))
-    roas = Column(Numeric(12, 4))
+    ctr = Column(Numeric(12, 6), nullable=False, default=0)
+    spend = Column(Numeric(12, 2), nullable=False, default=0)
+    cpc = Column(Numeric(12, 4), nullable=False, default=0)
+    cpa = Column(Numeric(12, 4), nullable=False, default=0)
+    roas = Column(Numeric(12, 4), nullable=False, default=0)
     
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
     updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)

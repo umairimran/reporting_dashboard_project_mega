@@ -30,7 +30,7 @@ class MetricsCalculator:
         return spend.quantize(Decimal('0.01'))
     
     @staticmethod
-    def calculate_ctr(impressions: int, clicks: int) -> Optional[Decimal]:
+    def calculate_ctr(impressions: int, clicks: int) -> Decimal:
         """
         Calculate Click-Through Rate (CTR).
         
@@ -41,16 +41,16 @@ class MetricsCalculator:
             clicks: Number of clicks
             
         Returns:
-            CTR  or None if impressions is 0
+            CTR or 0 if impressions is 0
         """
         if impressions == 0:
-            return None
+            return Decimal('0')
         
         ctr = (Decimal(clicks) / Decimal(impressions)) 
         return ctr.quantize(Decimal('0.000001'))
     
     @staticmethod
-    def calculate_cpc(spend: Decimal, clicks: int) -> Optional[Decimal]:
+    def calculate_cpc(spend: Decimal, clicks: int) -> Decimal:
         """
         Calculate Cost Per Click (CPC).
         
@@ -61,16 +61,16 @@ class MetricsCalculator:
             clicks: Number of clicks
             
         Returns:
-            CPC or None if clicks is 0
+            CPC or 0 if clicks is 0
         """
         if clicks == 0:
-            return None
+            return Decimal('0')
         
         cpc = spend / Decimal(clicks)
         return cpc.quantize(Decimal('0.0001'))
     
     @staticmethod
-    def calculate_cpa(spend: Decimal, conversions: int) -> Optional[Decimal]:
+    def calculate_cpa(spend: Decimal, conversions: int) -> Decimal:
         """
         Calculate Cost Per Acquisition (CPA).
         
@@ -81,16 +81,16 @@ class MetricsCalculator:
             conversions: Number of conversions
             
         Returns:
-            CPA or None if conversions is 0
+            CPA or 0 if conversions is 0
         """
         if conversions == 0:
-            return None
+            return Decimal('0')
         
         cpa = spend / Decimal(conversions)
         return cpa.quantize(Decimal('0.0001'))
     
     @staticmethod
-    def calculate_roas(revenue: Decimal, spend: Decimal) -> Optional[Decimal]:
+    def calculate_roas(revenue: Decimal, spend: Decimal) -> Decimal:
         """
         Calculate Return on Ad Spend (ROAS).
         
@@ -101,10 +101,10 @@ class MetricsCalculator:
             spend: Total spend
             
         Returns:
-            ROAS or None if spend is 0
+            ROAS or 0 if spend is 0
         """
         if spend == 0:
-            return None
+            return Decimal('0')
         
         roas = revenue / spend
         return roas.quantize(Decimal('0.0001'))

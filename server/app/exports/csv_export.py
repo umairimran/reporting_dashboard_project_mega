@@ -30,8 +30,20 @@ class CSVExportService:
         """
         logger.info(f"Exporting daily metrics for client {client_id}")
         
-        # Query metrics
-        query = db.query(DailyMetrics).filter(
+        from app.campaigns.models import Campaign, Strategy, Placement, Creative
+        
+        # Query metrics with joins to get names
+        query = db.query(
+            DailyMetrics,
+            Campaign.name.label('campaign_name'),
+            Strategy.name.label('strategy_name'),
+            Placement.name.label('placement_name'),
+            Creative.name.label('creative_name')
+        ).join(Campaign, DailyMetrics.campaign_id == Campaign.id
+        ).join(Strategy, DailyMetrics.strategy_id == Strategy.id
+        ).join(Placement, DailyMetrics.placement_id == Placement.id
+        ).join(Creative, DailyMetrics.creative_id == Creative.id
+        ).filter(
             DailyMetrics.client_id == client_id,
             DailyMetrics.date >= start_date,
             DailyMetrics.date <= end_date
@@ -40,7 +52,7 @@ class CSVExportService:
         if source:
             query = query.filter(DailyMetrics.source == source)
         
-        metrics = query.order_by(DailyMetrics.date.desc()).all()
+        results = query.order_by(DailyMetrics.date.desc()).all()
         
         # Create CSV
         output = io.StringIO()
@@ -66,13 +78,13 @@ class CSVExportService:
         ])
         
         # Write data
-        for metric in metrics:
+        for metric, campaign_name, strategy_name, placement_name, creative_name in results:
             writer.writerow([
                 metric.date.strftime('%Y-%m-%d'),
-                metric.campaign_name,
-                metric.strategy_name,
-                metric.placement_name,
-                metric.creative_name,
+                campaign_name,
+                strategy_name,
+                placement_name,
+                creative_name,
                 metric.source,
                 metric.impressions,
                 metric.clicks,
@@ -88,7 +100,7 @@ class CSVExportService:
         csv_content = output.getvalue()
         output.close()
         
-        logger.info(f"Exported {len(metrics)} records to CSV")
+        logger.info(f"Exported {len(results)} records to CSV")
         
         return csv_content
     

@@ -96,20 +96,22 @@ class DashboardService:
         limit: int = 10
     ) -> List[CampaignBreakdown]:
         """Get performance breakdown by campaign."""
+        from app.campaigns.models import Campaign
         
         results = db.query(
-            DailyMetrics.campaign_name,
+            Campaign.name.label('campaign_name'),
             func.sum(DailyMetrics.impressions).label('impressions'),
             func.sum(DailyMetrics.clicks).label('clicks'),
             func.sum(DailyMetrics.conversions).label('conversions'),
             func.sum(DailyMetrics.conversion_revenue).label('revenue'),
             func.sum(DailyMetrics.spend).label('spend')
+        ).join(Campaign, DailyMetrics.campaign_id == Campaign.id
         ).filter(
             DailyMetrics.client_id == client_id,
             DailyMetrics.date >= start_date,
             DailyMetrics.date <= end_date
         ).group_by(
-            DailyMetrics.campaign_name
+            Campaign.name
         ).order_by(
             desc(func.sum(DailyMetrics.impressions))
         ).limit(limit).all()
@@ -231,17 +233,20 @@ class DashboardService:
         """Get top performers across different metrics."""
         
         # Top by impressions
+        from app.campaigns.models import Campaign
+        
         by_impressions_results = db.query(
-            DailyMetrics.campaign_name,
+            Campaign.name.label('campaign_name'),
             func.sum(DailyMetrics.impressions).label('impressions'),
             func.sum(DailyMetrics.conversions).label('conversions'),
             func.sum(DailyMetrics.conversion_revenue).label('revenue')
+        ).join(Campaign, DailyMetrics.campaign_id == Campaign.id
         ).filter(
             DailyMetrics.client_id == client_id,
             DailyMetrics.date >= start_date,
             DailyMetrics.date <= end_date
         ).group_by(
-            DailyMetrics.campaign_name
+            Campaign.name
         ).order_by(
             desc(func.sum(DailyMetrics.impressions))
         ).limit(limit).all()
@@ -259,16 +264,17 @@ class DashboardService:
         
         # Top by conversions
         by_conversions_results = db.query(
-            DailyMetrics.campaign_name,
+            Campaign.name.label('campaign_name'),
             func.sum(DailyMetrics.impressions).label('impressions'),
             func.sum(DailyMetrics.conversions).label('conversions'),
             func.sum(DailyMetrics.conversion_revenue).label('revenue')
+        ).join(Campaign, DailyMetrics.campaign_id == Campaign.id
         ).filter(
             DailyMetrics.client_id == client_id,
             DailyMetrics.date >= start_date,
             DailyMetrics.date <= end_date
         ).group_by(
-            DailyMetrics.campaign_name
+            Campaign.name
         ).order_by(
             desc(func.sum(DailyMetrics.conversions))
         ).limit(limit).all()
@@ -286,16 +292,17 @@ class DashboardService:
         
         # Top by revenue
         by_revenue_results = db.query(
-            DailyMetrics.campaign_name,
+            Campaign.name.label('campaign_name'),
             func.sum(DailyMetrics.impressions).label('impressions'),
             func.sum(DailyMetrics.conversions).label('conversions'),
             func.sum(DailyMetrics.conversion_revenue).label('revenue')
+        ).join(Campaign, DailyMetrics.campaign_id == Campaign.id
         ).filter(
             DailyMetrics.client_id == client_id,
             DailyMetrics.date >= start_date,
             DailyMetrics.date <= end_date
         ).group_by(
-            DailyMetrics.campaign_name
+            Campaign.name
         ).order_by(
             desc(func.sum(DailyMetrics.conversion_revenue))
         ).limit(limit).all()
@@ -313,17 +320,18 @@ class DashboardService:
         
         # Top by ROAS
         by_roas_results = db.query(
-            DailyMetrics.campaign_name,
+            Campaign.name.label('campaign_name'),
             func.sum(DailyMetrics.impressions).label('impressions'),
             func.sum(DailyMetrics.conversions).label('conversions'),
             func.sum(DailyMetrics.conversion_revenue).label('revenue'),
             func.sum(DailyMetrics.spend).label('spend')
+        ).join(Campaign, DailyMetrics.campaign_id == Campaign.id
         ).filter(
             DailyMetrics.client_id == client_id,
             DailyMetrics.date >= start_date,
             DailyMetrics.date <= end_date
         ).group_by(
-            DailyMetrics.campaign_name
+            Campaign.name
         ).having(
             func.sum(DailyMetrics.spend) > 0
         ).all()

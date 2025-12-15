@@ -24,9 +24,9 @@ class DailyMetricsResponse(BaseModel):
     conversion_revenue: Decimal
     ctr: Decimal
     spend: Decimal
-    cpc: Optional[Decimal]
-    cpa: Optional[Decimal]
-    roas: Optional[Decimal]
+    cpc: Decimal
+    cpa: Decimal
+    roas: Decimal
     source: str
     
     class Config:
@@ -45,9 +45,9 @@ class WeeklySummaryResponse(BaseModel):
     revenue: Decimal
     spend: Decimal
     ctr: Decimal
-    cpc: Optional[Decimal]
-    cpa: Optional[Decimal]
-    roas: Optional[Decimal]
+    cpc: Decimal
+    cpa: Decimal
+    roas: Decimal
     
     class Config:
         from_attributes = True
@@ -65,9 +65,9 @@ class MonthlySummaryResponse(BaseModel):
     revenue: Decimal
     spend: Decimal
     ctr: Decimal
-    cpc: Optional[Decimal]
-    cpa: Optional[Decimal]
-    roas: Optional[Decimal]
+    cpc: Decimal
+    cpa: Decimal
+    roas: Decimal
     
     class Config:
         from_attributes = True
@@ -81,9 +81,9 @@ class MetricsSummary(BaseModel):
     total_revenue: Decimal
     total_spend: Decimal
     avg_ctr: Decimal
-    avg_cpc: Optional[Decimal]
-    avg_cpa: Optional[Decimal]
-    avg_roas: Optional[Decimal]
+    avg_cpc: Decimal
+    avg_cpa: Decimal
+    avg_roas: Decimal
 
 
 class DateRangeMetrics(BaseModel):
@@ -103,9 +103,9 @@ class CampaignPerformance(BaseModel):
     revenue: Decimal
     spend: Decimal
     ctr: Decimal
-    cpc: Optional[Decimal]
-    cpa: Optional[Decimal]
-    roas: Optional[Decimal]
+    cpc: Decimal
+    cpa: Decimal
+    roas: Decimal
 
 
 class TopPerformers(BaseModel):

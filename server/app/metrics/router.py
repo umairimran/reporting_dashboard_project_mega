@@ -41,7 +41,20 @@ async def get_daily_metrics(
     current_user: User = Depends(get_current_user)
 ):
     """Get daily metrics with optional filters."""
-    query = db.query(DailyMetrics).join(Client)
+    from app.campaigns.models import Campaign, Strategy, Placement, Creative
+    
+    query = db.query(
+        DailyMetrics,
+        Client.name.label('client_name'),
+        Campaign.name.label('campaign_name'),
+        Strategy.name.label('strategy_name'),
+        Placement.name.label('placement_name'),
+        Creative.name.label('creative_name')
+    ).join(Client, DailyMetrics.client_id == Client.id
+    ).outerjoin(Campaign, DailyMetrics.campaign_id == Campaign.id
+    ).outerjoin(Strategy, DailyMetrics.strategy_id == Strategy.id
+    ).outerjoin(Placement, DailyMetrics.placement_id == Placement.id
+    ).outerjoin(Creative, DailyMetrics.creative_id == Creative.id)
     
     # Apply date range filter
     query = query.filter(
@@ -57,7 +70,7 @@ async def get_daily_metrics(
     
     # Apply optional filters
     if campaign_name:
-        query = query.filter(DailyMetrics.campaign_name.ilike(f"%{campaign_name}%"))
+        query = query.filter(Campaign.name.ilike(f"%{campaign_name}%"))
     
     if source:
         query = query.filter(DailyMetrics.source == source)
@@ -66,17 +79,17 @@ async def get_daily_metrics(
     query = query.order_by(DailyMetrics.date.desc())
     
     # Apply pagination
-    metrics = query.offset(offset).limit(limit).all()
+    results = query.offset(offset).limit(limit).all()
     
     return [
         DailyMetricsResponse(
             id=m.id,
             client_id=m.client_id,
-            client_name=m.client.name,
-            campaign_name=m.campaign_name,
-            strategy_name=m.strategy_name,
-            placement_name=m.placement_name,
-            creative_name=m.creative_name,
+            client_name=c_name,
+            campaign_name=camp_name,
+            strategy_name=strat_name,
+            placement_name=place_name,
+            creative_name=creat_name,
             date=m.date,
             impressions=m.impressions,
             clicks=m.clicks,
@@ -89,7 +102,7 @@ async def get_daily_metrics(
             roas=m.roas,
             source=m.source
         )
-        for m in metrics
+        for m, c_name, camp_name, strat_name, place_name, creat_name in results
     ]
 
 

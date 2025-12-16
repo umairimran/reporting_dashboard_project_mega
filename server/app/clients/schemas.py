@@ -10,6 +10,7 @@ import uuid
 
 class ClientSettingsCreate(BaseModel):
     """Client settings creation schema."""
+    source: str = Field(..., pattern="^(surfside|vibe|facebook)$", description="Data source")
     cpm: Decimal = Field(..., gt=0, description="CPM rate must be positive")
     currency: str = Field(default="USD", max_length=3)
     effective_date: Optional[date] = None
@@ -17,6 +18,7 @@ class ClientSettingsCreate(BaseModel):
 
 class ClientSettingsUpdate(BaseModel):
     """Client settings update schema."""
+    source: str = Field(..., pattern="^(surfside|vibe|facebook)$", description="Data source")
     cpm: Decimal = Field(..., gt=0, description="CPM rate must be positive")
     effective_date: Optional[date] = None
 
@@ -25,6 +27,7 @@ class ClientSettingsResponse(BaseModel):
     """Client settings response schema."""
     id: uuid.UUID
     client_id: uuid.UUID
+    source: str
     cpm: Decimal
     currency: str
     effective_date: Optional[date]

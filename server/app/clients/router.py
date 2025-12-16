@@ -233,6 +233,7 @@ async def add_cpm_settings(
 @router.get("/{client_id}/cpm/history", response_model=List[ClientSettingsResponse])
 async def get_cpm_history(
     client_id: uuid.UUID,
+    source: Optional[str] = Query(None, pattern="^(surfside|vibe|facebook)$"),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -241,11 +242,48 @@ async def get_cpm_history(
     
     Args:
         client_id: Client UUID
+        source: Optional source filter
         db: Database session
         current_user: Current authenticated user
         
     Returns:
         List of CPM settings
     """
-    history = ClientService.get_cpm_history(db, client_id)
+    history = ClientService.get_cpm_history(db, client_id, source)
     return history
+
+
+@router.put("/{client_id}/cpm", response_model=ClientSettingsResponse)
+async def update_cpm_settings(
+    client_id: uuid.UUID,
+    settings_data: ClientSettingsUpdate,
+    db: Session = Depends(get_db),
+    admin: User = Depends(require_admin)
+):
+    """
+    Update CPM settings for a client and source (admin only).
+    
+    This endpoint updates the CPM for a specific client and source.
+    If a setting with the same effective_date exists, it will be updated.
+    Otherwise, a new setting entry will be created.
+    
+    Args:
+        client_id: Client UUID
+        settings_data: CPM update data (must include source)
+        db: Database session
+        admin: Current admin user
+        
+    Returns:
+        Updated or created CPM settings
+        
+    Raises:
+        HTTPException: If client not found
+    """
+    try:
+        settings = ClientService.update_cpm_settings(db, client_id, settings_data)
+        return settings
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )

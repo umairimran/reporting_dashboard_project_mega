@@ -78,14 +78,16 @@ COMMENT ON TABLE clients IS 'Client companies with associated user accounts';
 CREATE TABLE client_settings (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     client_id UUID NOT NULL REFERENCES clients(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    source VARCHAR(50) NOT NULL CHECK (source IN ('surfside', 'vibe', 'facebook')),
     cpm DECIMAL(10,4) NOT NULL,
     currency VARCHAR(3) DEFAULT 'USD',
     effective_date DATE,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    UNIQUE(client_id, source, effective_date)
 );
 
-CREATE INDEX idx_client_settings_client_id ON client_settings(client_id);
+CREATE INDEX idx_client_settings_client_source ON client_settings(client_id, source);
 CREATE INDEX idx_client_settings_effective_date ON client_settings(effective_date);
 
 CREATE TRIGGER update_client_settings_updated_at 
@@ -93,8 +95,9 @@ CREATE TRIGGER update_client_settings_updated_at
     FOR EACH ROW 
     EXECUTE FUNCTION update_updated_at_column();
 
-COMMENT ON TABLE client_settings IS 'Client-specific CPM rates and configuration';
-COMMENT ON COLUMN client_settings.cpm IS 'Client CPM rate (e.g., 15.0000)';
+COMMENT ON TABLE client_settings IS 'Client-specific CPM rates and configuration per source';
+COMMENT ON COLUMN client_settings.source IS 'Data source: surfside, vibe, or facebook - each source can have different CPM';
+COMMENT ON COLUMN client_settings.cpm IS 'Client CPM rate for this source (e.g., 15.0000)';
 
 -- ============================================================================
 -- SECTION 4: CAMPAIGN HIERARCHY TABLES

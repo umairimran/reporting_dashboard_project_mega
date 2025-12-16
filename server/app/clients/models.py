@@ -42,6 +42,7 @@ class ClientSettings(Base):
     
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     client_id = Column(UUID(as_uuid=True), ForeignKey('clients.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
+    source = Column(String(50), nullable=False)  # 'surfside', 'vibe', or 'facebook'
     cpm = Column(Numeric(10, 4), nullable=False)
     currency = Column(String(3), default='USD')
     effective_date = Column(Date)
@@ -52,4 +53,4 @@ class ClientSettings(Base):
     client = relationship("Client", back_populates="settings")
     
     def __repr__(self):
-        return f"<ClientSettings client_id={self.client_id} cpm={self.cpm}>"
+        return f"<ClientSettings client_id={self.client_id} source={self.source} cpm={self.cpm}>"

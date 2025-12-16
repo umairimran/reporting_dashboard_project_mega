@@ -42,12 +42,12 @@ class LoaderService:
         
         for record in records:
             try:
-                # Get CPM for this client on this date
-                cpm_settings = ClientService.get_current_cpm(db, client_id, record['date'])
+                # Get CPM for this client, source, and date
+                cpm_settings = ClientService.get_current_cpm(db, client_id, source, record['date'])
                 
                 if not cpm_settings:
                     cpm = Decimal('17.00')  # Default from documentation
-                    logger.warning(f"Using default CPM $17 for client {client_id}")
+                    logger.warning(f"Using default CPM $17 for client {client_id} source {source}")
                 else:
                     cpm = cpm_settings.cpm
                 

@@ -167,6 +167,7 @@ class ClientService:
         
         settings = ClientSettings(
             client_id=client_id,
+            source=settings_data.source,
             cpm=settings_data.cpm,
             currency=settings_data.currency,
             effective_date=settings_data.effective_date or date.today()
@@ -176,17 +177,18 @@ class ClientService:
         db.commit()
         db.refresh(settings)
         
-        logger.info(f"Added CPM settings for client {client.name}: {settings.cpm} {settings.currency}")
+        logger.info(f"Added CPM settings for client {client.name} ({settings_data.source}): {settings.cpm} {settings.currency}")
         return settings
     
     @staticmethod
-    def get_current_cpm(db: Session, client_id: uuid.UUID, target_date: date = None) -> Optional[ClientSettings]:
+    def get_current_cpm(db: Session, client_id: uuid.UUID, source: str, target_date: date = None) -> Optional[ClientSettings]:
         """
-        Get current CPM settings for a client on a specific date.
+        Get current CPM settings for a client on a specific date and source.
         
         Args:
             db: Database session
             client_id: Client UUID
+            source: Data source ('surfside', 'vibe', or 'facebook')
             target_date: Date to get CPM for (defaults to today)
             
         Returns:
@@ -197,6 +199,7 @@ class ClientService:
         
         settings = db.query(ClientSettings).filter(
             ClientSettings.client_id == client_id,
+            ClientSettings.source == source,
             ClientSettings.effective_date <= target_date
         ).order_by(desc(ClientSettings.effective_date)).first()
         
@@ -205,7 +208,8 @@ class ClientService:
     @staticmethod
     def get_cpm_history(
         db: Session, 
-        client_id: uuid.UUID
+        client_id: uuid.UUID,
+        source: Optional[str] = None
     ) -> List[ClientSettings]:
         """
         Get CPM history for a client.
@@ -213,13 +217,74 @@ class ClientService:
         Args:
             db: Database session
             client_id: Client UUID
+            source: Optional source filter ('surfside', 'vibe', or 'facebook')
             
         Returns:
-            List of CPM settings ordered by effective date
+            List of CPM settings ordered by source and effective date
         """
-        return db.query(ClientSettings).filter(
+        query = db.query(ClientSettings).filter(
             ClientSettings.client_id == client_id
-        ).order_by(desc(ClientSettings.effective_date)).all()
+        )
+        
+        if source:
+            query = query.filter(ClientSettings.source == source)
+        
+        return query.order_by(ClientSettings.source, desc(ClientSettings.effective_date)).all()
+    
+    @staticmethod
+    def update_cpm_settings(
+        db: Session,
+        client_id: uuid.UUID,
+        settings_data: ClientSettingsUpdate
+    ) -> ClientSettings:
+        """
+        Update CPM settings for a client and source.
+        
+        Args:
+            db: Database session
+            client_id: Client UUID
+            settings_data: CPM update data (includes source)
+            
+        Returns:
+            Updated or created settings
+            
+        Raises:
+            ValidationError: If client not found
+        """
+        client = db.query(Client).filter(Client.id == client_id).first()
+        
+        if not client:
+            raise ValidationError("Client not found")
+        
+        # Get the most recent setting for this client and source
+        current_settings = db.query(ClientSettings).filter(
+            ClientSettings.client_id == client_id,
+            ClientSettings.source == settings_data.source
+        ).order_by(desc(ClientSettings.effective_date)).first()
+        
+        effective_date = settings_data.effective_date or date.today()
+        
+        # If there's an existing setting with the same effective date, update it
+        if current_settings and current_settings.effective_date == effective_date:
+            current_settings.cpm = settings_data.cpm
+            db.commit()
+            db.refresh(current_settings)
+            logger.info(f"Updated CPM for client {client.name} ({settings_data.source}): {current_settings.cpm}")
+            return current_settings
+        else:
+            # Create new settings entry for this date
+            new_settings = ClientSettings(
+                client_id=client_id,
+                source=settings_data.source,
+                cpm=settings_data.cpm,
+                currency=current_settings.currency if current_settings else "USD",
+                effective_date=effective_date
+            )
+            db.add(new_settings)
+            db.commit()
+            db.refresh(new_settings)
+            logger.info(f"Created new CPM for client {client.name} ({settings_data.source}): {new_settings.cpm}")
+            return new_settings
     
     @staticmethod
     def get_client_with_cpm(
@@ -241,7 +306,8 @@ class ClientService:
         if not client:
             return None
         
-        current_settings = ClientService.get_current_cpm(db, client_id)
+        # For backward compatibility, get surfside CPM as default
+        current_settings = ClientService.get_current_cpm(db, client_id, 'surfside')
         
         client_dict = {
             "id": client.id,

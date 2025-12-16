@@ -44,10 +44,10 @@ class WeeklySummaryResponse(BaseModel):
     conversions: int
     revenue: Decimal
     spend: Decimal
-    ctr: Decimal
-    cpc: Decimal
-    cpa: Decimal
-    roas: Decimal
+    ctr: Decimal = Field(default=Decimal('0'))
+    cpc: Decimal = Field(default=Decimal('0'))
+    cpa: Decimal = Field(default=Decimal('0'))
+    roas: Decimal = Field(default=Decimal('0'))
     
     class Config:
         from_attributes = True
@@ -57,20 +57,44 @@ class MonthlySummaryResponse(BaseModel):
     """Response schema for monthly summary."""
     id: uuid.UUID
     client_id: uuid.UUID
-    year: int
-    month: int
+    month_start: date
+    month_end: date
+    year: int = Field(default=0, description="Derived from month_start")
+    month: int = Field(default=0, description="Derived from month_start")
     impressions: int
     clicks: int
     conversions: int
     revenue: Decimal
     spend: Decimal
-    ctr: Decimal
-    cpc: Decimal
-    cpa: Decimal
-    roas: Decimal
+    ctr: Decimal = Field(default=Decimal('0'))
+    cpc: Decimal = Field(default=Decimal('0'))
+    cpa: Decimal = Field(default=Decimal('0'))
+    roas: Decimal = Field(default=Decimal('0'))
     
     class Config:
         from_attributes = True
+    
+    @classmethod
+    def from_orm(cls, obj):
+        """Create response with derived year and month from month_start."""
+        data = {
+            'id': obj.id,
+            'client_id': obj.client_id,
+            'month_start': obj.month_start,
+            'month_end': obj.month_end,
+            'year': obj.month_start.year,
+            'month': obj.month_start.month,
+            'impressions': obj.impressions,
+            'clicks': obj.clicks,
+            'conversions': obj.conversions,
+            'revenue': obj.revenue,
+            'spend': obj.spend,
+            'ctr': obj.ctr,
+            'cpc': obj.cpc,
+            'cpa': obj.cpa,
+            'roas': obj.roas
+        }
+        return cls(**data)
 
 
 class MetricsSummary(BaseModel):

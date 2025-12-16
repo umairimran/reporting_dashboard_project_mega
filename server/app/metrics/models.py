@@ -117,10 +117,10 @@ class MonthlySummary(Base):
     spend = Column(Numeric(12, 2), nullable=False, default=0)
     
     # Calculated metrics
-    ctr = Column(Numeric(12, 6))
-    cpc = Column(Numeric(12, 4))
-    cpa = Column(Numeric(12, 4))
-    roas = Column(Numeric(12, 4))
+    ctr = Column(Numeric(12, 6), nullable=False, default=0)
+    cpc = Column(Numeric(12, 4), nullable=False, default=0)
+    cpa = Column(Numeric(12, 4), nullable=False, default=0)
+    roas = Column(Numeric(12, 4), nullable=False, default=0)
     
     # Top performers (JSON)
     top_campaigns = Column(JSONB)

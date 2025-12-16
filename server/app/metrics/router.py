@@ -64,7 +64,10 @@ async def get_daily_metrics(
     
     # Apply client filter based on user role
     if current_user.role == 'client':
-        query = query.filter(DailyMetrics.client_id == current_user.client_id)
+        # Client users should have exactly one client associated
+        if not current_user.clients:
+            raise HTTPException(status_code=403, detail="No client associated with user")
+        query = query.filter(DailyMetrics.client_id == current_user.clients[0].id)
     elif client_id:
         query = query.filter(DailyMetrics.client_id == client_id)
     
@@ -118,7 +121,9 @@ async def get_weekly_summaries(
     
     # Apply client filter
     if current_user.role == 'client':
-        query = query.filter(WeeklySummary.client_id == current_user.client_id)
+        if not current_user.clients:
+            raise HTTPException(status_code=403, detail="No client associated with user")
+        query = query.filter(WeeklySummary.client_id == current_user.clients[0].id)
     elif client_id:
         query = query.filter(WeeklySummary.client_id == client_id)
     
@@ -140,14 +145,16 @@ async def get_monthly_summaries(
     
     # Apply client filter
     if current_user.role == 'client':
-        query = query.filter(MonthlySummary.client_id == current_user.client_id)
+        if not current_user.clients:
+            raise HTTPException(status_code=403, detail="No client associated with user")
+        query = query.filter(MonthlySummary.client_id == current_user.clients[0].id)
     elif client_id:
         query = query.filter(MonthlySummary.client_id == client_id)
     
     if year:
-        query = query.filter(MonthlySummary.year == year)
+        query = query.filter(func.extract('year', MonthlySummary.month_start) == year)
     
-    summaries = query.order_by(MonthlySummary.year.desc(), MonthlySummary.month.desc()).limit(limit).all()
+    summaries = query.order_by(MonthlySummary.month_start.desc()).limit(limit).all()
     
     return [MonthlySummaryResponse.from_orm(s) for s in summaries]
 
@@ -174,7 +181,9 @@ async def get_metrics_summary(
     
     # Apply client filter
     if current_user.role == 'client':
-        query = query.filter(DailyMetrics.client_id == current_user.client_id)
+        if not current_user.clients:
+            raise HTTPException(status_code=403, detail="No client associated with user")
+        query = query.filter(DailyMetrics.client_id == current_user.clients[0].id)
     elif client_id:
         query = query.filter(DailyMetrics.client_id == client_id)
     

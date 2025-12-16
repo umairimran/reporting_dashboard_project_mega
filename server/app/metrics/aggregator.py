@@ -63,6 +63,107 @@ class AggregatorService:
         cpa = MetricsCalculator.calculate_cpa(Decimal(str(result.spend)), result.conversions)
         roas = MetricsCalculator.calculate_roas(Decimal(str(result.revenue)), Decimal(str(result.spend)))
         
+        # Find top campaigns by conversions and revenue
+        top_campaigns_by_conversions = db.query(
+            Campaign.name,
+            func.sum(DailyMetrics.conversions).label('conversions'),
+            func.sum(DailyMetrics.conversion_revenue).label('revenue'),
+            func.sum(DailyMetrics.spend).label('spend')
+        ).join(Campaign, DailyMetrics.campaign_id == Campaign.id
+        ).filter(
+            DailyMetrics.client_id == client_id,
+            DailyMetrics.date >= week_start,
+            DailyMetrics.date <= week_end
+        ).group_by(Campaign.name
+        ).order_by(func.sum(DailyMetrics.conversions).desc()
+        ).limit(5).all()
+        
+        top_campaigns_by_revenue = db.query(
+            Campaign.name,
+            func.sum(DailyMetrics.conversions).label('conversions'),
+            func.sum(DailyMetrics.conversion_revenue).label('revenue'),
+            func.sum(DailyMetrics.spend).label('spend')
+        ).join(Campaign, DailyMetrics.campaign_id == Campaign.id
+        ).filter(
+            DailyMetrics.client_id == client_id,
+            DailyMetrics.date >= week_start,
+            DailyMetrics.date <= week_end
+        ).group_by(Campaign.name
+        ).order_by(func.sum(DailyMetrics.conversion_revenue).desc()
+        ).limit(5).all()
+        
+        # Find top creatives by conversions and revenue
+        top_creatives_by_conversions = db.query(
+            Creative.name,
+            func.sum(DailyMetrics.conversions).label('conversions'),
+            func.sum(DailyMetrics.conversion_revenue).label('revenue'),
+            func.sum(DailyMetrics.spend).label('spend')
+        ).join(Creative, DailyMetrics.creative_id == Creative.id
+        ).filter(
+            DailyMetrics.client_id == client_id,
+            DailyMetrics.date >= week_start,
+            DailyMetrics.date <= week_end
+        ).group_by(Creative.name
+        ).order_by(func.sum(DailyMetrics.conversions).desc()
+        ).limit(5).all()
+        
+        top_creatives_by_revenue = db.query(
+            Creative.name,
+            func.sum(DailyMetrics.conversions).label('conversions'),
+            func.sum(DailyMetrics.conversion_revenue).label('revenue'),
+            func.sum(DailyMetrics.spend).label('spend')
+        ).join(Creative, DailyMetrics.creative_id == Creative.id
+        ).filter(
+            DailyMetrics.client_id == client_id,
+            DailyMetrics.date >= week_start,
+            DailyMetrics.date <= week_end
+        ).group_by(Creative.name
+        ).order_by(func.sum(DailyMetrics.conversion_revenue).desc()
+        ).limit(5).all()
+        
+        # Structure top performers as JSONB
+        top_campaigns_data = {
+            'by_conversions': [
+                {
+                    'name': row.name,
+                    'conversions': int(row.conversions),
+                    'revenue': float(row.revenue),
+                    'spend': float(row.spend)
+                }
+                for row in top_campaigns_by_conversions
+            ],
+            'by_revenue': [
+                {
+                    'name': row.name,
+                    'conversions': int(row.conversions),
+                    'revenue': float(row.revenue),
+                    'spend': float(row.spend)
+                }
+                for row in top_campaigns_by_revenue
+            ]
+        }
+        
+        top_creatives_data = {
+            'by_conversions': [
+                {
+                    'name': row.name,
+                    'conversions': int(row.conversions),
+                    'revenue': float(row.revenue),
+                    'spend': float(row.spend)
+                }
+                for row in top_creatives_by_conversions
+            ],
+            'by_revenue': [
+                {
+                    'name': row.name,
+                    'conversions': int(row.conversions),
+                    'revenue': float(row.revenue),
+                    'spend': float(row.spend)
+                }
+                for row in top_creatives_by_revenue
+            ]
+        }
+        
         # Create or update summary
         summary = db.query(WeeklySummary).filter(
             WeeklySummary.client_id == client_id,
@@ -87,6 +188,8 @@ class AggregatorService:
         summary.cpc = cpc
         summary.cpa = cpa
         summary.roas = roas
+        summary.top_campaigns = top_campaigns_data
+        summary.top_creatives = top_creatives_data
         
         db.commit()
         db.refresh(summary)
@@ -141,18 +244,118 @@ class AggregatorService:
         cpa = MetricsCalculator.calculate_cpa(Decimal(str(result.spend)), result.conversions)
         roas = MetricsCalculator.calculate_roas(Decimal(str(result.revenue)), Decimal(str(result.spend)))
         
+        # Find top campaigns by conversions and revenue
+        top_campaigns_by_conversions = db.query(
+            Campaign.name,
+            func.sum(DailyMetrics.conversions).label('conversions'),
+            func.sum(DailyMetrics.conversion_revenue).label('revenue'),
+            func.sum(DailyMetrics.spend).label('spend')
+        ).join(Campaign, DailyMetrics.campaign_id == Campaign.id
+        ).filter(
+            DailyMetrics.client_id == client_id,
+            DailyMetrics.date >= month_start,
+            DailyMetrics.date <= month_end
+        ).group_by(Campaign.name
+        ).order_by(func.sum(DailyMetrics.conversions).desc()
+        ).limit(5).all()
+        
+        top_campaigns_by_revenue = db.query(
+            Campaign.name,
+            func.sum(DailyMetrics.conversions).label('conversions'),
+            func.sum(DailyMetrics.conversion_revenue).label('revenue'),
+            func.sum(DailyMetrics.spend).label('spend')
+        ).join(Campaign, DailyMetrics.campaign_id == Campaign.id
+        ).filter(
+            DailyMetrics.client_id == client_id,
+            DailyMetrics.date >= month_start,
+            DailyMetrics.date <= month_end
+        ).group_by(Campaign.name
+        ).order_by(func.sum(DailyMetrics.conversion_revenue).desc()
+        ).limit(5).all()
+        
+        # Find top creatives by conversions and revenue
+        top_creatives_by_conversions = db.query(
+            Creative.name,
+            func.sum(DailyMetrics.conversions).label('conversions'),
+            func.sum(DailyMetrics.conversion_revenue).label('revenue'),
+            func.sum(DailyMetrics.spend).label('spend')
+        ).join(Creative, DailyMetrics.creative_id == Creative.id
+        ).filter(
+            DailyMetrics.client_id == client_id,
+            DailyMetrics.date >= month_start,
+            DailyMetrics.date <= month_end
+        ).group_by(Creative.name
+        ).order_by(func.sum(DailyMetrics.conversions).desc()
+        ).limit(5).all()
+        
+        top_creatives_by_revenue = db.query(
+            Creative.name,
+            func.sum(DailyMetrics.conversions).label('conversions'),
+            func.sum(DailyMetrics.conversion_revenue).label('revenue'),
+            func.sum(DailyMetrics.spend).label('spend')
+        ).join(Creative, DailyMetrics.creative_id == Creative.id
+        ).filter(
+            DailyMetrics.client_id == client_id,
+            DailyMetrics.date >= month_start,
+            DailyMetrics.date <= month_end
+        ).group_by(Creative.name
+        ).order_by(func.sum(DailyMetrics.conversion_revenue).desc()
+        ).limit(5).all()
+        
+        # Structure top performers as JSONB
+        top_campaigns_data = {
+            'by_conversions': [
+                {
+                    'name': row.name,
+                    'conversions': int(row.conversions),
+                    'revenue': float(row.revenue),
+                    'spend': float(row.spend)
+                }
+                for row in top_campaigns_by_conversions
+            ],
+            'by_revenue': [
+                {
+                    'name': row.name,
+                    'conversions': int(row.conversions),
+                    'revenue': float(row.revenue),
+                    'spend': float(row.spend)
+                }
+                for row in top_campaigns_by_revenue
+            ]
+        }
+        
+        top_creatives_data = {
+            'by_conversions': [
+                {
+                    'name': row.name,
+                    'conversions': int(row.conversions),
+                    'revenue': float(row.revenue),
+                    'spend': float(row.spend)
+                }
+                for row in top_creatives_by_conversions
+            ],
+            'by_revenue': [
+                {
+                    'name': row.name,
+                    'conversions': int(row.conversions),
+                    'revenue': float(row.revenue),
+                    'spend': float(row.spend)
+                }
+                for row in top_creatives_by_revenue
+            ]
+        }
+        
         # Create or update summary
         summary = db.query(MonthlySummary).filter(
             MonthlySummary.client_id == client_id,
-            MonthlySummary.year == year,
-            MonthlySummary.month == month
+            MonthlySummary.month_start == month_start
         ).first()
         
         if not summary:
             summary = MonthlySummary(
                 client_id=client_id,
-                year=year,
-                month=month
+                month_start=month_start,
+                month_end=month_end
             )
             db.add(summary)
         
@@ -166,6 +369,8 @@ class AggregatorService:
         summary.cpc = cpc
         summary.cpa = cpa
         summary.roas = roas
+        summary.top_campaigns = top_campaigns_data
+        summary.top_creatives = top_creatives_data
         
         db.commit()
         db.refresh(summary)

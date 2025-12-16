@@ -145,3 +145,43 @@ class ClientDashboard(BaseModel):
     sources: List[SourceBreakdown]
     daily_trends: List[DailyTrend]
     top_performers: TopPerformersResponse
+
+
+# ============================================================================
+# NEW SCHEMAS FOR TAB-BASED DASHBOARD
+# ============================================================================
+
+class SourceTabOverview(BaseModel):
+    """Overview metrics for a specific source tab (surfside/facebook/vibe)."""
+    source: str
+    total_impressions: int
+    total_clicks: int
+    total_conversions: int
+    total_revenue: Decimal
+    total_spend: Decimal
+    overall_ctr: Decimal
+    overall_cpc: Decimal
+    overall_cpa: Decimal
+    overall_roas: Decimal
+
+
+class DimensionSummary(BaseModel):
+    """Summary metrics for a dimension (campaign/strategy/placement/creative)."""
+    conversions: int
+    clicks: int
+    revenue: Decimal
+    spend: Decimal
+
+
+class DetailedBreakdown(BaseModel):
+    """Detailed breakdown for individual entities (campaign/strategy/placement/creative)."""
+    name: str
+    impressions: int
+    clicks: int
+    conversions: int
+    revenue: Decimal
+    spend: Decimal
+    ctr: Decimal
+    cpc: Decimal
+    cpa: Decimal
+    roas: Decimal

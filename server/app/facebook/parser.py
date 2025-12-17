@@ -18,7 +18,7 @@ class FacebookParser:
         'ad set name',
         'ad name',
         'impressions',
-        # 'link clicks',  # TODO: Awaiting client confirmation (Link clicks vs Clicks (all))
+        'link clicks',  # TODO: Awaiting client confirmation (Link clicks vs Clicks (all))
         # 'conversions',  # TODO: Not in current CSV - awaiting client confirmation
         # 'revenue'  # TODO: Not in current CSV - awaiting client confirmation
     ]

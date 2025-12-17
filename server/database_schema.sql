@@ -329,7 +329,7 @@ CREATE TABLE staging_media_raw (
     -- Raw metrics
     impressions BIGINT DEFAULT 0,
     clicks BIGINT DEFAULT 0,
-    ctr DECIMAL(12,6),
+    ctr DECIMAL(12,6) DEFAULT 0,
     conversions BIGINT DEFAULT 0,
     conversion_revenue DECIMAL(12,2) DEFAULT 0,
     

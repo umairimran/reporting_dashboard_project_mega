@@ -73,7 +73,7 @@ class StagingService:
                 creative_name=record.get('creative_name'),
                 impressions=record.get('impressions', 0),
                 clicks=record.get('clicks', 0),
-                ctr=record.get('ctr'),
+                ctr=record.get('ctr', 0),
                 conversions=record.get('conversions', 0),
                 conversion_revenue=record.get('conversion_revenue', 0),
                 raw_data=serialized_raw_data  # Store serialized data as JSON

@@ -170,7 +170,7 @@ class ClientService:
             source=settings_data.source,
             cpm=settings_data.cpm,
             currency=settings_data.currency,
-            effective_date=settings_data.effective_date or date.today()
+            effective_date=settings_data.effective_date or datetime.utcnow()
         )
         
         db.add(settings)
@@ -181,26 +181,26 @@ class ClientService:
         return settings
     
     @staticmethod
-    def get_current_cpm(db: Session, client_id: uuid.UUID, source: str, target_date: date = None) -> Optional[ClientSettings]:
+    def get_current_cpm(db: Session, client_id: uuid.UUID, source: str, target_datetime: datetime = None) -> Optional[ClientSettings]:
         """
-        Get current CPM settings for a client on a specific date and source.
+        Get current CPM settings for a client on a specific datetime and source.
         
         Args:
             db: Database session
             client_id: Client UUID
             source: Data source ('surfside', 'vibe', or 'facebook')
-            target_date: Date to get CPM for (defaults to today)
+            target_datetime: Datetime to get CPM for (defaults to now)
             
         Returns:
             Current CPM settings if found, None otherwise
         """
-        if target_date is None:
-            target_date = date.today()
+        if target_datetime is None:
+            target_datetime = datetime.utcnow()
         
         settings = db.query(ClientSettings).filter(
             ClientSettings.client_id == client_id,
             ClientSettings.source == source,
-            ClientSettings.effective_date <= target_date
+            ClientSettings.effective_date <= target_datetime
         ).order_by(desc(ClientSettings.effective_date)).first()
         
         return settings
@@ -262,29 +262,21 @@ class ClientService:
             ClientSettings.source == settings_data.source
         ).order_by(desc(ClientSettings.effective_date)).first()
         
-        effective_date = settings_data.effective_date or date.today()
+        effective_datetime = settings_data.effective_date or datetime.utcnow()
         
-        # If there's an existing setting with the same effective date, update it
-        if current_settings and current_settings.effective_date == effective_date:
-            current_settings.cpm = settings_data.cpm
-            db.commit()
-            db.refresh(current_settings)
-            logger.info(f"Updated CPM for client {client.name} ({settings_data.source}): {current_settings.cpm}")
-            return current_settings
-        else:
-            # Create new settings entry for this date
-            new_settings = ClientSettings(
-                client_id=client_id,
-                source=settings_data.source,
-                cpm=settings_data.cpm,
-                currency=current_settings.currency if current_settings else "USD",
-                effective_date=effective_date
-            )
-            db.add(new_settings)
-            db.commit()
-            db.refresh(new_settings)
-            logger.info(f"Created new CPM for client {client.name} ({settings_data.source}): {new_settings.cpm}")
-            return new_settings
+        # Always create new settings entry with current timestamp (allows multiple updates per day)
+        new_settings = ClientSettings(
+            client_id=client_id,
+            source=settings_data.source,
+            cpm=settings_data.cpm,
+            currency=current_settings.currency if current_settings else "USD",
+            effective_date=effective_datetime
+        )
+        db.add(new_settings)
+        db.commit()
+        db.refresh(new_settings)
+        logger.info(f"Created new CPM for client {client.name} ({settings_data.source}): {new_settings.cpm} (effective: {effective_datetime})")
+        return new_settings
     
     @staticmethod
     def get_client_with_cpm(

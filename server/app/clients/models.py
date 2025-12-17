@@ -45,7 +45,7 @@ class ClientSettings(Base):
     source = Column(String(50), nullable=False)  # 'surfside', 'vibe', or 'facebook'
     cpm = Column(Numeric(10, 4), nullable=False)
     currency = Column(String(3), default='USD')
-    effective_date = Column(Date)
+    effective_date = Column(DateTime, default=datetime.utcnow)  # TIMESTAMP for multiple updates per day
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
     updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
     

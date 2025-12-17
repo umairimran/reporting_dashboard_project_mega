@@ -81,14 +81,14 @@ CREATE TABLE client_settings (
     source VARCHAR(50) NOT NULL CHECK (source IN ('surfside', 'vibe', 'facebook')),
     cpm DECIMAL(10,4) NOT NULL,
     currency VARCHAR(3) DEFAULT 'USD',
-    effective_date DATE,
+    effective_date TIMESTAMP DEFAULT NOW(),
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     UNIQUE(client_id, source, effective_date)
 );
 
 CREATE INDEX idx_client_settings_client_source ON client_settings(client_id, source);
-CREATE INDEX idx_client_settings_effective_date ON client_settings(effective_date);
+CREATE INDEX idx_client_settings_effective_date ON client_settings(effective_date DESC);
 
 CREATE TRIGGER update_client_settings_updated_at 
     BEFORE UPDATE ON client_settings 
@@ -98,6 +98,7 @@ CREATE TRIGGER update_client_settings_updated_at
 COMMENT ON TABLE client_settings IS 'Client-specific CPM rates and configuration per source';
 COMMENT ON COLUMN client_settings.source IS 'Data source: surfside, vibe, or facebook - each source can have different CPM';
 COMMENT ON COLUMN client_settings.cpm IS 'Client CPM rate for this source (e.g., 15.0000)';
+COMMENT ON COLUMN client_settings.effective_date IS 'Timestamp when this CPM rate becomes effective - allows multiple updates per day';
 
 -- ============================================================================
 -- SECTION 4: CAMPAIGN HIERARCHY TABLES

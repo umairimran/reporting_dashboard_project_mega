@@ -74,16 +74,29 @@ class FacebookUploadHandler:
         Returns:
             UploadedFile record
         """
+        print("\n" + "="*80)
+        print(f"FACEBOOK ETL PIPELINE STARTED")
+        print("="*80)
+        print(f"Client: {client_name}")
+        print(f"File: {file.filename}")
+        print(f"Client ID: {client_id}")
+        print("="*80 + "\n")
+        
         logger.info(f"Processing Facebook upload for client {client_name}: {file.filename}")
         
         # Validate file
+        print("[STEP 1] VALIDATING FILE...")
         await FacebookValidator.validate_upload(file)
+        print("✓ File validation passed\n")
         
         # Get upload directory
         upload_dir = self._get_upload_directory(client_id)
         
         # Save file
+        print("[STEP 2] SAVING FILE TO DISK...")
         file_path, file_size = self._save_uploaded_file(file, upload_dir)
+        print(f"✓ File saved: {file_path}")
+        print(f"  Size: {file_size:,} bytes\n")
         
         # Create upload record
         uploaded_file = UploadedFile(
@@ -109,14 +122,18 @@ class FacebookUploadHandler:
             self.db.commit()
             
             # Parse file
+            print("[STEP 3] PARSING FILE...")
             logger.info(f"Parsing Facebook file: {file.filename}")
             raw_records = FacebookParser.parse_file(file_path)
             uploaded_file.records_count = len(raw_records)
             self.db.commit()
             
+            print(f"✓ File parsed successfully")
+            print(f"  Total records found: {len(raw_records)}\n")
             logger.info(f"Parsed {len(raw_records)} records from Facebook file")
             
             # Run ETL pipeline
+            print("[STEP 4] STARTING ETL PIPELINE...\n")
             from datetime import date
             ingestion_log = await self.orchestrator.run_etl_pipeline(
                 client_id=client_id,
@@ -131,12 +148,23 @@ class FacebookUploadHandler:
             # Update status based on ETL result
             if ingestion_log.status == 'success':
                 uploaded_file.upload_status = 'processed'
+                print("\n" + "="*80)
+                print("✓ FACEBOOK ETL PIPELINE COMPLETED SUCCESSFULLY")
+                print("="*80)
             elif ingestion_log.status == 'partial':
                 uploaded_file.upload_status = 'processed'
                 uploaded_file.error_message = f"Partial success: {ingestion_log.message}"
+                print("\n" + "="*80)
+                print("⚠ FACEBOOK ETL PIPELINE COMPLETED WITH WARNINGS")
+                print(f"Message: {ingestion_log.message}")
+                print("="*80)
             else:
                 uploaded_file.upload_status = 'failed'
                 uploaded_file.error_message = f"ETL failed: {ingestion_log.message}"
+                print("\n" + "="*80)
+                print("✗ FACEBOOK ETL PIPELINE FAILED")
+                print(f"Error: {ingestion_log.message}")
+                print("="*80)
             
             uploaded_file.processed_at = datetime.utcnow()
             

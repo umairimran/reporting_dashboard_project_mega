@@ -16,8 +16,7 @@ def setup_logging():
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S',
         handlers=[
-            logging.StreamHandler(sys.stdout),
-            logging.FileHandler('app.log')
+            logging.FileHandler('app.log', encoding='utf-8')
         ]
     )
     
@@ -26,6 +25,17 @@ def setup_logging():
     logging.getLogger("botocore").setLevel(logging.WARNING)
     logging.getLogger("urllib3").setLevel(logging.WARNING)
     logging.getLogger("s3transfer").setLevel(logging.WARNING)
+    
+    # Suppress SQLAlchemy database logs
+    logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
+    logging.getLogger("sqlalchemy.pool").setLevel(logging.WARNING)
+    logging.getLogger("sqlalchemy.dialects").setLevel(logging.WARNING)
+    
+    # Suppress Uvicorn server logs (these have their own handlers)
+    logging.getLogger("uvicorn").setLevel(logging.ERROR)
+    logging.getLogger("uvicorn.access").setLevel(logging.ERROR)
+    logging.getLogger("uvicorn.error").setLevel(logging.ERROR)
+    logging.getLogger("watchfiles").setLevel(logging.ERROR)
     
     logger = logging.getLogger(__name__)
     logger.info("Logging system initialized")

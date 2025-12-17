@@ -16,7 +16,7 @@ engine = create_engine(
     max_overflow=20,
     pool_pre_ping=True,
     pool_recycle=3600,
-    echo=settings.DEBUG
+    echo=False  # Disabled to prevent SQL logs in terminal
 )
 
 # Session factory

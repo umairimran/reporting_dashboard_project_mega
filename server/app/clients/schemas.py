@@ -13,14 +13,14 @@ class ClientSettingsCreate(BaseModel):
     source: str = Field(..., pattern="^(surfside|vibe|facebook)$", description="Data source")
     cpm: Decimal = Field(..., gt=0, description="CPM rate must be positive")
     currency: str = Field(default="USD", max_length=3)
-    effective_date: Optional[date] = None
+    effective_date: Optional[datetime] = None
 
 
 class ClientSettingsUpdate(BaseModel):
     """Client settings update schema."""
     source: str = Field(..., pattern="^(surfside|vibe|facebook)$", description="Data source")
     cpm: Decimal = Field(..., gt=0, description="CPM rate must be positive")
-    effective_date: Optional[date] = None
+    effective_date: Optional[datetime] = None
 
 
 class ClientSettingsResponse(BaseModel):
@@ -30,7 +30,7 @@ class ClientSettingsResponse(BaseModel):
     source: str
     cpm: Decimal
     currency: str
-    effective_date: Optional[date]
+    effective_date: Optional[datetime]
     created_at: datetime
     updated_at: datetime
     

@@ -37,13 +37,16 @@ class LoaderService:
         Returns:
             Tuple of (records_loaded, records_failed)
         """
+        print(f"[STEP 4.3] CALCULATING METRICS & LOADING DATA...")
+        print(f"Total records to load: {len(records)}\n")
+        
         loaded = 0
         failed = 0
         
-        for record in records:
+        for idx, record in enumerate(records):
             try:
-                # Get CPM for this client, source, and date
-                cpm_settings = ClientService.get_current_cpm(db, client_id, source, record['date'])
+                # Get CPM for this client and source (uses today's date for current CPM settings)
+                cpm_settings = ClientService.get_current_cpm(db, client_id, source)
                 
                 if not cpm_settings:
                     cpm = Decimal('17.00')  # Default from documentation
@@ -71,6 +74,25 @@ class LoaderService:
                     cpm=cpm
                 )
                 
+                # Print detailed metrics for first few records
+                if idx < 3 or (idx + 1) % 10 == 0:
+                    print(f"  Record {idx + 1}: Metrics calculated")
+                    print(f"    Date: {record['date']}")
+                    print(f"    Campaign: {record['campaign_name'][:40]}..." if len(record['campaign_name']) > 40 else f"    Campaign: {record['campaign_name']}")
+                    print(f"    Input Data:")
+                    print(f"      Impressions: {record['impressions']:,}")
+                    print(f"      Clicks: {record['clicks']:,}")
+                    print(f"      Conversions: {record['conversions']:,}")
+                    print(f"      Revenue: ${record['conversion_revenue']:,.2f}")
+                    print(f"    CPM Rate: ${cpm}")
+                    print(f"    Calculated Metrics:")
+                    print(f"      Spend: ${metrics['spend']:,.2f} (Formula: Impressions {record['impressions']:,} ÷ 1000 × CPM ${cpm})")
+                    print(f"      CTR: {metrics['ctr']:.6f}")
+                    print(f"      CPC: ${metrics['cpc']:.4f}")
+                    print(f"      CPA: ${metrics['cpa']:.4f}" if record['conversions'] > 0 else f"      CPA: $0.0000 (no conversions)")
+                    print(f"      ROAS: {metrics['roas']:.4f}" if metrics['spend'] > 0 else f"      ROAS: 0.0000 (no spend)")
+                    print()
+                
                 # Check if record already exists (duplicate detection)
                 existing = db.query(DailyMetrics).filter(
                     DailyMetrics.client_id == client_id,
@@ -94,6 +116,8 @@ class LoaderService:
                     existing.cpa = metrics['cpa']
                     existing.roas = metrics['roas']
                     logger.debug(f"Updated existing metric for {record['date']}")
+                    if idx < 3:
+                        print(f"    → Updated existing record in database\n")
                 else:
                     # Create new record
                     daily_metric = DailyMetrics(
@@ -116,6 +140,8 @@ class LoaderService:
                     )
                     db.add(daily_metric)
                     logger.debug(f"Created new metric for {record['date']}")
+                    if idx < 3:
+                        print(f"    → Inserted new record into database\n")
                 
                 loaded += 1
                 
@@ -127,8 +153,12 @@ class LoaderService:
         # Commit all changes
         try:
             db.commit()
+            print(f"\n✓ Data loading complete")
+            print(f"  Records loaded: {loaded}")
+            print(f"  Records failed: {failed}\n")
             logger.info(f"Loaded {loaded} records, {failed} failed")
         except Exception as e:
+            print(f"\n✗ Error committing to database: {str(e)}\n")
             logger.error(f"Error committing records: {str(e)}")
             db.rollback()
             raise

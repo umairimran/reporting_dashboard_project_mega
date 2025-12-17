@@ -175,8 +175,8 @@ class TransformerService:
         impressions = TransformerService.parse_number(raw_record.get('Impressions', 0))
         clicks = TransformerService.parse_number(raw_record.get('Clicks', 0))
         
-        # Calculate CTR: (Clicks / Impressions) * 100
-        ctr = (clicks / impressions * 100) if impressions > 0 else 0
+        # Calculate CTR: (Clicks / Impressions) 
+        ctr = (clicks / impressions ) if impressions > 0 else 0
         
         return {
             'date': TransformerService.parse_date(raw_record.get('Event Date')),
@@ -216,8 +216,8 @@ class TransformerService:
         impressions = TransformerService.parse_number(raw_record.get('impressions', 0))
         clicks = TransformerService.parse_number(raw_record.get('installs', 0))  # Vibe: installs → clicks
         
-        # Calculate CTR: (Clicks / Impressions) * 100
-        ctr = (clicks / impressions * 100) if impressions > 0 else 0
+        # Calculate CTR: (Clicks / Impressions) 
+        ctr = (clicks / impressions ) if impressions > 0 else 0
         
         return {
             'date': TransformerService.parse_date(raw_record.get('impression_date')),
@@ -267,8 +267,8 @@ class TransformerService:
         clicks = TransformerService.parse_number(raw_record.get('link clicks', 0))
         # clicks = TransformerService.parse_number(raw_record.get('clicks (all)', 0))  # Alternative
         
-        # Calculate CTR: (Clicks / Impressions) * 100
-        ctr = (clicks / impressions * 100) if impressions > 0 else 0
+        # Calculate CTR: (Clicks / Impressions) 
+        ctr = (clicks / impressions ) if impressions > 0 else 0
         
         return {
             # TODO: Date field - awaiting client confirmation on which field to use

@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     
     # App Settings
     SECRET_KEY: str
+    ENCRYPTION_KEY: str  # Fernet key for encrypting sensitive data (API keys, etc.)
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     DEBUG: bool = False

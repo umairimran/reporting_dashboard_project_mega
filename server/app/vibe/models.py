@@ -7,6 +7,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 import uuid
 from app.core.database import Base
+from app.core.encryption import decrypt_api_key
 
 
 class VibeCredentials(Base):
@@ -16,7 +17,7 @@ class VibeCredentials(Base):
     
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     client_id = Column(UUID(as_uuid=True), ForeignKey('clients.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
-    api_key = Column(Text, nullable=False)
+    api_key = Column(Text, nullable=False)  # Stored encrypted
     advertiser_id = Column(String(255))
     is_active = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
@@ -24,6 +25,11 @@ class VibeCredentials(Base):
     
     # Relationships
     client = relationship("Client", back_populates="vibe_credentials")
+    
+    @property
+    def decrypted_api_key(self) -> str:
+        """Get the decrypted API key."""
+        return decrypt_api_key(self.api_key)
     
     def __repr__(self):
         return f"<VibeCredentials client_id={self.client_id}>"

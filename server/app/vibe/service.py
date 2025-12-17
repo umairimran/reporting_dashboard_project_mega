@@ -8,6 +8,7 @@ from app.vibe.models import VibeCredentials, VibeReportRequest
 from app.vibe.api_client import VibeAPIClient
 from app.core.logging import logger
 from app.core.exceptions import VibeAPIError
+from app.core.encryption import encrypt_api_key
 
 
 class VibeService:
@@ -30,7 +31,7 @@ class VibeService:
             raise VibeAPIError(f"No active Vibe credentials for client {client_id}")
         
         return VibeAPIClient(
-            api_key=creds.api_key,
+            api_key=creds.decrypted_api_key,  # Use decrypted key
             advertiser_id=creds.advertiser_id
         )
     
@@ -50,10 +51,10 @@ class VibeService:
         for cred in existing:
             cred.is_active = False
         
-        # Create new credentials
+        # Create new credentials with encrypted API key
         new_creds = VibeCredentials(
             client_id=client_id,
-            api_key=api_key,
+            api_key=encrypt_api_key(api_key),  # Encrypt before saving
             advertiser_id=advertiser_id,
             is_active=True
         )
@@ -81,7 +82,7 @@ class VibeService:
             raise VibeAPIError(f"Credentials {credential_id} not found")
         
         if api_key:
-            creds.api_key = api_key
+            creds.api_key = encrypt_api_key(api_key)  # Encrypt before saving
         if advertiser_id:
             creds.advertiser_id = advertiser_id
         

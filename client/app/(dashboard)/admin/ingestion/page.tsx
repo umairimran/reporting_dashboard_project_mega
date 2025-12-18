@@ -45,7 +45,9 @@ interface VibeConfig {
 }
 
 export default function AdminIngestion() {
-  const [activeTab, setActiveTab] = useState<"logs" | "s3" | "upload" | "vibe">("logs");
+  const [activeTab, setActiveTab] = useState<"logs" | "s3" | "upload" | "vibe">(
+    "logs"
+  );
   const [selectedClient, setSelectedClient] = useState<string>("");
   const [vibeApiKey, setVibeApiKey] = useState<string>("");
   const [savedVibeConfigs, setSavedVibeConfigs] = useState<VibeConfig[]>([
@@ -142,7 +144,7 @@ export default function AdminIngestion() {
 
   const handleDeleteVibeConfig = (id: string) => {
     if (confirm("Are you sure you want to delete this configuration?")) {
-      setSavedVibeConfigs(savedVibeConfigs.filter(c => c.id !== id));
+      setSavedVibeConfigs(savedVibeConfigs.filter((c) => c.id !== id));
     }
   };
 
@@ -177,7 +179,7 @@ export default function AdminIngestion() {
             className={cn(
               "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer",
               activeTab === tab.id
-                ? "bg-amber-500 text-white shadow-lg"
+                ? "bg-blue-500 text-white shadow-lg"
                 : "text-slate-600 hover:text-slate-900 hover:bg-slate-200"
             )}
           >
@@ -223,10 +225,10 @@ export default function AdminIngestion() {
                 const duration =
                   log.finishedAt && log.startedAt
                     ? Math.round(
-                      (new Date(log.finishedAt).getTime() -
-                        new Date(log.startedAt).getTime()) /
-                      1000
-                    )
+                        (new Date(log.finishedAt).getTime() -
+                          new Date(log.startedAt).getTime()) /
+                          1000
+                      )
                     : null;
 
                 return (
@@ -253,11 +255,11 @@ export default function AdminIngestion() {
                         className={cn(
                           "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize",
                           log.source === "surfside" &&
-                          "bg-green-500/20 text-green-400",
+                            "bg-green-500/20 text-green-400",
                           log.source === "facebook" &&
-                          "bg-blue-500/20 text-blue-400",
+                            "bg-blue-500/20 text-blue-400",
                           log.source === "vibe" &&
-                          "bg-purple-500/20 text-purple-400"
+                            "bg-purple-500/20 text-purple-400"
                         )}
                       >
                         {log.source}
@@ -355,7 +357,9 @@ export default function AdminIngestion() {
           </div>
 
           <div className="mt-6 flex justify-end">
-            <Button variant="gold" className="cursor-pointer">Save Configuration</Button>
+            <Button variant="gold" className="cursor-pointer">
+              Save Configuration
+            </Button>
           </div>
         </div>
       )}
@@ -424,27 +428,43 @@ export default function AdminIngestion() {
 
             {/* Saved Configurations List */}
             <div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-4">Saved API Configurations</h3>
+              <h3 className="text-lg font-semibold text-slate-900 mb-4">
+                Saved API Configurations
+              </h3>
               <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
                 <Table>
                   <TableHeader>
                     <TableRow className="hover:bg-transparent border-b border-slate-200">
-                      <TableHead className="text-left text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto">Client</TableHead>
-                      <TableHead className="text-left text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto">API Key</TableHead>
-                      <TableHead className="text-left text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto">Added On</TableHead>
-                      <TableHead className="text-right text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto">Actions</TableHead>
+                      <TableHead className="text-left text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto">
+                        Client
+                      </TableHead>
+                      <TableHead className="text-left text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto">
+                        API Key
+                      </TableHead>
+                      <TableHead className="text-left text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto">
+                        Added On
+                      </TableHead>
+                      <TableHead className="text-right text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto">
+                        Actions
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {savedVibeConfigs.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={4} className="text-center py-6 text-slate-500">
+                        <TableCell
+                          colSpan={4}
+                          className="text-center py-6 text-slate-500"
+                        >
                           No configurations found. Add one above.
                         </TableCell>
                       </TableRow>
                     ) : (
                       savedVibeConfigs.map((config) => (
-                        <TableRow key={config.id} className="border-b border-slate-200 hover:bg-slate-50">
+                        <TableRow
+                          key={config.id}
+                          className="border-b border-slate-200 hover:bg-slate-50"
+                        >
                           <TableCell className="px-4 py-3 font-medium text-slate-900">
                             {getClientName(config.clientId)}
                           </TableCell>
@@ -600,7 +620,7 @@ export default function AdminIngestion() {
               className={cn(
                 "gap-2 cursor-pointer",
                 (!selectedClient || !selectedSource || !selectedFile) &&
-                "opacity-50 cursor-not-allowed"
+                  "opacity-50 cursor-not-allowed"
               )}
             >
               <Upload className="w-4 h-4" />

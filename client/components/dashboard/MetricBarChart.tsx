@@ -94,7 +94,7 @@ export default function MetricBarChart({ data, title }: MetricBarChartProps) {
               className={cn(
                 "px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200",
                 selectedMetric === metric.key
-                  ? "bg-amber-500 text-white shadow-md"
+                  ? "bg-blue-500 text-white shadow-md"
                   : "text-slate-600 hover:text-slate-900 hover:bg-slate-200"
               )}
             >
@@ -135,7 +135,7 @@ export default function MetricBarChart({ data, title }: MetricBarChartProps) {
             <Tooltip content={<CustomTooltip />} cursor={{ fill: "#f1f5f9" }} />
             <Bar
               dataKey={selectedMetric}
-              fill="#f59e0b"
+              fill="#3b82f6"
               radius={[4, 4, 0, 0]}
             />
           </BarChart>

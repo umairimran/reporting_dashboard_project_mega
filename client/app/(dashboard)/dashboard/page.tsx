@@ -136,10 +136,10 @@ export default function Dashboard() {
           <Button variant="outline" size="icon" className="cursor-pointer">
             <RefreshCw className="w-4 h-4" />
           </Button>
-          {/* <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="gap-2">
             <Download className="w-4 h-4" />
             Export
-          </Button> */}
+          </Button>
         </div>
       </div>
 

@@ -84,9 +84,12 @@ export default function AdminClients() {
     if (isDialogOpen) {
       if (editingClient) {
         const settings = getClientSettings(editingClient.id);
-        const surfside = settings.find(s => s.source === 'surfside')?.cpm?.toString() || "";
-        const vibe = settings.find(s => s.source === 'vibe')?.cpm?.toString() || "";
-        const facebook = settings.find(s => s.source === 'facebook')?.cpm?.toString() || "";
+        const surfside =
+          settings.find((s) => s.source === "surfside")?.cpm?.toString() || "";
+        const vibe =
+          settings.find((s) => s.source === "vibe")?.cpm?.toString() || "";
+        const facebook =
+          settings.find((s) => s.source === "facebook")?.cpm?.toString() || "";
 
         form.reset({
           name: editingClient.name,
@@ -103,7 +106,10 @@ export default function AdminClients() {
         });
       }
     }
-  }, [isDialogOpen, editingClient, /* clientSettings is stable enough or we ignore it to avoid loop */]);
+  }, [
+    isDialogOpen,
+    editingClient /* clientSettings is stable enough or we ignore it to avoid loop */,
+  ]);
 
   const filteredClients = clients.filter((client) =>
     client.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -121,41 +127,43 @@ export default function AdminClients() {
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     if (editingClient) {
       // Update existing client
-      setClients(prev => prev.map(c =>
-        c.id === editingClient.id ? { ...c, name: values.name } : c
-      ));
+      setClients((prev) =>
+        prev.map((c) =>
+          c.id === editingClient.id ? { ...c, name: values.name } : c
+        )
+      );
 
       // Update settings
-      setClientSettings(prev => {
+      setClientSettings((prev) => {
         // Remove old settings for this client
-        const filtered = prev.filter(s => s.clientId !== editingClient.id);
+        const filtered = prev.filter((s) => s.clientId !== editingClient.id);
         const newSettings: ClientSettings[] = [];
 
         if (values.surfsideCpm) {
           newSettings.push({
             id: Math.random().toString(36).substr(2, 9),
             clientId: editingClient.id,
-            source: 'surfside' as const,
+            source: "surfside" as const,
             cpm: parseFloat(values.surfsideCpm),
-            currency: 'USD',
+            currency: "USD",
           });
         }
         if (values.vibeCpm) {
           newSettings.push({
             id: Math.random().toString(36).substr(2, 9),
             clientId: editingClient.id,
-            source: 'vibe' as const,
+            source: "vibe" as const,
             cpm: parseFloat(values.vibeCpm),
-            currency: 'USD',
+            currency: "USD",
           });
         }
         if (values.facebookCpm) {
           newSettings.push({
             id: Math.random().toString(36).substr(2, 9),
             clientId: editingClient.id,
-            source: 'facebook' as const,
+            source: "facebook" as const,
             cpm: parseFloat(values.facebookCpm),
-            currency: 'USD',
+            currency: "USD",
           });
         }
         return [...filtered, ...newSettings];
@@ -168,8 +176,8 @@ export default function AdminClients() {
       const newClient = {
         id: newClientId,
         name: values.name,
-        status: 'active' as const,
-        userId: 'new-user', // In a real app this would be linked to a user
+        status: "active" as const,
+        userId: "new-user", // In a real app this would be linked to a user
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -182,27 +190,27 @@ export default function AdminClients() {
         newSettings.push({
           id: Math.random().toString(36).substr(2, 9),
           clientId: newClientId,
-          source: 'surfside' as const,
+          source: "surfside" as const,
           cpm: parseFloat(values.surfsideCpm),
-          currency: 'USD',
+          currency: "USD",
         });
       }
       if (values.vibeCpm) {
         newSettings.push({
           id: Math.random().toString(36).substr(2, 9),
           clientId: newClientId,
-          source: 'vibe' as const,
+          source: "vibe" as const,
           cpm: parseFloat(values.vibeCpm),
-          currency: 'USD',
+          currency: "USD",
         });
       }
       if (values.facebookCpm) {
         newSettings.push({
           id: Math.random().toString(36).substr(2, 9),
           clientId: newClientId,
-          source: 'facebook' as const,
+          source: "facebook" as const,
           cpm: parseFloat(values.facebookCpm),
-          currency: 'USD',
+          currency: "USD",
         });
       }
 
@@ -231,17 +239,26 @@ export default function AdminClients() {
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button variant="gold" className="gap-2" onClick={() => setEditingClient(null)}>
+            <Button
+              variant="gold"
+              className="gap-2"
+              onClick={() => setEditingClient(null)}
+            >
               <Plus className="w-4 h-4" />
               Add Client
             </Button>
           </DialogTrigger>
           <DialogContent className="bg-white">
             <DialogHeader>
-              <DialogTitle>{editingClient ? "Edit Client" : "Add New Client"}</DialogTitle>
+              <DialogTitle>
+                {editingClient ? "Edit Client" : "Add New Client"}
+              </DialogTitle>
             </DialogHeader>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4"
+              >
                 <FormField
                   control={form.control}
                   name="name"
@@ -361,13 +378,27 @@ export default function AdminClients() {
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent border-b border-slate-200">
-              <TableHead className="text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto">Client</TableHead>
-              <TableHead className="text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto">Status</TableHead>
-              <TableHead className="text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto text-center">CPM - Surfside</TableHead>
-              <TableHead className="text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto text-center">CPM - Vibe</TableHead>
-              <TableHead className="text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto text-center">CPM - Facebook</TableHead>
-              <TableHead className="text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto">Created</TableHead>
-              <TableHead className="text-right text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto">Actions</TableHead>
+              <TableHead className="text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto">
+                Client
+              </TableHead>
+              <TableHead className="text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto">
+                Status
+              </TableHead>
+              <TableHead className="text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto text-center">
+                CPM - Surfside
+              </TableHead>
+              <TableHead className="text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto text-center">
+                CPM - Vibe
+              </TableHead>
+              <TableHead className="text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto text-center">
+                CPM - Facebook
+              </TableHead>
+              <TableHead className="text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto">
+                Created
+              </TableHead>
+              <TableHead className="text-right text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto">
+                Actions
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -389,8 +420,8 @@ export default function AdminClients() {
                 >
                   <TableCell className="px-4 py-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center">
-                        <Building2 className="w-5 h-5 text-amber-600" />
+                      <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                        <Building2 className="w-5 h-5 text-blue-600" />
                       </div>
                       <span className="font-medium text-slate-900">
                         {client.name}
@@ -400,7 +431,7 @@ export default function AdminClients() {
                   <TableCell className="px-4 py-3">
                     <span
                       className={cn(
-                        'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize',
+                        "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize",
                         client.status === "active" ? "active" : "disabled"
                       )}
                     >

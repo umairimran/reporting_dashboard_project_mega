@@ -46,8 +46,8 @@ export default function KPICard({
       style={{ animationDelay: `${delay}ms` }}
     >
       <div className="flex items-start justify-between mb-4">
-        <div className="p-2.5 rounded-lg bg-amber-500/10">
-          <Icon className="w-5 h-5 text-amber-600" />
+        <div className="p-2.5 rounded-lg bg-blue-500/10">
+          <Icon className="w-5 h-5 text-blue-600" />
         </div>
         <Tooltip>
           <TooltipTrigger asChild>
@@ -74,7 +74,7 @@ export default function KPICard({
       </div>
 
       {/* Hover glow effect */}
-      <div className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none bg-[radial-gradient(circle_at_center,rgba(251,191,36,0.08)_0%,transparent_70%)] rounded-xl" />
+      <div className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.08)_0%,transparent_70%)] rounded-xl" />
     </div>
   );
 }

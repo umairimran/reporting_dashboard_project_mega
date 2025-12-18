@@ -5,21 +5,19 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/30 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/30 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default:
-          "bg-amber-600 text-white shadow-md hover:bg-amber-700 hover:shadow-lg active:scale-[0.98]",
-        destructive:
-          "bg-red-600 text-white shadow-md hover:bg-red-700",
+          "bg-blue-600 text-white shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-[0.98]",
+        destructive: "bg-red-600 text-white shadow-md hover:bg-red-700",
         outline:
           "border border-slate-200 bg-transparent hover:bg-slate-100 hover:text-slate-900",
-        secondary:
-          "bg-slate-100 text-slate-900 hover:bg-slate-200",
+        secondary: "bg-slate-100 text-slate-900 hover:bg-slate-200",
         ghost: "hover:bg-slate-100 hover:text-slate-900",
-        link: "text-amber-600 underline-offset-4 hover:underline",
-        gold: "bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md hover:shadow-lg hover:shadow-amber-500/20 active:scale-[0.98]",
+        link: "text-blue-600 underline-offset-4 hover:underline",
+        gold: "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md hover:shadow-lg hover:shadow-blue-500/20 active:scale-[0.98]",
       },
       size: {
         default: "h-10 px-4 py-2",
@@ -38,7 +36,7 @@ const buttonVariants = cva(
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-  VariantProps<typeof buttonVariants> {
+    VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }
 

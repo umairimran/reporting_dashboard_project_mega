@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import Sidebar from "@/components/layout/Sidebar";
+import Header from "@/components/layout/Header";
 
 export default function DashboardLayout({
   children,
@@ -16,7 +16,7 @@ export default function DashboardLayout({
     return (
       <div className="flex h-screen items-center justify-center bg-white">
         <div className="text-center">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-amber-600 border-r-transparent"></div>
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
           <p className="mt-4 text-sm text-slate-600">Loading...</p>
         </div>
       </div>
@@ -28,8 +28,8 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex h-screen bg-white">
-      <Sidebar />
+    <div className="flex flex-col h-screen bg-white">
+      <Header />
       <main className="flex-1 overflow-y-auto bg-slate-50">{children}</main>
     </div>
   );

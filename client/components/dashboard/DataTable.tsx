@@ -96,9 +96,9 @@ export default function DataTable({
       return <ChevronsUpDown className="w-4 h-4 text-slate-400" />;
     }
     if (sortDirection === "asc") {
-      return <ChevronUp className="w-4 h-4 text-amber-600" />;
+      return <ChevronUp className="w-4 h-4 text-blue-600" />;
     }
-    return <ChevronDown className="w-4 h-4 text-amber-600" />;
+    return <ChevronDown className="w-4 h-4 text-blue-600" />;
   };
 
   return (
@@ -174,7 +174,7 @@ export default function DataTable({
                     onClick={() => setCurrentPage(page)}
                     className={cn(
                       "w-8 h-8 p-0",
-                      currentPage === page && "bg-amber-600 hover:bg-amber-700"
+                      currentPage === page && "bg-blue-600 hover:bg-blue-700"
                     )}
                   >
                     {page}

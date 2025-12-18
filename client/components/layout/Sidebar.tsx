@@ -42,7 +42,7 @@ function NavItem({ href, icon: Icon, label, isCollapsed }: NavItemProps) {
       className={cn(
         "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 group",
         isActive
-          ? "text-amber-600 bg-amber-500/10"
+          ? "text-blue-600 bg-blue-500/10"
           : "text-slate-600 hover:text-slate-900 hover:bg-slate-100",
         isCollapsed && "justify-center px-2"
       )}
@@ -108,12 +108,12 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="p-6 border-b border-slate-200 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shrink-0">
             <BarChart3 className="w-6 h-6 text-white" />
           </div>
           {!isCollapsed && (
             <div>
-              <span className="text-lg font-bold bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text text-transparent">
+              <span className="text-lg font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
                 Gold Standard
               </span>
               <p className="text-xs text-slate-500">Analytics Dashboard</p>
@@ -129,20 +129,20 @@ export default function Sidebar() {
             "mx-4 mt-4",
             isCollapsed
               ? "p-1"
-              : "p-3 rounded-lg bg-amber-500/10 border border-amber-500/20"
+              : "p-3 rounded-lg bg-blue-500/10 border border-blue-500/20"
           )}
         >
           {!isCollapsed ? (
             <>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-xs text-amber-600">
+                <div className="flex items-center gap-2 text-xs text-blue-600">
                   <Building2 className="w-4 h-4" />
                   <span className="font-medium">Viewing as:</span>
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-6 w-6 p-0 text-amber-600 hover:text-amber-700 hover:bg-amber-500/20"
+                  className="h-6 w-6 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-500/20"
                   onClick={handleStopSimulation}
                 >
                   <X className="w-4 h-4" />
@@ -154,7 +154,7 @@ export default function Sidebar() {
               <Button
                 variant="outline"
                 size="sm"
-                className="w-full mt-2 text-xs h-7 border-amber-500/30 text-amber-600 hover:bg-amber-500/20"
+                className="w-full mt-2 text-xs h-7 border-blue-500/30 text-blue-600 hover:bg-blue-500/20"
                 onClick={handleStopSimulation}
               >
                 Stop Viewing as Client
@@ -166,7 +166,7 @@ export default function Sidebar() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="w-full h-8 text-amber-600 bg-amber-500/10"
+                  className="w-full h-8 text-blue-600 bg-blue-500/10"
                 >
                   <Building2 className="w-4 h-4" />
                 </Button>
@@ -241,8 +241,8 @@ export default function Sidebar() {
             isCollapsed ? "p-2 justify-center" : "px-3 py-2"
           )}
         >
-          <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0">
-            <span className="text-sm font-semibold text-amber-600">
+          <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
+            <span className="text-sm font-semibold text-blue-600">
               {user?.email?.charAt(0).toUpperCase()}
             </span>
           </div>

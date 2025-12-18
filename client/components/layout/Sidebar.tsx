@@ -193,15 +193,17 @@ export default function Sidebar() {
           <NavItem
             href="/dashboard"
             icon={LayoutDashboard}
-            label="Dashboard"
+            label={simulatedClient ? "Performance" : "Dashboard"}
             isCollapsed={isCollapsed}
           />
-          <NavItem
-            href="/reports"
-            icon={FileText}
-            label="Reports"
-            isCollapsed={isCollapsed}
-          />
+          {simulatedClient && (
+            <NavItem
+              href="/reports"
+              icon={FileText}
+              label="Reports"
+              isCollapsed={isCollapsed}
+            />
+          )}
         </div>
 
         {isAdmin && !simulatedClient && (

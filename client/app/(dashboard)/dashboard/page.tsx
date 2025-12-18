@@ -27,6 +27,7 @@ import DashboardCustomizer, {
   KPIConfig,
   SectionConfig,
 } from "@/components/dashboard/DashboardCustomizer";
+import GenerateReportDialog from "@/components/dashboard/GenerateReportDialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { DataSource, DateRange } from "@/types/dashboard";
 import {
@@ -173,9 +174,14 @@ export default function Dashboard() {
 
             {/* Campaign Performance Table */}
             <div className="mt-6 bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-xl p-6 opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]">
-              <h3 className="text-lg font-semibold text-slate-900 mb-4">
-                Campaign Details
-              </h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-slate-900">
+                  Campaign Details
+                </h3>
+                <span className="text-sm text-slate-600">
+                  Total: {mockCampaignPerformance.length} records
+                </span>
+              </div>
               <DataTable
                 data={mockCampaignPerformance.map((item) => ({
                   id: item.campaignId,
@@ -230,9 +236,14 @@ export default function Dashboard() {
 
             {/* Strategy Performance Table */}
             <div className="mt-6 bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-xl p-6 opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]">
-              <h3 className="text-lg font-semibold text-slate-900 mb-4">
-                Strategy Details
-              </h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-slate-900">
+                  Strategy Details
+                </h3>
+                <span className="text-sm text-slate-600">
+                  Total: {mockStrategyPerformance.length} records
+                </span>
+              </div>
               <DataTable
                 data={mockStrategyPerformance}
                 columns={[
@@ -277,9 +288,14 @@ export default function Dashboard() {
 
             {/* Region Performance Table */}
             <div className="mt-6 bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-xl p-6 opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]">
-              <h3 className="text-lg font-semibold text-slate-900 mb-4">
-                Region Details
-              </h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-slate-900">
+                  Region Details
+                </h3>
+                <span className="text-sm text-slate-600">
+                  Total: {mockRegionPerformance.length} records
+                </span>
+              </div>
               <DataTable
                 data={mockRegionPerformance}
                 columns={[
@@ -324,9 +340,14 @@ export default function Dashboard() {
 
             {/* Creative Performance Table */}
             <div className="mt-6 bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-xl p-6 opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]">
-              <h3 className="text-lg font-semibold text-slate-900 mb-4">
-                Creative Details
-              </h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-slate-900">
+                  Creative Details
+                </h3>
+                <span className="text-sm text-slate-600">
+                  Total: {mockCreativePerformance.length} records
+                </span>
+              </div>
               <DataTable
                 data={mockCreativePerformance}
                 columns={[
@@ -361,10 +382,11 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">{clientName}</h1>
-          <p className="text-slate-600">
-            Performance overview for your paid media campaigns
-          </p>
+          <h1 className="text-2xl font-bold text-blue-600">{clientName}</h1>
+          <div className="flex items-center gap-3 mt-1">
+            <div className="w-px h-6 bg-slate-300"></div>
+            <p className="text-lg text-slate-500">Performance Overview</p>
+          </div>
         </div>
 
         <div className="flex items-center gap-3">
@@ -392,10 +414,12 @@ export default function Dashboard() {
           <Button variant="outline" size="icon" className="cursor-pointer">
             <RefreshCw className="w-4 h-4" />
           </Button>
-          <Button variant="outline" className="gap-2">
-            <Download className="w-4 h-4" />
-            Export
-          </Button>
+          <GenerateReportDialog>
+            <Button variant="outline" className="gap-2">
+              <Download className="w-4 h-4" />
+              Export
+            </Button>
+          </GenerateReportDialog>
         </div>
       </div>
 

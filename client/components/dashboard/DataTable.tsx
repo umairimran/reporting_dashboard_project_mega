@@ -110,11 +110,11 @@ export default function DataTable({
               {columns.map((column) => (
                 <th
                   key={column.key}
-                  className="text-left text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 border-b border-slate-200"
+                  className="text-left text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 border-b border-slate-200"
                 >
                   <button
                     onClick={() => handleSort(column.key)}
-                    className="flex items-center gap-2 hover:text-slate-900 transition-colors"
+                    className="flex items-center gap-2 hover:text-blue-600 transition-colors"
                   >
                     {column.label}
                     {getSortIcon(column.key)}
@@ -123,7 +123,12 @@ export default function DataTable({
               ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody
+            style={{
+              minHeight: `${pageSize * 49}px`,
+              display: "table-row-group",
+            }}
+          >
             {paginatedData.map((row, index) => (
               <tr
                 key={row.id || index}
@@ -144,6 +149,16 @@ export default function DataTable({
                 ))}
               </tr>
             ))}
+            {/* Add empty rows to maintain consistent height */}
+            {Array.from({ length: pageSize - paginatedData.length }).map(
+              (_, i) => (
+                <tr key={`empty-${i}`} style={{ height: "49px" }}>
+                  {columns.map((column) => (
+                    <td key={column.key} className="px-4 py-3"></td>
+                  ))}
+                </tr>
+              )
+            )}
           </tbody>
         </table>
       </div>

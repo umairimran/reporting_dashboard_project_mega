@@ -78,8 +78,15 @@ export default function AdminClients() {
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [formTab, setFormTab] = useState<"basic" | "credentials">("basic");
 
-  const { simulateAsClient } = useAuth();
+  const { simulateAsClient, simulatedClient, isAdmin } = useAuth();
   const router = useRouter();
+
+  // Redirect if viewing as client
+  useEffect(() => {
+    if (simulatedClient && isAdmin) {
+      router.push("/dashboard");
+    }
+  }, [simulatedClient, isAdmin, router]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -617,25 +624,25 @@ export default function AdminClients() {
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent border-b border-slate-200">
-              <TableHead className="text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto">
+              <TableHead className="text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto">
                 Client
               </TableHead>
-              <TableHead className="text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto">
+              <TableHead className="text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto">
                 Status
               </TableHead>
-              <TableHead className="text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto text-center">
+              <TableHead className="text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto text-center">
                 CPM - Surfside
               </TableHead>
-              <TableHead className="text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto text-center">
+              <TableHead className="text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto text-center">
                 CPM - Vibe
               </TableHead>
-              <TableHead className="text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto text-center">
+              <TableHead className="text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto text-center">
                 CPM - Facebook
               </TableHead>
-              <TableHead className="text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto">
+              <TableHead className="text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto">
                 Created
               </TableHead>
-              <TableHead className="text-right text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto">
+              <TableHead className="text-right text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto">
                 Actions
               </TableHead>
             </TableRow>
@@ -671,7 +678,9 @@ export default function AdminClients() {
                     <span
                       className={cn(
                         "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize",
-                        client.status === "active" ? "active" : "disabled"
+                        client.status === "active"
+                          ? "bg-green-500/20 text-green-600"
+                          : "bg-gray-500/20 text-gray-600"
                       )}
                     >
                       {client.status}
@@ -690,36 +699,29 @@ export default function AdminClients() {
                     {new Date(client.createdAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell className="text-right px-4 py-3">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="w-4 h-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48">
-                        <DropdownMenuItem
-                          onClick={() => handleSimulate(client)}
-                          className="gap-2"
-                        >
-                          <Eye className="w-4 h-4" />
-                          View as Client
-                        </DropdownMenuItem>
-                        {/* <DropdownMenuItem className="gap-2">
-                          <Settings className="w-4 h-4" />
-                          Edit CPM Settings
-                        </DropdownMenuItem> */}
-                        <DropdownMenuItem
-                          className="gap-2"
-                          onClick={() => {
-                            setEditingClient(client);
-                            setIsDialogOpen(true);
-                          }}
-                        >
-                          <Edit2 className="w-4 h-4" />
-                          Edit Client
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <div className="flex items-center justify-end gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleSimulate(client)}
+                        className="gap-2"
+                      >
+                        <Eye className="w-4 h-4" />
+                        View
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setEditingClient(client);
+                          setIsDialogOpen(true);
+                        }}
+                        className="gap-2"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                        Edit
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               );

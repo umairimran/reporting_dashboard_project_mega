@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Users, Database } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 
 // Import the content from the clients and ingestion pages
 import AdminClients from "./clients/page";
@@ -12,6 +14,15 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<"clients" | "ingestion">(
     "clients"
   );
+  const { isAdmin, simulatedClient } = useAuth();
+  const router = useRouter();
+
+  // Redirect if viewing as client
+  useEffect(() => {
+    if (simulatedClient && isAdmin) {
+      router.push("/dashboard");
+    }
+  }, [simulatedClient, isAdmin, router]);
 
   return (
     <div className="flex flex-col h-full">

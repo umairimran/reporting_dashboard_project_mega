@@ -165,28 +165,31 @@ export default function DashboardCustomizer({
                       </span>
                     </div>
 
-                    {hoveredKPI === kpi.id && (
-                      <div className="flex items-center gap-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0"
-                          onClick={() => moveKPI(kpi.id, "up")}
-                          disabled={index === 0}
-                        >
-                          <ChevronUp className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0"
-                          onClick={() => moveKPI(kpi.id, "down")}
-                          disabled={index === localKPIs.length - 1}
-                        >
-                          <ChevronDown className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    )}
+                    <div
+                      className={cn(
+                        "flex items-center gap-1 transition-opacity duration-200",
+                        hoveredKPI === kpi.id ? "opacity-100" : "opacity-0"
+                      )}
+                    >
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0"
+                        onClick={() => moveKPI(kpi.id, "up")}
+                        disabled={index === 0}
+                      >
+                        <ChevronUp className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0"
+                        onClick={() => moveKPI(kpi.id, "down")}
+                        disabled={index === localKPIs.length - 1}
+                      >
+                        <ChevronDown className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -215,28 +218,33 @@ export default function DashboardCustomizer({
                       {section.label}
                     </span>
 
-                    {hoveredSection === section.id && (
-                      <div className="flex items-center gap-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0"
-                          onClick={() => moveSection(section.id, "up")}
-                          disabled={index === 0}
-                        >
-                          <ChevronUp className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0"
-                          onClick={() => moveSection(section.id, "down")}
-                          disabled={index === localSections.length - 1}
-                        >
-                          <ChevronDown className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    )}
+                    <div
+                      className={cn(
+                        "flex items-center gap-1 transition-opacity duration-200",
+                        hoveredSection === section.id
+                          ? "opacity-100"
+                          : "opacity-0"
+                      )}
+                    >
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0"
+                        onClick={() => moveSection(section.id, "up")}
+                        disabled={index === 0}
+                      >
+                        <ChevronUp className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0"
+                        onClick={() => moveSection(section.id, "down")}
+                        disabled={index === localSections.length - 1}
+                      >
+                        <ChevronDown className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </div>

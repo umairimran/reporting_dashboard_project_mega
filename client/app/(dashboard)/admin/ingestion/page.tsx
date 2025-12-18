@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Upload,
   RefreshCw,
@@ -14,6 +14,8 @@ import {
   MonitorPlay,
   Trash2,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   Table,
   TableBody,
@@ -43,6 +45,16 @@ export default function AdminIngestion() {
   const [selectedSource, setSelectedSource] = useState<string>("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+
+  const { simulatedClient, isAdmin } = useAuth();
+  const router = useRouter();
+
+  // Redirect if viewing as client
+  useEffect(() => {
+    if (simulatedClient && isAdmin) {
+      router.push("/dashboard");
+    }
+  }, [simulatedClient, isAdmin, router]);
 
   const getClientName = (clientId?: string) => {
     if (!clientId) return "All Clients";
@@ -153,22 +165,22 @@ export default function AdminIngestion() {
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent border-b border-slate-200">
-                <TableHead className="text-left text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto">
+                <TableHead className="text-left text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto">
                   Date
                 </TableHead>
-                <TableHead className="text-left text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto">
+                <TableHead className="text-left text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto">
                   Status
                 </TableHead>
-                <TableHead className="text-left text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto">
+                <TableHead className="text-left text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto">
                   Source
                 </TableHead>
-                <TableHead className="text-left text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto">
+                <TableHead className="text-left text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto">
                   Client
                 </TableHead>
-                <TableHead className="text-left text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto">
+                <TableHead className="text-left text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto">
                   Records
                 </TableHead>
-                <TableHead className="text-left text-xs font-medium text-slate-600 uppercase tracking-wide px-4 py-3 h-auto">
+                <TableHead className="text-left text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto">
                   Message
                 </TableHead>
               </TableRow>
@@ -198,17 +210,7 @@ export default function AdminIngestion() {
                       </div>
                     </TableCell>
                     <TableCell className="px-4 py-3">
-                      <span
-                        className={cn(
-                          "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize",
-                          log.source === "surfside" &&
-                            "bg-green-500/20 text-green-400",
-                          log.source === "facebook" &&
-                            "bg-blue-500/20 text-blue-400",
-                          log.source === "vibe" &&
-                            "bg-purple-500/20 text-purple-400"
-                        )}
-                      >
+                      <span className="text-sm text-slate-900 capitalize">
                         {log.source}
                       </span>
                     </TableCell>

@@ -93,7 +93,7 @@ export default function Dashboard() {
           });
           setKpis(mergedKPIs);
         } catch (e) {
-          console.error("Failed to parse KPIs from localStorage", e);
+          console.error("Failed to parse KPIs from localStorage ", e);
           setKpis(DEFAULT_KPIS);
         }
       }

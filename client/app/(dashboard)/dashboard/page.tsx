@@ -102,7 +102,7 @@ export default function Dashboard() {
         try {
           setSections(JSON.parse(savedSections));
         } catch (e) {
-          console.error("Failed to parse sections from localStorage", e);
+          console.error("Failed to parse sections from localStorage ", e);
         }
       }
     }

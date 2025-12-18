@@ -10,6 +10,8 @@ import {
   Building2,
   Settings,
   DollarSign,
+  Cloud,
+  MonitorPlay,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -58,6 +60,14 @@ const formSchema = z.object({
   surfsideCpm: z.string().optional(),
   vibeCpm: z.string().optional(),
   facebookCpm: z.string().optional(),
+  // S3 Credentials
+  s3BucketName: z.string().optional(),
+  s3Region: z.string().optional(),
+  s3AccessKeyId: z.string().optional(),
+  s3SecretAccessKey: z.string().optional(),
+  // Vibe Credentials
+  vibeApiKey: z.string().optional(),
+  vibeAdvertiserId: z.string().optional(),
 });
 
 export default function AdminClients() {
@@ -66,6 +76,7 @@ export default function AdminClients() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
+  const [formTab, setFormTab] = useState<"basic" | "credentials">("basic");
 
   const { simulateAsClient } = useAuth();
   const router = useRouter();
@@ -77,6 +88,12 @@ export default function AdminClients() {
       surfsideCpm: "",
       vibeCpm: "",
       facebookCpm: "",
+      s3BucketName: "",
+      s3Region: "us-east-1",
+      s3AccessKeyId: "",
+      s3SecretAccessKey: "",
+      vibeApiKey: "",
+      vibeAdvertiserId: "",
     },
   });
 
@@ -91,11 +108,18 @@ export default function AdminClients() {
         const facebook =
           settings.find((s) => s.source === "facebook")?.cpm?.toString() || "";
 
+        // TODO: Load S3 and Vibe credentials from storage
         form.reset({
           name: editingClient.name,
           surfsideCpm: surfside,
           vibeCpm: vibe,
           facebookCpm: facebook,
+          s3BucketName: "",
+          s3Region: "us-east-1",
+          s3AccessKeyId: "",
+          s3SecretAccessKey: "",
+          vibeApiKey: "",
+          vibeAdvertiserId: "",
         });
       } else {
         form.reset({
@@ -103,8 +127,15 @@ export default function AdminClients() {
           surfsideCpm: "",
           vibeCpm: "",
           facebookCpm: "",
+          s3BucketName: "",
+          s3Region: "us-east-1",
+          s3AccessKeyId: "",
+          s3SecretAccessKey: "",
+          vibeApiKey: "",
+          vibeAdvertiserId: "",
         });
       }
+      setFormTab("basic");
     }
   }, [
     isDialogOpen,
@@ -248,101 +279,309 @@ export default function AdminClients() {
               Add Client
             </Button>
           </DialogTrigger>
-          <DialogContent className="bg-white">
+          <DialogContent className="bg-white max-w-2xl">
             <DialogHeader>
               <DialogTitle>
                 {editingClient ? "Edit Client" : "Add New Client"}
               </DialogTitle>
             </DialogHeader>
+
+            {/* Tabs */}
+            <div className="flex items-center gap-2 p-1 bg-slate-100 rounded-xl mb-4 w-fit">
+              <button
+                type="button"
+                onClick={() => setFormTab("basic")}
+                className={cn(
+                  "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                  formTab === "basic"
+                    ? "bg-blue-500 text-white shadow-lg"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-200"
+                )}
+              >
+                Basic Info
+              </button>
+              <button
+                type="button"
+                onClick={() => setFormTab("credentials")}
+                className={cn(
+                  "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                  formTab === "credentials"
+                    ? "bg-blue-500 text-white shadow-lg"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-200"
+                )}
+              >
+                Credentials
+              </button>
+            </div>
+
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="space-y-4"
               >
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Client Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Acme Corp" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {/* Basic Info Tab */}
+                {formTab === "basic" && (
+                  <div className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            Client Name <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Acme Corp"
+                              className="bg-white"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="surfsideCpm"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Surfside CPM</FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <DollarSign className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-500" />
-                            <Input
-                              type="number"
-                              step="0.01"
-                              placeholder="0.00"
-                              className="pl-9"
-                              {...field}
-                            />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="vibeCpm"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Vibe CPM</FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <DollarSign className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-500" />
-                            <Input
-                              type="number"
-                              step="0.01"
-                              placeholder="0.00"
-                              className="pl-9"
-                              {...field}
-                            />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="facebookCpm"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Facebook CPM</FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <DollarSign className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-500" />
-                            <Input
-                              type="number"
-                              step="0.01"
-                              placeholder="0.00"
-                              className="pl-9"
-                              {...field}
-                            />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                    <div className="border-t border-slate-200 pt-4 mt-4">
+                      <h3 className="text-sm font-semibold text-slate-900 mb-4">
+                        CPM Settings (Optional)
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="surfsideCpm"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Surfside CPM</FormLabel>
+                              <FormControl>
+                                <div className="relative">
+                                  <DollarSign className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-500" />
+                                  <Input
+                                    type="number"
+                                    step="0.01"
+                                    placeholder="0.00"
+                                    className="pl-9 bg-white"
+                                    {...field}
+                                  />
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="vibeCpm"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Vibe CPM</FormLabel>
+                              <FormControl>
+                                <div className="relative">
+                                  <DollarSign className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-500" />
+                                  <Input
+                                    type="number"
+                                    step="0.01"
+                                    placeholder="0.00"
+                                    className="pl-9 bg-white"
+                                    {...field}
+                                  />
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="facebookCpm"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Facebook CPM</FormLabel>
+                              <FormControl>
+                                <div className="relative">
+                                  <DollarSign className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-500" />
+                                  <Input
+                                    type="number"
+                                    step="0.01"
+                                    placeholder="0.00"
+                                    className="pl-9 bg-white"
+                                    {...field}
+                                  />
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
 
-                <div className="flex justify-end gap-2 mt-4">
+                {/* Credentials Tab */}
+                {formTab === "credentials" && (
+                  <div className="space-y-6">
+                    {/* S3 Credentials Section */}
+                    <div>
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                          <Cloud className="w-5 h-5 text-blue-600" />
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-semibold text-slate-900">
+                            S3 Configuration (Optional)
+                          </h3>
+                          <p className="text-xs text-slate-600">
+                            For Surfside data sync
+                          </p>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="s3BucketName"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Bucket Name</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="my-analytics-bucket"
+                                  className="bg-white"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="s3Region"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Region</FormLabel>
+                              <FormControl>
+                                <select
+                                  {...field}
+                                  className="w-full h-10 px-4 rounded-lg border border-slate-200 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                                >
+                                  <option value="us-east-1">
+                                    US East (N. Virginia)
+                                  </option>
+                                  <option value="us-west-2">
+                                    US West (Oregon)
+                                  </option>
+                                  <option value="eu-west-1">
+                                    EU (Ireland)
+                                  </option>
+                                  <option value="ap-south-1">
+                                    Asia Pacific (Mumbai)
+                                  </option>
+                                  <option value="ap-southeast-1">
+                                    Asia Pacific (Singapore)
+                                  </option>
+                                </select>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="s3AccessKeyId"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Access Key ID</FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="password"
+                                  placeholder="Enter Access Key ID"
+                                  className="bg-white"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="s3SecretAccessKey"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Secret Access Key</FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="password"
+                                  placeholder="Enter Secret Access Key"
+                                  className="bg-white"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Vibe Credentials Section */}
+                    <div className="border-t border-slate-200 pt-6">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                          <MonitorPlay className="w-5 h-5 text-purple-600" />
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-semibold text-slate-900">
+                            Vibe Configuration (Optional)
+                          </h3>
+                          <p className="text-xs text-slate-600">
+                            For Vibe campaign sync
+                          </p>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="vibeApiKey"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>API Key</FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="password"
+                                  placeholder="Enter Vibe API Key"
+                                  className="bg-white"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="vibeAdvertiserId"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Advertiser ID</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Enter Advertiser ID"
+                                  className="bg-white"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex justify-end gap-2 mt-6 pt-4 border-t border-slate-200">
                   <Button
                     type="button"
                     variant="ghost"

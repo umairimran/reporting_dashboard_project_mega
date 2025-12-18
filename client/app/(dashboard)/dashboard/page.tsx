@@ -357,7 +357,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="p-8">
+    <div className="p-8 px-48">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
         <div>

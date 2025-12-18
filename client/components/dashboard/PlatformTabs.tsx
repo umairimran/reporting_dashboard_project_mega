@@ -2,12 +2,11 @@ import { cn } from "@/lib/utils";
 import { DataSource } from "@/types/dashboard";
 
 interface PlatformTabsProps {
-  activeSource: DataSource | "all";
-  onChange: (source: DataSource | "all") => void;
+  activeSource: DataSource;
+  onChange: (source: DataSource) => void;
 }
 
-const platforms: { id: DataSource | "all"; label: string; color: string }[] = [
-  { id: "all", label: "All Platforms", color: "#3b82f6" },
+const platforms: { id: DataSource; label: string; color: string }[] = [
   { id: "surfside", label: "Surfside", color: "#3b82f6" },
   { id: "facebook", label: "Facebook", color: "#3b82f6" },
   { id: "vibe", label: "Vibe", color: "#3b82f6" },

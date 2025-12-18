@@ -79,7 +79,7 @@ export default function DateRangePicker({
                 className={cn(
                   "w-full text-left px-3 py-2 rounded-md text-sm transition-colors",
                   activePreset === preset.id
-                    ? "bg-amber-500 text-white"
+                    ? "bg-blue-500 text-white"
                     : "hover:bg-slate-100 text-slate-900"
                 )}
               >

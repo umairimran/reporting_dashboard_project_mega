@@ -1,5 +1,5 @@
 // User types
-export type UserRole = 'admin' | 'client';
+export type UserRole = "admin" | "client";
 
 export interface User {
   id: string;
@@ -11,7 +11,7 @@ export interface User {
 }
 
 // Client types
-export type ClientStatus = 'active' | 'disabled';
+export type ClientStatus = "active" | "disabled";
 
 export interface Client {
   id: string;
@@ -32,7 +32,7 @@ export interface ClientSettings {
 }
 
 // Data source types
-export type DataSource = 'surfside' | 'vibe' | 'facebook';
+export type DataSource = "surfside" | "vibe" | "facebook";
 
 // Campaign hierarchy types
 export interface Campaign {
@@ -99,7 +99,7 @@ export interface MetricTrend {
   value: number;
   previousValue: number;
   percentChange: number;
-  direction: 'up' | 'down' | 'flat';
+  direction: "up" | "down" | "flat";
 }
 
 export interface KPIData {
@@ -109,6 +109,8 @@ export interface KPIData {
   cpa: MetricTrend;
   impressions: MetricTrend;
   clicks: MetricTrend;
+  ctr: MetricTrend;
+  conversions: MetricTrend;
 }
 
 // Summary types
@@ -130,14 +132,15 @@ export interface WeeklySummary {
   topCreatives?: any[];
 }
 
-export interface MonthlySummary extends Omit<WeeklySummary, 'weekStart' | 'weekEnd'> {
+export interface MonthlySummary
+  extends Omit<WeeklySummary, "weekStart" | "weekEnd"> {
   monthStart: string;
   monthEnd: string;
 }
 
 // Ingestion types
-export type IngestionStatus = 'success' | 'failed' | 'partial' | 'processing';
-export type ResolutionStatus = 'unresolved' | 'resolved' | 'ignored';
+export type IngestionStatus = "success" | "failed" | "partial" | "processing";
+export type ResolutionStatus = "unresolved" | "resolved" | "ignored";
 
 export interface IngestionLog {
   id: string;
@@ -161,7 +164,7 @@ export interface DateRange {
   to: Date;
 }
 
-export type DatePreset = 'last7' | 'last30' | 'last90' | 'custom';
+export type DatePreset = "last7" | "last30" | "last90" | "custom";
 
 // Chart data types
 export interface ChartDataPoint {
@@ -189,9 +192,9 @@ export interface CampaignPerformance {
 export interface Report {
   id: string;
   clientId: string;
-  type: 'weekly' | 'monthly';
+  type: "weekly" | "monthly";
   periodStart: string;
   periodEnd: string;
   generatedAt: string;
-  status: 'ready' | 'generating' | 'failed';
+  status: "ready" | "generating" | "failed";
 }

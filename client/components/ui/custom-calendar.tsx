@@ -171,7 +171,7 @@ export function CustomCalendar({
                 key={index}
                 className={cn(
                   "h-9 flex items-center justify-center",
-                  inRange && !rangeStart && !rangeEnd && "bg-amber-50"
+                  inRange && !rangeStart && !rangeEnd && "bg-blue-50"
                 )}
               >
                 {day ? (
@@ -181,7 +181,7 @@ export function CustomCalendar({
                       "h-9 w-9 rounded-md text-sm font-normal transition-colors",
                       "hover:bg-slate-100",
                       isSelected || rangeStart || rangeEnd
-                        ? "bg-amber-600 text-white hover:bg-amber-600"
+                        ? "bg-blue-600 text-white hover:bg-blue-600"
                         : isToday(day)
                         ? "bg-slate-100 font-semibold"
                         : "text-slate-900"

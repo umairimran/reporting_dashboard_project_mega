@@ -220,6 +220,18 @@ export const mockKPIData: KPIData = {
     percentChange: 16.99,
     direction: "up",
   },
+  ctr: {
+    value: 3.02,
+    previousValue: 3.0,
+    percentChange: 0.67,
+    direction: "up",
+  },
+  conversions: {
+    value: 1948,
+    previousValue: 1674,
+    percentChange: 16.37,
+    direction: "up",
+  },
 };
 
 // Mock Campaign Performance

@@ -193,10 +193,14 @@ export default function Sidebar() {
           <NavItem
             href="/dashboard"
             icon={LayoutDashboard}
-            label={simulatedClient ? "Performance" : "Dashboard"}
+            label={
+              simulatedClient || user?.role === "client"
+                ? "Performance"
+                : "Dashboard"
+            }
             isCollapsed={isCollapsed}
           />
-          {simulatedClient && (
+          {(simulatedClient || user?.role === "client") && (
             <NavItem
               href="/reports"
               icon={FileText}

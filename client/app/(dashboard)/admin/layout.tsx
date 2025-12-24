@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 export default function AdminLayout({
   children,
@@ -10,16 +11,25 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const { isAdmin, isLoading } = useAuth();
+  const { isAdmin, isLoading, isAuthenticated } = useAuth();
 
   useEffect(() => {
     if (isLoading) return;
 
+    // Redirect if not authenticated
+    if (!isAuthenticated) {
+      router.push("/login");
+      return;
+    }
+
     // Redirect if not admin
     if (!isAdmin) {
+      toast.error("Access Denied", {
+        description: "You don't have permission to access this page.",
+      });
       router.push("/dashboard");
     }
-  }, [isAdmin, isLoading, router]);
+  }, [isAdmin, isLoading, isAuthenticated, router]);
 
   // Show loading state while checking auth
   if (isLoading) {

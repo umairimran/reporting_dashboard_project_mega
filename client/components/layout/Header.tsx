@@ -29,8 +29,9 @@ export default function Header() {
   const isReports = pathname === "/reports";
   const isAdminPage = pathname.startsWith("/admin");
 
-  // When viewing as client, show Performance and Reports only
-  const showClientNav = simulatedClient && isAdmin;
+  // Show client navigation when: 1) Admin simulating as client OR 2) Actual client user
+  const showClientNav =
+    (simulatedClient && isAdmin) || (!isAdmin && user?.role === "client");
 
   return (
     <header className="h-16 bg-white border-b border-slate-200 flex items-center px-8 relative">
@@ -104,7 +105,7 @@ export default function Header() {
       {/* Right Side - Viewing Banner and User Section */}
       <div className="ml-auto flex items-center gap-4">
         {/* Viewing as Client Banner */}
-        {showClientNav && (
+        {simulatedClient && isAdmin && (
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-500/10 border border-blue-500/20">
               <Building2 className="w-4 h-4 text-blue-600" />

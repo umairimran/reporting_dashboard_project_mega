@@ -74,3 +74,10 @@ class ClientListResponse(BaseModel):
     """Client list response schema."""
     total: int
     clients: List[ClientResponse]
+
+
+class ClientCpmsResponse(BaseModel):
+    """Response schema for latest CPMs."""
+    surfside: Optional[ClientSettingsResponse] = None
+    facebook: Optional[ClientSettingsResponse] = None
+

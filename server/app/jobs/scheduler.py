@@ -62,6 +62,21 @@ def setup_all_jobs(scheduler: AsyncIOScheduler):
     )
     logger.info(f"✓ Monthly aggregation scheduled for 1st of month at {settings.MONTHLY_AGGREGATION_HOUR:02d}:00 Eastern")
     
+    logger.info(f"✓ Monthly aggregation scheduled for 1st of month at {settings.MONTHLY_AGGREGATION_HOUR:02d}:00 Eastern")
+    
+    # === UPLOAD MONITOR ===
+    # Monitors for pending uploads and triggers ETL
+    from app.jobs.ingestion_monitor import check_pending_uploads
+    scheduler.add_job(
+        check_pending_uploads,
+        trigger='interval',
+        seconds=10,
+        id='upload_monitor',
+        replace_existing=True,
+        max_instances=1
+    )
+    logger.info("✓ Upload monitor scheduled (every 10s)")
+
     logger.info("=" * 60)
     logger.info("ALL SCHEDULED JOBS CONFIGURED")
     logger.info("=" * 60)

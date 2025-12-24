@@ -6,26 +6,19 @@ import {
   Plus,
   Edit2,
   Eye,
-  MoreHorizontal,
   Building2,
-  Settings,
   DollarSign,
   Cloud,
-  MonitorPlay,
+  Loader2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
@@ -42,9 +35,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useAuth } from "@/contexts/AuthContext";
-import { mockClients, mockClientSettings } from "@/lib/mock-data";
-import { ClientSettings, Client } from "@/types/dashboard";
+import { clientsService } from "@/lib/services/clients";
+import { Client, ClientSettings } from "@/types/dashboard";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 import {
   Table,
@@ -58,28 +52,41 @@ import {
 const formSchema = z.object({
   name: z.string().min(2, "Client name must be at least 2 characters"),
   surfsideCpm: z.string().optional(),
-  vibeCpm: z.string().optional(),
   facebookCpm: z.string().optional(),
   // S3 Credentials
   s3BucketName: z.string().optional(),
   s3Region: z.string().optional(),
   s3AccessKeyId: z.string().optional(),
   s3SecretAccessKey: z.string().optional(),
-  // Vibe Credentials
-  vibeApiKey: z.string().optional(),
-  vibeAdvertiserId: z.string().optional(),
 });
 
+// Component to fetch and display CPM for a client/source
+const CpmCell = ({ clientId, source }: { clientId: string, source: "surfside" | "facebook" }) => {
+  const { data: settings } = useQuery({
+    queryKey: ["client-settings", clientId],
+    queryFn: () => clientsService.getCpmSettings(clientId),
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+
+  // Find latest setting for source
+  const cpm = settings?.find((s) => s.source === source)?.cpm;
+
+  return (
+    <span className="font-mono text-sm">
+      {cpm ? `$${Number(cpm).toFixed(2)}` : "—"}
+    </span>
+  );
+};
+
 export default function AdminClients() {
-  const [clients, setClients] = useState(mockClients);
-  const [clientSettings, setClientSettings] = useState(mockClientSettings);
   const [searchQuery, setSearchQuery] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [formTab, setFormTab] = useState<"basic" | "credentials">("basic");
 
-  const { simulateAsClient, simulatedClient, isAdmin } = useAuth();
+  const { simulateAsClient, simulatedClient, isAdmin, user } = useAuth();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   // Redirect if viewing as client
   useEffect(() => {
@@ -88,178 +95,153 @@ export default function AdminClients() {
     }
   }, [simulatedClient, isAdmin, router]);
 
+  const { data: clientsData, isLoading } = useQuery({
+    queryKey: ["admin", "clients"],
+    queryFn: () => clientsService.getClients(0, 100),
+  });
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       surfsideCpm: "",
-      vibeCpm: "",
       facebookCpm: "",
       s3BucketName: "",
       s3Region: "us-east-1",
       s3AccessKeyId: "",
       s3SecretAccessKey: "",
-      vibeApiKey: "",
-      vibeAdvertiserId: "",
     },
   });
 
+  // Fetch settings when editing to pre-fill form
+  // We use a query enabled only when editingClient is set
+  const { data: editingSettings } = useQuery({
+    queryKey: ["client-settings", editingClient?.id],
+    queryFn: () => clientsService.getCpmSettings(editingClient!.id),
+    enabled: !!editingClient,
+  });
+
+  // Reset form when opening dialog or switching clients
   useEffect(() => {
     if (isDialogOpen) {
       if (editingClient) {
-        const settings = getClientSettings(editingClient.id);
-        const surfside =
-          settings.find((s) => s.source === "surfside")?.cpm?.toString() || "";
-        const vibe =
-          settings.find((s) => s.source === "vibe")?.cpm?.toString() || "";
-        const facebook =
-          settings.find((s) => s.source === "facebook")?.cpm?.toString() || "";
+        // Pre-fill form from editingClient + fetched settings
+        const surfside = editingSettings?.find(s => s.source === "surfside")?.cpm;
+        const facebook = editingSettings?.find(s => s.source === "facebook")?.cpm;
 
-        // TODO: Load S3 and Vibe credentials from storage
         form.reset({
           name: editingClient.name,
-          surfsideCpm: surfside,
-          vibeCpm: vibe,
-          facebookCpm: facebook,
-          s3BucketName: "",
+          surfsideCpm: surfside ? String(surfside) : "",
+          facebookCpm: facebook ? String(facebook) : "",
+          s3BucketName: "", // Todo: Fetch these
           s3Region: "us-east-1",
           s3AccessKeyId: "",
           s3SecretAccessKey: "",
-          vibeApiKey: "",
-          vibeAdvertiserId: "",
         });
       } else {
         form.reset({
           name: "",
           surfsideCpm: "",
-          vibeCpm: "",
           facebookCpm: "",
           s3BucketName: "",
           s3Region: "us-east-1",
           s3AccessKeyId: "",
           s3SecretAccessKey: "",
-          vibeApiKey: "",
-          vibeAdvertiserId: "",
         });
       }
-      setFormTab("basic");
     }
-  }, [
-    isDialogOpen,
-    editingClient /* clientSettings is stable enough or we ignore it to avoid loop */,
-  ]);
+  }, [isDialogOpen, editingClient, editingSettings, form]);
 
-  const filteredClients = clients.filter((client) =>
+  // Mutations
+  const createClientMutation = useMutation({
+    mutationFn: clientsService.createClient,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "clients"] });
+      toast.success("Client created successfully");
+      setIsDialogOpen(false);
+      form.reset();
+    },
+    onError: (error) => {
+      toast.error("Failed to create client");
+      console.error(error);
+    }
+  });
+
+  const updateClientMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) => clientsService.updateClient(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "clients"] });
+      toast.success("Client updated successfully");
+      setIsDialogOpen(false);
+      setEditingClient(null);
+      form.reset();
+    },
+    onError: (error) => {
+      toast.error("Failed to update client");
+      console.error(error);
+    }
+  });
+
+  const saveCpmMutation = useMutation({
+    mutationFn: ({ clientId, source, cpm }: { clientId: string, source: "surfside" | "facebook", cpm: number }) =>
+      clientsService.updateCpmSetting(clientId, { source, cpm }),
+    onSuccess: (_, variables) => {
+      // Invalidate specific client settings to refresh the table cell
+      queryClient.invalidateQueries({ queryKey: ["client-settings", variables.clientId] });
+    }
+  });
+
+  // Helper to sync multiple CPMs
+  const syncCpms = async (clientId: string, values: z.infer<typeof formSchema>) => {
+    const promises = [];
+    if (values.surfsideCpm) {
+      promises.push(saveCpmMutation.mutateAsync({
+        clientId, source: "surfside", cpm: parseFloat(values.surfsideCpm)
+      }));
+    }
+    if (values.facebookCpm) {
+      promises.push(saveCpmMutation.mutateAsync({
+        clientId, source: "facebook", cpm: parseFloat(values.facebookCpm)
+      }));
+    }
+    await Promise.all(promises);
+  };
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      if (editingClient) {
+        // Update
+        await updateClientMutation.mutateAsync({ id: editingClient.id, data: { name: values.name } });
+        await syncCpms(editingClient.id, values);
+      } else {
+        // Create
+        // Use current admin user ID to satisfy FK constraint
+        if (!user?.id) {
+            toast.error("User context missing. Cannot create client.");
+            // Generate a random UUID v4 placeholder as fallback if user.id is missing (should not happen for logged in admin)
+            // But better to fail than create invalid data? 
+            // The user requested: "if it is not available, update the backend function to use the client user."
+            // But backend requires a valid UUID that exists in users table. So we must use a valid ID.
+            return;
+        }
+
+        const newClient = await createClientMutation.mutateAsync({ name: values.name, user_id: user.id });
+        if (newClient) {
+          await syncCpms(newClient.id, values);
+        }
+      }
+    } catch (error) {
+      console.error("Error submitting form", error);
+    }
+  };
+
+  const filteredClients = clientsData?.clients.filter((client) =>
     client.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ) || [];
 
-  const handleSimulate = (client: (typeof mockClients)[0]) => {
+  const handleSimulate = (client: Client) => {
     simulateAsClient(client);
     router.push("/dashboard");
-  };
-
-  const getClientSettings = (clientId: string) => {
-    return clientSettings.filter((s) => s.clientId === clientId);
-  };
-
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    if (editingClient) {
-      // Update existing client
-      setClients((prev) =>
-        prev.map((c) =>
-          c.id === editingClient.id ? { ...c, name: values.name } : c
-        )
-      );
-
-      // Update settings
-      setClientSettings((prev) => {
-        // Remove old settings for this client
-        const filtered = prev.filter((s) => s.clientId !== editingClient.id);
-        const newSettings: ClientSettings[] = [];
-
-        if (values.surfsideCpm) {
-          newSettings.push({
-            id: Math.random().toString(36).substr(2, 9),
-            clientId: editingClient.id,
-            source: "surfside" as const,
-            cpm: parseFloat(values.surfsideCpm),
-            currency: "USD",
-          });
-        }
-        if (values.vibeCpm) {
-          newSettings.push({
-            id: Math.random().toString(36).substr(2, 9),
-            clientId: editingClient.id,
-            source: "vibe" as const,
-            cpm: parseFloat(values.vibeCpm),
-            currency: "USD",
-          });
-        }
-        if (values.facebookCpm) {
-          newSettings.push({
-            id: Math.random().toString(36).substr(2, 9),
-            clientId: editingClient.id,
-            source: "facebook" as const,
-            cpm: parseFloat(values.facebookCpm),
-            currency: "USD",
-          });
-        }
-        return [...filtered, ...newSettings];
-      });
-    } else {
-      // Create new client
-      const newClientId = Math.random().toString(36).substr(2, 9);
-
-      // Add new client
-      const newClient = {
-        id: newClientId,
-        name: values.name,
-        status: "active" as const,
-        userId: "new-user", // In a real app this would be linked to a user
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-
-      setClients((prev) => [newClient, ...prev]);
-
-      // Add settings if CPMs are provided
-      const newSettings: ClientSettings[] = [];
-      if (values.surfsideCpm) {
-        newSettings.push({
-          id: Math.random().toString(36).substr(2, 9),
-          clientId: newClientId,
-          source: "surfside" as const,
-          cpm: parseFloat(values.surfsideCpm),
-          currency: "USD",
-        });
-      }
-      if (values.vibeCpm) {
-        newSettings.push({
-          id: Math.random().toString(36).substr(2, 9),
-          clientId: newClientId,
-          source: "vibe" as const,
-          cpm: parseFloat(values.vibeCpm),
-          currency: "USD",
-        });
-      }
-      if (values.facebookCpm) {
-        newSettings.push({
-          id: Math.random().toString(36).substr(2, 9),
-          clientId: newClientId,
-          source: "facebook" as const,
-          cpm: parseFloat(values.facebookCpm),
-          currency: "USD",
-        });
-      }
-
-      if (newSettings.length > 0) {
-        setClientSettings((prev) => [...prev, ...newSettings]);
-      }
-    }
-
-    setIsDialogOpen(false);
-    form.reset();
-    setEditingClient(null);
   };
 
   return (
@@ -271,7 +253,7 @@ export default function AdminClients() {
             Client Management
           </h1>
           <p className="text-slate-600">
-            Manage client accounts and CPM configurations
+            Manage client accounts and configurations
           </p>
         </div>
 
@@ -279,8 +261,11 @@ export default function AdminClients() {
           <DialogTrigger asChild>
             <Button
               variant="gold"
-              className="gap-2"
-              onClick={() => setEditingClient(null)}
+              className="gap-2 cursor-pointer"
+              onClick={() => {
+                setEditingClient(null);
+                // Form reset is handled by effect
+              }}
             >
               <Plus className="w-4 h-4" />
               Add Client
@@ -351,37 +336,15 @@ export default function AdminClients() {
 
                     <div className="border-t border-slate-200 pt-4 mt-4">
                       <h3 className="text-sm font-semibold text-slate-900 mb-4">
-                        CPM Settings (Optional)
+                        Update CPM Settings (Optional)
                       </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <FormField
                           control={form.control}
                           name="surfsideCpm"
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>Surfside CPM</FormLabel>
-                              <FormControl>
-                                <div className="relative">
-                                  <DollarSign className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-500" />
-                                  <Input
-                                    type="number"
-                                    step="0.01"
-                                    placeholder="0.00"
-                                    className="pl-9 bg-white"
-                                    {...field}
-                                  />
-                                </div>
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="vibeCpm"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Vibe CPM</FormLabel>
                               <FormControl>
                                 <div className="relative">
                                   <DollarSign className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-500" />
@@ -428,7 +391,6 @@ export default function AdminClients() {
                 {/* Credentials Tab */}
                 {formTab === "credentials" && (
                   <div className="space-y-6">
-                    {/* S3 Credentials Section */}
                     <div>
                       <div className="flex items-center gap-3 mb-4">
                         <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
@@ -531,60 +493,6 @@ export default function AdminClients() {
                         />
                       </div>
                     </div>
-
-                    {/* Vibe Credentials Section */}
-                    <div className="border-t border-slate-200 pt-6">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
-                          <MonitorPlay className="w-5 h-5 text-purple-600" />
-                        </div>
-                        <div>
-                          <h3 className="text-sm font-semibold text-slate-900">
-                            Vibe Configuration (Optional)
-                          </h3>
-                          <p className="text-xs text-slate-600">
-                            For Vibe campaign sync
-                          </p>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <FormField
-                          control={form.control}
-                          name="vibeApiKey"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>API Key</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="password"
-                                  placeholder="Enter Vibe API Key"
-                                  className="bg-white"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="vibeAdvertiserId"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Advertiser ID</FormLabel>
-                              <FormControl>
-                                <Input
-                                  placeholder="Enter Advertiser ID"
-                                  className="bg-white"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                    </div>
                   </div>
                 )}
 
@@ -596,7 +504,10 @@ export default function AdminClients() {
                   >
                     Cancel
                   </Button>
-                  <Button type="submit" variant="gold">
+                  <Button type="submit" variant="gold" disabled={createClientMutation.isPending || updateClientMutation.isPending}>
+                    {createClientMutation.isPending || updateClientMutation.isPending ? (
+                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    ) : null}
                     {editingClient ? "Save Changes" : "Add Client"}
                   </Button>
                 </div>
@@ -621,113 +532,108 @@ export default function AdminClients() {
 
       {/* Clients Table */}
       <div className="bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-xl overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow className="hover:bg-transparent border-b border-slate-200">
-              <TableHead className="text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto">
-                Client
-              </TableHead>
-              <TableHead className="text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto">
-                Status
-              </TableHead>
-              <TableHead className="text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto text-center">
-                CPM - Surfside
-              </TableHead>
-              <TableHead className="text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto text-center">
-                CPM - Vibe
-              </TableHead>
-              <TableHead className="text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto text-center">
-                CPM - Facebook
-              </TableHead>
-              <TableHead className="text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto">
-                Created
-              </TableHead>
-              <TableHead className="text-right text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto">
-                Actions
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredClients.map((client, index) => {
-              const settings = getClientSettings(client.id);
-              const surfsideCpm = settings.find(
-                (s) => s.source === "surfside"
-              )?.cpm;
-              const vibeCpm = settings.find((s) => s.source === "vibe")?.cpm;
-              const facebookCpm = settings.find(
-                (s) => s.source === "facebook"
-              )?.cpm;
-
-              return (
-                <TableRow
-                  key={client.id}
-                  className="opacity-0 animate-[fadeIn_0.5s_ease-out_forwards] border-b border-slate-200 hover:bg-slate-100/50 transition-colors"
-                  style={{ animationDelay: `${index * 30}ms` }}
-                >
-                  <TableCell className="px-4 py-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                        <Building2 className="w-5 h-5 text-blue-600" />
-                      </div>
-                      <span className="font-medium text-slate-900">
-                        {client.name}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="px-4 py-3">
-                    <span
-                      className={cn(
-                        "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize",
-                        client.status === "active"
-                          ? "bg-green-500/20 text-green-600"
-                          : "bg-gray-500/20 text-gray-600"
-                      )}
-                    >
-                      {client.status}
-                    </span>
-                  </TableCell>
-                  <TableCell className="font-mono text-sm px-4 py-3 text-center">
-                    {surfsideCpm ? `$${surfsideCpm.toFixed(2)}` : "—"}
-                  </TableCell>
-                  <TableCell className="font-mono text-sm px-4 py-3 text-center">
-                    {vibeCpm ? `$${vibeCpm.toFixed(2)}` : "—"}
-                  </TableCell>
-                  <TableCell className="font-mono text-sm px-4 py-3 text-center">
-                    {facebookCpm ? `$${facebookCpm.toFixed(2)}` : "—"}
-                  </TableCell>
-                  <TableCell className="text-slate-600 text-sm px-4 py-3">
-                    {new Date(client.createdAt).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell className="text-right px-4 py-3">
-                    <div className="flex items-center justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleSimulate(client)}
-                        className="gap-2"
-                      >
-                        <Eye className="w-4 h-4" />
-                        View
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          setEditingClient(client);
-                          setIsDialogOpen(true);
-                        }}
-                        className="gap-2"
-                      >
-                        <Edit2 className="w-4 h-4" />
-                        Edit
-                      </Button>
-                    </div>
+        {isLoading ? (
+          <div className="p-8 text-center text-slate-500">Loading clients...</div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow className="hover:bg-transparent border-b border-slate-200">
+                <TableHead className="text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto">
+                  Client
+                </TableHead>
+                <TableHead className="text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto">
+                  Status
+                </TableHead>
+                <TableHead className="text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto text-center">
+                  CPM - Surfside
+                </TableHead>
+                <TableHead className="text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto text-center">
+                  CPM - Facebook
+                </TableHead>
+                <TableHead className="text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto">
+                  Created
+                </TableHead>
+                <TableHead className="text-right text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto">
+                  Actions
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredClients.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="h-24 text-center">
+                    No clients found.
                   </TableCell>
                 </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+              ) : filteredClients.map((client, index) => {
+                return (
+                  <TableRow
+                    key={client.id}
+                    className="opacity-0 animate-[fadeIn_0.5s_ease-out_forwards] border-b border-slate-200 hover:bg-slate-100/50 transition-colors"
+                    style={{ animationDelay: `${index * 30}ms` }}
+                  >
+                    <TableCell className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                          <Building2 className="w-5 h-5 text-blue-600" />
+                        </div>
+                        <span className="font-medium text-slate-900">
+                          {client.name}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="px-4 py-3">
+                      <span
+                        className={cn(
+                          "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize",
+                          client.status === "active"
+                            ? "bg-green-500/20 text-green-600"
+                            : "bg-gray-500/20 text-gray-600"
+                        )}
+                      >
+                        {client.status}
+                      </span>
+                    </TableCell>
+                    <TableCell className="font-mono text-sm px-4 py-3 text-center">
+                      <CpmCell clientId={client.id} source="surfside" />
+                    </TableCell>
+                    <TableCell className="font-mono text-sm px-4 py-3 text-center">
+                      <CpmCell clientId={client.id} source="facebook" />
+                    </TableCell>
+                    <TableCell className="text-slate-600 text-sm px-4 py-3">
+                      {new Date(client.createdAt).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell className="text-right px-4 py-3">
+                      <div className="flex items-center justify-end gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleSimulate(client)}
+                          className="gap-2 cursor-pointer hover:bg-gray-200"
+                        >
+                          <Eye className="w-4 h-4" />
+                          View
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setEditingClient(client);
+                            setIsDialogOpen(true);
+                          }}
+                          className="gap-2 cursor-pointer hover:bg-gray-200"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                          Edit
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        )}
       </div>
     </div>
   );

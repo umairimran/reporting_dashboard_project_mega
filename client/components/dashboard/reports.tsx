@@ -419,13 +419,17 @@ export default function Reports() {
 
       {/* Empty State */}
       {filteredReports.length === 0 && (
-        <div className="text-center py-12">
-          <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-slate-900 mb-2">
-            No reports found
-          </h3>
-          <p className="text-muted-foreground">
-            Try adjusting your filters or generate a new report.
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="w-16 h-16 mb-4 rounded-full bg-slate-100 flex items-center justify-center">
+            <FileText className="w-8 h-8 text-slate-400" />
+          </div>
+          <p className="text-lg font-medium text-slate-900 mb-2">
+            No Reports Available
+          </p>
+          <p className="text-sm text-slate-600 mb-4">
+            {filterType === "all"
+              ? "There are no reports to display. Generate a new report to get started."
+              : `No ${filterType} reports found. Try adjusting your filters or generate a new report.`}
           </p>
         </div>
       )}

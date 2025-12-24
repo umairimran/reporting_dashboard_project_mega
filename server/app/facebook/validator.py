@@ -71,12 +71,10 @@ class FacebookValidator:
                 detail=f"Invalid file format. Allowed: {', '.join(FacebookValidator.ALLOWED_EXTENSIONS)}"
             )
         
-        # Read file to check size
-        content = await file.read()
-        file_size = len(content)
-        
-        # Reset file pointer
-        await file.seek(0)
+        # Check file size by seeking to end
+        file.file.seek(0, 2)
+        file_size = file.file.tell()
+        file.file.seek(0)
         
         if not FacebookValidator.validate_file_size(file_size):
             max_mb = FacebookValidator.MAX_FILE_SIZE / (1024 * 1024)

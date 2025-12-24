@@ -22,12 +22,16 @@ export const apiClient = async <T>(endpoint: string, options: FetchOptions = {})
     url += `?${searchParams.toString()}`;
   }
 
+  const headers = new Headers(init.headers);
+
+  // Only set JSON content type if body is NOT FormData
+  if (!(init.body instanceof FormData) && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
+
   const response = await fetch(url, {
     ...init,
-    headers: {
-      "Content-Type": "application/json",
-      ...init.headers,
-    },
+    headers,
     credentials: "include", // Important for HttpOnly cookies
   });
 
@@ -41,7 +45,16 @@ export const apiClient = async <T>(endpoint: string, options: FetchOptions = {})
     }
 
     const errorData = await response.json().catch(() => ({}));
-    const message = errorData.detail || errorData.message || "An unexpected error occurred";
+    let message = errorData.detail || errorData.message || "An unexpected error occurred";
+
+    // Handle FastAPI validation error array
+    if (Array.isArray(message)) {
+      message = message
+        .map((err: any) => `${err.loc?.join(".")}: ${err.msg}`)
+        .join(", ");
+    } else if (typeof message === "object") {
+      message = JSON.stringify(message);
+    }
 
     // Toast error only if not silent
     if (!silent) {

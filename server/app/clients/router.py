@@ -12,7 +12,7 @@ from app.clients.models import Client
 from app.clients.schemas import (
     ClientCreate, ClientUpdate, ClientResponse, ClientListResponse,
     ClientSettingsCreate, ClientSettingsUpdate, ClientSettingsResponse,
-    ClientWithSettings
+    ClientWithSettings, ClientCpmsResponse
 )
 from app.clients.service import ClientService
 
@@ -287,3 +287,24 @@ async def update_cpm_settings(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e)
         )
+
+
+@router.get("/{client_id}/cpm/latest", response_model=ClientCpmsResponse)
+async def get_latest_cpms(
+    client_id: uuid.UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Get latest CPM settings for both Surfside and Facebook.
+    
+    Args:
+        client_id: Client UUID
+        db: Database session
+        current_user: Current authenticated user
+        
+    Returns:
+        Object containing latest settings for each source
+    """
+    return ClientService.get_latest_cpms(db, client_id)
+

@@ -82,11 +82,47 @@ export default function MetricBarChart({ data, title }: MetricBarChartProps) {
     return formatNumber(value);
   };
 
+  // Show empty state if no data
+  if (!data || data.length === 0) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
+        </div>
+        <div className="flex flex-col items-center justify-center py-12 text-center h-[400px] border border-slate-200 rounded-lg">
+          <div className="w-16 h-16 mb-4 rounded-full bg-slate-100 flex items-center justify-center">
+            <svg
+              className="w-8 h-8 text-slate-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+              />
+            </svg>
+          </div>
+          <p className="text-lg font-medium text-slate-900 mb-2">
+            No Data Available
+          </p>
+          <p className="text-sm text-slate-600">
+            There is no data to display for this metric at this time.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
+      \n{" "}
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
         <div className="flex items-center gap-2 p-1 bg-slate-100 rounded-lg">
+          \n{" "}
           {metrics.map((metric) => (
             <button
               key={metric.key}
@@ -103,7 +139,6 @@ export default function MetricBarChart({ data, title }: MetricBarChartProps) {
           ))}
         </div>
       </div>
-
       <div className="h-[400px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart

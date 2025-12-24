@@ -27,7 +27,8 @@ class ETLOrchestrator:
         source: str,
         run_date: date,
         file_name: Optional[str] = None,
-        admin_emails: Optional[List[str]] = None
+        admin_emails: Optional[List[str]] = None,
+        ingestion_log_id: Optional[uuid.UUID] = None
     ) -> IngestionLog:
         """
         Run complete ETL pipeline for a data source.
@@ -40,6 +41,7 @@ class ETLOrchestrator:
             run_date: Date of the data
             file_name: Optional source file name
             admin_emails: Optional list of admin emails for alerts
+            ingestion_log_id: Optional ID of existing processing log
             
         Returns:
             IngestionLog record
@@ -47,17 +49,26 @@ class ETLOrchestrator:
         started_at = datetime.utcnow()
         ingestion_run_id = StagingService.create_ingestion_run_id()
         
-        # Create ingestion log
-        ingestion_log = IngestionLog(
-            run_date=run_date,
-            status='processing',
-            started_at=started_at,
-            file_name=file_name,
-            source=source,
-            client_id=client_id
-        )
-        self.db.add(ingestion_log)
-        self.db.commit()
+        # Get or create ingestion log
+        if ingestion_log_id:
+            ingestion_log = self.db.query(IngestionLog).filter(IngestionLog.id == ingestion_log_id).first()
+            if not ingestion_log:
+                logger.warning(f"Ingestion log {ingestion_log_id} not found, creating new one")
+                ingestion_log = None
+        else:
+            ingestion_log = None
+            
+        if not ingestion_log:
+            ingestion_log = IngestionLog(
+                run_date=run_date,
+                status='processing',
+                started_at=started_at,
+                file_name=file_name,
+                source=source,
+                client_id=client_id
+            )
+            self.db.add(ingestion_log)
+            self.db.commit()
         
         try:
             logger.info(f"Starting ETL for {source} - {client_name} - {run_date}")

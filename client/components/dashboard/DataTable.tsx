@@ -101,6 +101,35 @@ export default function DataTable({
     return <ChevronDown className="w-4 h-4 text-blue-600" />;
   };
 
+  // Show empty state if no data
+  if (data.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <div className="w-16 h-16 mb-4 rounded-full bg-slate-100 flex items-center justify-center">
+          <svg
+            className="w-8 h-8 text-slate-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+            />
+          </svg>
+        </div>
+        <p className="text-lg font-medium text-slate-900 mb-2">
+          No Data Available
+        </p>
+        <p className="text-sm text-slate-600">
+          There is no data to display at this time.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
       <div className="overflow-x-auto">

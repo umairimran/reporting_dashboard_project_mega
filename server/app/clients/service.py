@@ -313,3 +313,30 @@ class ClientService:
         }
         
         return ClientWithSettings(**client_dict)
+
+    @staticmethod
+    def get_latest_cpms(
+        db: Session,
+        client_id: uuid.UUID
+    ) -> dict:
+        """
+        Get latest CPM settings for a client for all sources.
+        
+        Args:
+            db: Database session
+            client_id: Client UUID
+            
+        Returns:
+            Dictionary with source as key and settings object as value
+        """
+        client = db.query(Client).filter(Client.id == client_id).first()
+        if not client:
+            return {"surfside": None, "facebook": None}
+
+        surfside = ClientService.get_current_cpm(db, client_id, "surfside")
+        facebook = ClientService.get_current_cpm(db, client_id, "facebook")
+
+        return {
+            "surfside": surfside,
+            "facebook": facebook
+        }

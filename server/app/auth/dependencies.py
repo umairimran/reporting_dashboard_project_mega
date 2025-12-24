@@ -1,7 +1,7 @@
 """
 FastAPI dependencies for authentication and authorization.
 """
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from jose import JWTError
@@ -9,20 +9,24 @@ from app.core.database import get_db
 from app.auth.security import decode_access_token
 from app.auth.models import User
 from app.core.exceptions import AuthenticationError, AuthorizationError
+from typing import Optional
 
-# OAuth2 scheme for token extraction
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
+# OAuth2 scheme for token extraction (auto_error=False to allow us to check cookie)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login", auto_error=False)
 
 
 async def get_current_user(
-    token: str = Depends(oauth2_scheme),
+    request: Request,
+    token: Optional[str] = Depends(oauth2_scheme),
     db: Session = Depends(get_db)
 ) -> User:
     """
     Dependency to get current authenticated user from JWT token.
+    Check Authorization header first, then 'access_token' cookie.
     
     Args:
-        token: JWT token from Authorization header
+        request: FastAPI Request object
+        token: JWT token from Authorization header (optional)
         db: Database session
         
     Returns:
@@ -36,6 +40,15 @@ async def get_current_user(
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
+    
+    # Try to get token from cookie if not in header
+    if not token:
+        token = request.cookies.get("access_token")
+        if token and token.startswith("Bearer "):
+            token = token.split(" ")[1]
+    
+    if not token:
+        raise credentials_exception
     
     try:
         payload = decode_access_token(token)

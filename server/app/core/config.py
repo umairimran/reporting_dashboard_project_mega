@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ENCRYPTION_KEY: str  # Fernet key for encrypting sensitive data (API keys, etc.)
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 11520  # 8 days (60 * 24 * 8)
     DEBUG: bool = False
     
     # AWS S3 (Surfside)

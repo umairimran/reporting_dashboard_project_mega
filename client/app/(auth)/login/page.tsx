@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Loader2, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,36 +14,25 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/dashboard");
+    }
+  }, [isAuthenticated, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      const success = await login(email, password);
-
-      if (success) {
-        toast({
-          title: "Welcome back",
-          description: "Successfully logged in to Gold Standard.",
-        });
-        router.push("/dashboard");
-      } else {
-        toast({
-          title: "Authentication failed",
-          description: "Invalid email or password. Please try again.",
-          variant: "destructive",
-        });
-      }
+      await login({ email, password });
+      // Redirect is handled in AuthProvider onSuccess
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "An unexpected error occurred. Please try again.",
-        variant: "destructive",
-      });
+      // Error is handled in AuthProvider/apiClient
     } finally {
       setIsLoading(false);
     }
@@ -167,14 +156,14 @@ export default function Login() {
           </form>
 
           {/* Demo credentials hint */}
-          <div className="mt-8 p-4 rounded-lg bg-white border border-slate-200">
+          {/* <div className="mt-8 p-4 rounded-lg bg-white border border-slate-200">
             <p className="text-xs text-slate-500 mb-2">Demo Credentials:</p>
             <div className="space-y-1 text-xs font-mono">
               <p className="text-slate-900">Admin: admin@goldstandard.io</p>
               <p className="text-slate-900">Client: client@acmecorp.com</p>
               <p className="text-slate-500">Password: any</p>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

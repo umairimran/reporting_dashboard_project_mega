@@ -1,6 +1,7 @@
 "use client";
 
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import Header from "@/components/layout/Header";
 
@@ -10,9 +11,16 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const { isAuthenticated, isLoading } = useAuth();
+  const router = useRouter();
 
-  // Show loading state while checking authentication
-  if (isLoading) {
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.push("/login");
+    }
+  }, [isLoading, isAuthenticated, router]);
+
+  // Show loading state while checking authentication or redirecting
+  if (isLoading || !isAuthenticated) {
     return (
       <div className="flex h-screen items-center justify-center bg-white">
         <div className="text-center">
@@ -21,10 +29,6 @@ export default function DashboardLayout({
         </div>
       </div>
     );
-  }
-
-  if (!isAuthenticated) {
-    redirect("/login");
   }
 
   return (

@@ -82,13 +82,75 @@ app = FastAPI(
 )
 
 # CORS middleware
+origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+# If FRONTEND_URL is set in env, add it
+import os
+if os.getenv("FRONTEND_URL"):
+    origins.append(os.getenv("FRONTEND_URL"))
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Configure appropriately in production
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Zstd Compression Middleware (Custom)
+from starlette.types import ASGIApp, Message, Receive, Scope, Send
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import Response, StreamingResponse
+import zstandard as zstd
+
+class ZstdMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        # Allow client to opt-out or if not supported (though browser usually sends Accept-Encoding: gzip, deflate, br)
+        # We will assume modern client supports it or we just force it for our specialized client
+        # Ideally we check 'Accept-Encoding' header
+        accept_encoding = request.headers.get("Accept-Encoding", "")
+        
+        response = await call_next(request)
+        
+        # We only compress if it's a JSON response and reasonably large
+        if "application/json" not in response.headers.get("Content-Type", ""):
+            return response
+            
+        response_body = b""
+        async for chunk in response.body_iterator:
+            response_body += chunk
+            
+        if len(response_body) < 1000: # Don't compress small responses
+            return Response(content=response_body, status_code=response.status_code, headers=dict(response.headers), media_type=response.media_type)
+
+        cctx = zstd.ZstdCompressor(level=3)
+        compressed_body = cctx.compress(response_body)
+        
+        # Create new headers dict from original response
+        headers = dict(response.headers)
+        
+        # Remove any existing Content-Length headers to avoid conflicts
+        # Starlette/Uvicorn might send both if we don't clean it up
+        keys_to_remove = [k for k in headers.keys() if k.lower() == "content-length"]
+        for k in keys_to_remove:
+            del headers[k]
+            
+        headers["Content-Encoding"] = "zstd"
+        
+        # Note: We do NOT manually set "Content-Length" here.
+        # The Response class automatically calculates and sets it based on the 'content' argument.
+        # This prevents "Response content shorter than Content-Length" errors.
+        
+        return Response(
+            content=compressed_body,
+            status_code=response.status_code,
+            headers=headers,
+            media_type=response.media_type
+        )
+
+app.add_middleware(ZstdMiddleware)
 
 # Include all routers
 app.include_router(auth_router, prefix="/api/v1")

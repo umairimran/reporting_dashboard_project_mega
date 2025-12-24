@@ -41,3 +41,4 @@ reportlab==4.0.7
 
 # Utilities
 python-dateutil==2.8.2
+zstandard==0.22.0

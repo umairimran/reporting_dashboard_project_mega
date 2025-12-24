@@ -35,7 +35,7 @@ async def get_daily_metrics(
     client_id: Optional[uuid.UUID] = Query(None, description="Filter by client ID"),
     campaign_name: Optional[str] = Query(None, description="Filter by campaign"),
     source: Optional[str] = Query(None, description="Filter by source (surfside/vibe/facebook)"),
-    limit: int = Query(100, ge=1, le=1000),
+    limit: int = Query(100, ge=1, le=10000),
     offset: int = Query(0, ge=0),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)

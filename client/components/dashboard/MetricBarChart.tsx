@@ -76,7 +76,10 @@ export default function MetricBarChart({ data, title }: MetricBarChartProps) {
 
   const formatYAxis = (value: number) => {
     if (selectedMetric === "revenue" || selectedMetric === "spend") {
-      return "$" + (value / 1000).toFixed(0) + "k";
+      if (value >= 1000) {
+        return "$" + (value / 1000).toFixed(0) + "k";
+      }
+      return "$" + formatNumber(value);
     }
     return formatNumber(value);
   };

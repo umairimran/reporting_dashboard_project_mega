@@ -197,6 +197,7 @@ export default function Dashboard() {
           end_date: formattedDateTo,
           client_id: appliedClientId!,
           source: "surfside",
+          limit: 100000,
         }),
       enabled: !!appliedClientId && !!formattedDateFrom && !!formattedDateTo,
     });
@@ -239,6 +240,7 @@ export default function Dashboard() {
           end_date: formattedDateTo,
           client_id: appliedClientId!,
           source: "facebook",
+          limit: 100000,
         }),
       enabled: !!appliedClientId && !!formattedDateFrom && !!formattedDateTo,
     });

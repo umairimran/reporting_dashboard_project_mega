@@ -9,7 +9,7 @@ interface CampaignTableProps {
 const sourceColors: Record<DataSource, string> = {
   surfside: "bg-green-500/20 text-green-400",
   facebook: "bg-blue-500/20 text-blue-400",
-  vibe: "bg-purple-500/20 text-purple-400",
+  // vibe: "bg-purple-500/20 text-purple-400",
 };
 
 export default function CampaignTable({ campaigns }: CampaignTableProps) {

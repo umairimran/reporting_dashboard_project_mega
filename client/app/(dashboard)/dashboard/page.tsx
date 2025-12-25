@@ -136,12 +136,14 @@ export default function Dashboard() {
   }, [isAdmin, simulatedClient, selectedClientId, clients]);
 
   // Handle Client Context (Non-Admin)
+  // Handle Client Context (Non-Admin or Simulation)
   useEffect(() => {
-    if (currentClient && !isAdmin) {
+    // If we have a current client (regular user OR simulated), enforce that selection
+    if (currentClient && (!isAdmin || simulatedClient)) {
       setSelectedClientId(currentClient.id);
       setAppliedClientId(currentClient.id);
     }
-  }, [currentClient, isAdmin]);
+  }, [currentClient, isAdmin, simulatedClient]);
 
   // Check if filters have changed (Dirty State) - ONLY Client and Date
   const hasChanges =
@@ -597,8 +599,8 @@ export default function Dashboard() {
             onClick={handleApplyFilters}
             disabled={!hasChanges && !isLoading}
             className={`transition-all duration-300 ${hasChanges
-                ? "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-200"
-                : ""
+              ? "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-200"
+              : ""
               }`}
             size="default"
           >

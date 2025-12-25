@@ -463,6 +463,12 @@ COMMENT ON TABLE uploaded_files IS 'Tracks manually uploaded files (Facebook, et
 COMMENT ON COLUMN uploaded_files.file_name IS 'Original filename of the uploaded file';
 COMMENT ON COLUMN uploaded_files.records_count IS 'Number of records parsed from the file';
 
+
+
+
+
+
+
 -- ============================================================================
 -- SECTION 10: AUDIT LOGGING
 -- ============================================================================
@@ -627,6 +633,37 @@ JOIN clients cl ON dm.client_id = cl.id
 GROUP BY c.id, c.name, c.source, cl.id, cl.name, dm.date;
 
 COMMENT ON VIEW v_campaign_metrics IS 'Aggregated metrics by campaign and date';
+
+-- ============================================================================
+-- SECTION 13: REPORTS TABLE
+-- ============================================================================
+
+-- Reports table for tracking async report generation
+CREATE TABLE reports (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    client_id UUID NOT NULL REFERENCES clients(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    source VARCHAR(50) CHECK (source IN ('facebook', 'surfside')), -- source specific reports
+    type VARCHAR(50) NOT NULL CHECK (type IN ('weekly', 'monthly')),
+    period_start DATE NOT NULL,
+    period_end DATE NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'generating' CHECK (status IN ('generating', 'ready', 'failed')),
+    csv_file_path TEXT,
+    pdf_file_path TEXT,
+    error_message TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_reports_client ON reports(client_id);
+CREATE INDEX idx_reports_created_at ON reports(created_at DESC);
+-- REMOVED UNIQUE INDEX to allow duplicates as per requirements
+
+CREATE TRIGGER update_reports_updated_at 
+    BEFORE UPDATE ON reports 
+    FOR EACH ROW 
+    EXECUTE FUNCTION update_updated_at_column();
+
+COMMENT ON TABLE reports IS 'Async generated weekly/monthly reports';
 
 -- ============================================================================
 -- END OF SCHEMA

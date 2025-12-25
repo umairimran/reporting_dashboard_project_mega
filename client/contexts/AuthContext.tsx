@@ -13,6 +13,7 @@ import { authService } from "@/lib/services/auth";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { clientsService } from "@/lib/services/clients";
 
 // Adapt User type if necessary to match Dashboard's expectation
 interface User extends AuthUser { }
@@ -61,6 +62,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error("Error loading auth state:", error);
     }
   }, []);
+
+  // Fetch client for the logged-in user (if not admin)
+  const { data: userClient } = useQuery({
+    queryKey: ["auth", "client", user?.id],
+    queryFn: async () => {
+      if (!user || user.role === "admin") return null;
+      // Fetch all clients and find the one belonging to this user
+      // efficient enough for now until we have a dedicated endpoint
+      const response = await clientsService.getClients(0, 1000);
+      const myClient = response.clients.find((c) => c.userId === user.id);
+      return myClient || null;
+    },
+    enabled: !!user && user.role === "client",
+    staleTime: Infinity,
+  });
 
   // Sync logout and login across tabs
   useEffect(() => {
@@ -118,10 +134,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const isAdmin = user?.role === "admin";
 
   // Get the current client (either simulated for admin, or the user's mapped client)
-  // For Real backend: we need to fetch user's clients. 
-  // For now we will assume 'mockClients' or fetch them. 
-  // Ideally backend /me returns clients. Let's assume user object has them or we filter mockClients for now as temporary bridge.
-  const currentClient = simulatedClient || null; // Removed mockClients fallback
+  const currentClient = simulatedClient || userClient || null;
 
   const simulateAsClient = useCallback(
     (client: Client | null) => {

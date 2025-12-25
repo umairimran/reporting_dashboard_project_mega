@@ -11,11 +11,15 @@ import io
 from datetime import date
 from decimal import Decimal
 from sqlalchemy.orm import Session
+from sqlalchemy import func, desc
 import uuid
 from typing import List
 from app.clients.models import Client
 from app.dashboard.service import DashboardService
 from app.core.logging import logger
+from app.metrics.models import DailyMetrics
+from app.campaigns.models import Campaign, Strategy, Placement, Creative
+from app.metrics.calculator import MetricsCalculator
 
 
 class PDFExportService:
@@ -38,13 +42,60 @@ class PDFExportService:
         if value is None:
             return "N/A"
         return f"${value:,.2f}"
+
+    @staticmethod
+    def _get_dimension_stats(
+        db: Session,
+        client_id: uuid.UUID,
+        start_date: date,
+        end_date: date,
+        dimension_model,
+        fk_column,
+        limit: int = 10,
+        source: str = None
+    ):
+        """Helper to fetch performance stats for a specific dimension."""
+        query = db.query(
+            dimension_model.name,
+            func.sum(DailyMetrics.impressions).label('impressions'),
+            func.sum(DailyMetrics.clicks).label('clicks'),
+            func.sum(DailyMetrics.conversions).label('conversions'),
+            func.sum(DailyMetrics.conversion_revenue).label('revenue'),
+            func.sum(DailyMetrics.spend).label('spend')
+        ).join(dimension_model, fk_column == dimension_model.id).filter(
+            DailyMetrics.client_id == client_id,
+            DailyMetrics.date >= start_date,
+            DailyMetrics.date <= end_date
+        )
+
+        if source:
+            query = query.filter(DailyMetrics.source == source)
+
+        results = query.group_by(dimension_model.name).order_by(
+            desc(func.sum(DailyMetrics.impressions))
+        ).limit(limit).all()
+
+        data = []
+        for r in results:
+             roas = MetricsCalculator.calculate_roas(r.revenue, r.spend)
+             data.append({
+                 'name': r.name,
+                 'impressions': r.impressions,
+                 'clicks': r.clicks,
+                 'conversions': r.conversions,
+                 'revenue': r.revenue,
+                 'spend': r.spend,
+                 'roas': roas
+             })
+        return data
     
     @staticmethod
     def export_dashboard_report(
         db: Session,
         client_id: uuid.UUID,
         start_date: date,
-        end_date: date
+        end_date: date,
+        source: str = None  # Optional source filter
     ) -> bytes:
         """
         Export dashboard report to PDF.
@@ -52,21 +103,27 @@ class PDFExportService:
         Returns:
             PDF content as bytes
         """
-        logger.info(f"Generating PDF report for client {client_id}")
+        logger.info(f"Generating PDF report for client {client_id} (Source: {source})")
         
         # Get client
         client = db.query(Client).filter(Client.id == client_id).first()
         if not client:
             raise ValueError(f"Client not found: {client_id}")
         
-        # Get dashboard data
+        # Get dashboard data (for Summary, Source, Campaign) - keeping original logic for these
         dashboard = DashboardService.get_client_dashboard(
             db=db,
             client_id=client_id,
             start_date=start_date,
-            end_date=end_date
+            end_date=end_date,
+            source=source
         )
         
+        # Fetch additional dimension stats directly (avoiding DashboardService mods per user request)
+        strategies = PDFExportService._get_dimension_stats(db, client_id, start_date, end_date, Strategy, DailyMetrics.strategy_id, source=source)
+        placements = PDFExportService._get_dimension_stats(db, client_id, start_date, end_date, Placement, DailyMetrics.placement_id, source=source)
+        creatives = PDFExportService._get_dimension_stats(db, client_id, start_date, end_date, Creative, DailyMetrics.creative_id, source=source)
+
         # Create PDF
         buffer = io.BytesIO()
         doc = SimpleDocTemplate(buffer, pagesize=letter)
@@ -134,24 +191,38 @@ class PDFExportService:
         elements.append(summary_table)
         elements.append(Spacer(1, 0.3 * inch))
         
-        # Campaign Performance Section
-        if dashboard.campaigns:
-            elements.append(Paragraph("Top Campaign Performance", heading_style))
-            
-            campaign_data = [['Campaign', 'Impressions', 'Clicks', 'Conversions', 'Revenue', 'ROAS']]
-            
-            for campaign in dashboard.campaigns[:10]:  # Top 10
-                campaign_data.append([
-                    campaign.campaign_name[:30],  # Truncate long names
-                    PDFExportService._format_number(campaign.impressions),
-                    PDFExportService._format_number(campaign.clicks),
-                    PDFExportService._format_number(campaign.conversions),
-                    PDFExportService._format_currency(campaign.revenue),
-                    PDFExportService._format_number(campaign.roas)
-                ])
-            
-            campaign_table = Table(campaign_data, colWidths=[2 * inch, 1 * inch, 1 * inch, 1 * inch, 1 * inch, 1 * inch])
-            campaign_table.setStyle(TableStyle([
+        # Helper to render generic performance table
+        def render_performance_table(title, items, name_header="Name"):
+             if not items: return
+             elements.append(Paragraph(title, heading_style))
+             table_data = [[name_header, 'Impressions', 'Clicks', 'Conversions', 'Revenue', 'ROAS']]
+             for item in items:
+                  # Item is dict or object, using existing campaign object for campaign section below,
+                  # but using dict for our new sections. 
+                  # Let's standardize or handle both.
+                  if isinstance(item, dict):
+                       row = [
+                            item['name'][:30],
+                            PDFExportService._format_number(item['impressions']),
+                            PDFExportService._format_number(item['clicks']),
+                            PDFExportService._format_number(item['conversions']),
+                            PDFExportService._format_currency(item['revenue']),
+                            PDFExportService._format_number(item['roas'])
+                       ]
+                  else:
+                        # Existing campaign object
+                       row = [
+                            item.campaign_name[:30],
+                            PDFExportService._format_number(item.impressions),
+                            PDFExportService._format_number(item.clicks),
+                            PDFExportService._format_number(item.conversions),
+                            PDFExportService._format_currency(item.revenue),
+                            PDFExportService._format_number(item.roas)
+                       ]
+                  table_data.append(row)
+             
+             t = Table(table_data, colWidths=[2 * inch, 1 * inch, 1 * inch, 1 * inch, 1 * inch, 1 * inch])
+             t.setStyle(TableStyle([
                 ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#3498DB')),
                 ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
                 ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
@@ -164,11 +235,13 @@ class PDFExportService:
                 ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
                 ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
                 ('FONTSIZE', (0, 1), (-1, -1), 8),
-            ]))
-            
-            elements.append(campaign_table)
-            elements.append(Spacer(1, 0.3 * inch))
-        
+             ]))
+             elements.append(t)
+             elements.append(Spacer(1, 0.3 * inch))
+
+        # Campaign Performance Section (Existing)
+        render_performance_table("Top Campaign Performance", dashboard.campaigns[:10], "Campaign")
+
         # Source Breakdown Section
         if dashboard.sources:
             elements.append(Paragraph("Performance by Source", heading_style))
@@ -201,6 +274,12 @@ class PDFExportService:
             ]))
             
             elements.append(source_table)
+            elements.append(Spacer(1, 0.3 * inch)) # Add spacer
+
+        # NEW SECTIONS
+        render_performance_table("Top Strategy Performance", strategies, "Strategy")
+        render_performance_table("Top Placement Performance", placements, "Placement")
+        render_performance_table("Top Creative Performance", creatives, "Creative")
         
         # Build PDF
         doc.build(elements)

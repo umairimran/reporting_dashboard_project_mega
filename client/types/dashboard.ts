@@ -32,7 +32,7 @@ export interface ClientSettings {
 }
 
 // Data source types
-export type DataSource = "surfside" | "vibe" | "facebook";
+export type DataSource = "surfside" | "facebook";
 
 // Campaign hierarchy types
 export interface Campaign {
@@ -193,8 +193,13 @@ export interface Report {
   id: string;
   clientId: string;
   type: "weekly" | "monthly";
+  source?: "surfside" | "facebook";
   periodStart: string;
   periodEnd: string;
   generatedAt: string;
   status: "ready" | "generating" | "failed";
+  pdfPath?: string;
+  csvPath?: string;
+  errorMessage?: string;
+  // clientId: string; // From computed_field
 }

@@ -20,6 +20,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Report } from "@/types/dashboard";
+import { useMutation } from "@tanstack/react-query";
+import { reportService } from "@/lib/api-client";
+import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface GenerateReportDialogProps {
   children: React.ReactNode;
@@ -32,8 +36,40 @@ export default function GenerateReportDialog({
 }: GenerateReportDialogProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [reportType, setReportType] = useState<"weekly" | "monthly">("weekly");
+  const [source, setSource] = useState<string>("all");
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [error, setError] = useState<string>("");
+
+  const { user, simulatedClient, isAdmin } = useAuth();
+
+  const { mutate: generateReport, isPending } = useMutation({
+    mutationFn: (data: { type: "weekly" | "monthly"; source?: string; periodStart: string; periodEnd: string }) => {
+      // Determine client ID
+      // If admin simulating, use simulatedClient.id
+      // If client user, we can pass null (backend handles it) or try to find it. 
+      // For legacy/safety, passing undefined lets backend rely on user context
+      const clientId = (isAdmin && simulatedClient?.id) ? simulatedClient.id : undefined;
+
+      return reportService.create({
+        ...data,
+        clientId
+      });
+    },
+    onSuccess: (data) => {
+      toast.success("Report generation started");
+      if (onReportGenerated) {
+        onReportGenerated(data);
+      }
+      setIsDialogOpen(false);
+      setSelectedDate(null);
+      setSource("all");
+      setError("");
+    },
+    onError: (error: Error) => {
+      setError(error.message);
+      toast.error("Failed to generate report");
+    },
+  });
 
   const handleGenerateReport = () => {
     setError("");
@@ -81,26 +117,18 @@ export default function GenerateReportDialog({
       }
     }
 
-    // Generate new report
-    const newReport: Report = {
-      id: Math.random().toString(36).substr(2, 9),
-      clientId: "1", // In production, use actual client ID
-      type: reportType,
-      periodStart: format(periodStart, "yyyy-MM-dd"),
-      periodEnd: format(periodEnd, "yyyy-MM-dd"),
-      generatedAt: new Date().toISOString(),
-      status: "generating",
-    };
-
-    // Notify parent component
-    if (onReportGenerated) {
-      onReportGenerated(newReport);
+    // Additional check for admin simulation
+    if (isAdmin && !simulatedClient) {
+      setError("Please select a client to generate a report for.");
+      return;
     }
 
-    // Close dialog and reset form
-    setIsDialogOpen(false);
-    setSelectedDate(null);
-    setError("");
+    generateReport({
+      type: reportType,
+      source: source === "all" ? undefined : source,
+      periodStart: format(periodStart, "yyyy-MM-dd"),
+      periodEnd: format(periodEnd, "yyyy-MM-dd"),
+    });
   };
 
   const getPeriodDescription = () => {
@@ -159,6 +187,24 @@ export default function GenerateReportDialog({
                   {type.label}
                 </button>
               ))}
+            </div>
+          </div>
+
+          {/* Source Selection */}
+          <div>
+            <label className="text-sm font-medium text-slate-900 mb-3 block">
+              Data Source
+            </label>
+            <div className="flex items-center gap-2">
+              <select
+                value={source}
+                onChange={(e) => setSource(e.target.value)}
+                className="w-full h-10 px-4 rounded-lg border border-slate-200 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+              >
+                <option value="all">All Sources (Aggregated)</option>
+                <option value="facebook">Facebook</option>
+                <option value="surfside">Surfside</option>
+              </select>
             </div>
           </div>
 
@@ -240,9 +286,9 @@ export default function GenerateReportDialog({
               variant="default"
               className="flex-1 bg-blue-600 hover:bg-blue-700"
               onClick={handleGenerateReport}
-              disabled={!selectedDate}
+              disabled={!selectedDate || isPending}
             >
-              Generate Report
+              {isPending ? "Generating..." : "Generate Report"}
             </Button>
           </div>
         </div>

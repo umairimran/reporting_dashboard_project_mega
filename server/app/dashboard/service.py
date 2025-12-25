@@ -138,7 +138,8 @@ class DashboardService:
         client_id: uuid.UUID,
         start_date: date,
         end_date: date,
-        limit: int = 10
+        limit: int = 10,
+        source: Optional[str] = None
     ) -> List[CampaignBreakdown]:
         """Get performance breakdown by campaign."""
         from app.campaigns.models import Campaign
@@ -155,7 +156,12 @@ class DashboardService:
             DailyMetrics.client_id == client_id,
             DailyMetrics.date >= start_date,
             DailyMetrics.date <= end_date
-        ).group_by(
+        )
+
+        if source:
+            results = results.filter(DailyMetrics.source == source)
+            
+        results = results.group_by(
             Campaign.name
         ).order_by(
             desc(func.sum(DailyMetrics.impressions))
@@ -188,7 +194,8 @@ class DashboardService:
         db: Session,
         client_id: uuid.UUID,
         start_date: date,
-        end_date: date
+        end_date: date,
+        source: Optional[str] = None
     ) -> List[SourceBreakdown]:
         """Get performance breakdown by data source."""
         
@@ -203,7 +210,13 @@ class DashboardService:
             DailyMetrics.client_id == client_id,
             DailyMetrics.date >= start_date,
             DailyMetrics.date <= end_date
-        ).group_by(
+        )
+
+        if source:
+             # If filtering by source, this query becomes trivial (1 row), but still valid.
+             results = results.filter(DailyMetrics.source == source)
+
+        results = results.group_by(
             DailyMetrics.source
         ).all()
         
@@ -228,7 +241,8 @@ class DashboardService:
         db: Session,
         client_id: uuid.UUID,
         start_date: date,
-        end_date: date
+        end_date: date,
+        source: Optional[str] = None
     ) -> List[DailyTrend]:
         """Get daily trend data."""
         
@@ -243,7 +257,12 @@ class DashboardService:
             DailyMetrics.client_id == client_id,
             DailyMetrics.date >= start_date,
             DailyMetrics.date <= end_date
-        ).group_by(
+        )
+        
+        if source:
+            results = results.filter(DailyMetrics.source == source)
+            
+        results = results.group_by(
             DailyMetrics.date
         ).order_by(
             DailyMetrics.date
@@ -273,7 +292,8 @@ class DashboardService:
         client_id: uuid.UUID,
         start_date: date,
         end_date: date,
-        limit: int = 5
+        limit: int = 5,
+        source: Optional[str] = None
     ) -> TopPerformersResponse:
         """Get top performers across different metrics."""
         
@@ -287,10 +307,16 @@ class DashboardService:
             func.sum(DailyMetrics.conversion_revenue).label('revenue')
         ).join(Campaign, DailyMetrics.campaign_id == Campaign.id
         ).filter(
+        ).filter(
             DailyMetrics.client_id == client_id,
             DailyMetrics.date >= start_date,
             DailyMetrics.date <= end_date
-        ).group_by(
+        )
+        
+        if source:
+            by_impressions_results = by_impressions_results.filter(DailyMetrics.source == source)
+            
+        by_impressions_results = by_impressions_results.group_by(
             Campaign.name
         ).order_by(
             desc(func.sum(DailyMetrics.impressions))
@@ -315,10 +341,16 @@ class DashboardService:
             func.sum(DailyMetrics.conversion_revenue).label('revenue')
         ).join(Campaign, DailyMetrics.campaign_id == Campaign.id
         ).filter(
+        ).filter(
             DailyMetrics.client_id == client_id,
             DailyMetrics.date >= start_date,
             DailyMetrics.date <= end_date
-        ).group_by(
+        )
+        
+        if source:
+           by_conversions_results = by_conversions_results.filter(DailyMetrics.source == source)
+
+        by_conversions_results = by_conversions_results.group_by(
             Campaign.name
         ).order_by(
             desc(func.sum(DailyMetrics.conversions))
@@ -343,10 +375,16 @@ class DashboardService:
             func.sum(DailyMetrics.conversion_revenue).label('revenue')
         ).join(Campaign, DailyMetrics.campaign_id == Campaign.id
         ).filter(
+        ).filter(
             DailyMetrics.client_id == client_id,
             DailyMetrics.date >= start_date,
             DailyMetrics.date <= end_date
-        ).group_by(
+        )
+        
+        if source:
+            by_revenue_results = by_revenue_results.filter(DailyMetrics.source == source)
+
+        by_revenue_results = by_revenue_results.group_by(
             Campaign.name
         ).order_by(
             desc(func.sum(DailyMetrics.conversion_revenue))
@@ -372,10 +410,16 @@ class DashboardService:
             func.sum(DailyMetrics.spend).label('spend')
         ).join(Campaign, DailyMetrics.campaign_id == Campaign.id
         ).filter(
+        ).filter(
             DailyMetrics.client_id == client_id,
             DailyMetrics.date >= start_date,
             DailyMetrics.date <= end_date
-        ).group_by(
+        )
+        
+        if source:
+            by_roas_results = by_roas_results.filter(DailyMetrics.source == source)
+
+        by_roas_results = by_roas_results.group_by(
             Campaign.name
         ).having(
             func.sum(DailyMetrics.spend) > 0
@@ -413,7 +457,8 @@ class DashboardService:
         db: Session,
         client_id: uuid.UUID,
         start_date: date,
-        end_date: date
+        end_date: date,
+        source: Optional[str] = None
     ) -> ClientDashboard:
         """Get complete dashboard for a client."""
         
@@ -427,9 +472,9 @@ class DashboardService:
             client_name=client.name,
             date_range_start=start_date,
             date_range_end=end_date,
-            summary=DashboardService.get_dashboard_summary(db, client_id, start_date, end_date),
-            campaigns=DashboardService.get_campaign_breakdown(db, client_id, start_date, end_date),
-            sources=DashboardService.get_source_breakdown(db, client_id, start_date, end_date),
-            daily_trends=DashboardService.get_daily_trends(db, client_id, start_date, end_date),
-            top_performers=DashboardService.get_top_performers(db, client_id, start_date, end_date)
+            summary=DashboardService.get_dashboard_summary(db, client_id, start_date, end_date, source=source),
+            campaigns=DashboardService.get_campaign_breakdown(db, client_id, start_date, end_date, source=source),
+            sources=DashboardService.get_source_breakdown(db, client_id, start_date, end_date, source=source),
+            daily_trends=DashboardService.get_daily_trends(db, client_id, start_date, end_date, source=source),
+            top_performers=DashboardService.get_top_performers(db, client_id, start_date, end_date, source=source)
         )

@@ -274,7 +274,7 @@ class TransformerService:
             'date': TransformerService.parse_date(raw_record.get('day')),
             
             'campaign_name': campaign_name,
-            'strategy_name': ad_set_name or "General Strategy",
+        'strategy_name': ad_set_name or "General Strategy",
             'placement_name': placement_name or "General Placement",
             'creative_name': creative_name or "General Creative",
             'impressions': impressions,

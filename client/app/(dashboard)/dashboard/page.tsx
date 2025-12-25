@@ -31,7 +31,8 @@ import GenerateReportDialog from "@/components/dashboard/GenerateReportDialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { DataSource, DateRange } from "@/types/dashboard";
 import { mockRegionPerformance } from "@/lib/mock-data";
-import { formatCurrency, formatNumber } from "@/lib/utils";
+import { formatCurrency, formatNumber, formatRawNumber } from "@/lib/utils";
+
 import MetricBarChart from "@/components/dashboard/MetricBarChart";
 import DataTable from "@/components/dashboard/DataTable";
 import { clientsService } from "@/lib/services/clients";
@@ -52,9 +53,11 @@ const DEFAULT_KPIS: KPIConfig[] = [
 const DEFAULT_SECTIONS: SectionConfig[] = [
   { id: "campaign", label: "Campaign Performance", order: 0 },
   { id: "strategy", label: "Strategy Performance", order: 1 },
-  { id: "region", label: "Region Performance", order: 2 },
+  { id: "placement", label: "Placement Performance", order: 2 },
   { id: "creative", label: "Creative Performance", order: 3 },
+  { id: "region", label: "Region Performance", order: 4 },
 ];
+
 
 const STORAGE_KEY_KPIS = "dashboard_kpis";
 const STORAGE_KEY_SECTIONS = "dashboard_sections";
@@ -104,11 +107,27 @@ export default function Dashboard() {
 
       if (savedSections) {
         try {
-          setSections(JSON.parse(savedSections));
+          const parsed = JSON.parse(savedSections);
+          // Merge strategy: Start with defaults to ensure all required sections exist.
+          // If a section is in saved prefs, use its order/visibility (if we had visibility).
+          // Since sections only track order currently, we want to respect saved order but inject new available sections.
+
+          // 1. Get all saved IDs
+          const savedIds = new Set(parsed.map((s: SectionConfig) => s.id));
+
+          // 2. Find any new default sections that aren't in saved
+          const newSections = DEFAULT_SECTIONS.filter(s => !savedIds.has(s.id));
+
+          // 3. Combine saved + new
+          // We append new sections at the end for now, or we could re-sort based on default order if preferred.
+          // A safer bet to keep user prefs is: keep saved, append new.
+          setSections([...parsed, ...newSections]);
         } catch (e) {
           console.error("Failed to parse sections from localStorage ", e);
+          setSections(DEFAULT_SECTIONS);
         }
       }
+
     }
   }, []);
 
@@ -281,6 +300,7 @@ export default function Dashboard() {
   const aggregatedData = useMemo(() => {
     const campaigns: Record<string, any> = {};
     const strategies: Record<string, any> = {};
+    const placements: Record<string, any> = {};
     const creatives: Record<string, any> = {};
 
     const initMetric = {
@@ -318,6 +338,17 @@ export default function Dashboard() {
       }
       accumulate(strategies[stratName], m);
 
+      // Placement
+      const placeName = m.placement_name || "Unknown";
+      if (!placements[placeName]) {
+        placements[placeName] = {
+          ...initMetric,
+          name: placeName,
+          id: placeName,
+        };
+      }
+      accumulate(placements[placeName], m);
+
       // Creative
       const creatName = m.creative_name || "Unknown";
       if (!creatives[creatName]) {
@@ -339,8 +370,10 @@ export default function Dashboard() {
     return {
       campaigns: Object.values(campaigns).map(calculateComputed),
       strategies: Object.values(strategies).map(calculateComputed),
+      placements: Object.values(placements).map(calculateComputed),
       creatives: Object.values(creatives).map(calculateComputed),
     };
+
   }, [dailyMetrics]);
 
   // Save preferences to localStorage
@@ -362,7 +395,10 @@ export default function Dashboard() {
   const renderSection = (sectionId: string) => {
     switch (sectionId) {
       case "campaign":
+        // ####### here we commented a working code for xyz section ####
+        if (activeSource === "surfside") return null;
         return (
+
           <div key="campaign">
             <div className="mt-8 bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-xl p-6 opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]">
               <MetricBarChart
@@ -393,19 +429,20 @@ export default function Dashboard() {
                   {
                     key: "impressions",
                     label: "Impressions",
-                    format: "number",
+                    format: "raw",
                   },
-                  { key: "clicks", label: "Clicks", format: "number" },
+                  { key: "clicks", label: "Clicks", format: "raw" },
                   { key: "ctr", label: "CTR", format: "percent" },
                   {
                     key: "conversions",
                     label: "Conversions",
-                    format: "number",
+                    format: "raw",
                   },
                   { key: "revenue", label: "Revenue", format: "currency" },
                   { key: "spend", label: "Spend", format: "currency" },
-                  { key: "roas", label: "ROAS", format: "number" },
+                  { key: "roas", label: "ROAS", format: "raw" },
                 ]}
+
               />
             </div>
           </div>
@@ -442,25 +479,79 @@ export default function Dashboard() {
                   {
                     key: "impressions",
                     label: "Impressions",
-                    format: "number",
+                    format: "raw",
                   },
-                  { key: "clicks", label: "Clicks", format: "number" },
+                  { key: "clicks", label: "Clicks", format: "raw" },
                   { key: "ctr", label: "CTR", format: "percent" },
                   {
                     key: "conversions",
                     label: "Conversions",
-                    format: "number",
+                    format: "raw",
                   },
                   { key: "revenue", label: "Revenue", format: "currency" },
                   { key: "spend", label: "Spend", format: "currency" },
-                  { key: "roas", label: "ROAS", format: "number" },
+                  { key: "roas", label: "ROAS", format: "raw" },
+                ]}
+
+              />
+            </div>
+          </div>
+        );
+      case "placement":
+        return (
+          <div key="placement">
+            <div className="mt-8 bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-xl p-6 opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]">
+              <MetricBarChart
+                data={aggregatedData.placements.map((item) => ({
+                  id: item.id,
+                  name: item.name,
+                  conversions: item.conversions,
+                  revenue: item.revenue,
+                  spend: item.spend,
+                  clicks: item.clicks,
+                }))}
+                title="Placement Performance"
+              />
+            </div>
+            <div className="mt-6 bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-xl p-6 opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-slate-900">
+                  Placement Details
+                </h3>
+                <span className="text-sm text-slate-600">
+                  Total: {aggregatedData.placements.length} records
+                </span>
+              </div>
+              <DataTable
+                data={aggregatedData.placements}
+                columns={[
+                  { key: "name", label: "Placement", format: "text" },
+                  {
+                    key: "impressions",
+                    label: "Impressions",
+                    format: "raw",
+                  },
+                  { key: "clicks", label: "Clicks", format: "raw" },
+                  { key: "ctr", label: "CTR", format: "percent" },
+                  {
+                    key: "conversions",
+                    label: "Conversions",
+                    format: "raw",
+                  },
+                  { key: "revenue", label: "Revenue", format: "currency" },
+                  { key: "spend", label: "Spend", format: "currency" },
+                  { key: "roas", label: "ROAS", format: "raw" },
                 ]}
               />
             </div>
           </div>
         );
       case "region":
+
+        // ####### here we commented a working code for xyz section ####
+        if (activeSource === "surfside") return null;
         return (
+
           <div key="region">
             <div className="mt-8 bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-xl p-6 opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]">
               <MetricBarChart
@@ -491,19 +582,20 @@ export default function Dashboard() {
                   {
                     key: "impressions",
                     label: "Impressions",
-                    format: "number",
+                    format: "raw",
                   },
-                  { key: "clicks", label: "Clicks", format: "number" },
+                  { key: "clicks", label: "Clicks", format: "raw" },
                   { key: "ctr", label: "CTR", format: "percent" },
                   {
                     key: "conversions",
                     label: "Conversions",
-                    format: "number",
+                    format: "raw",
                   },
                   { key: "revenue", label: "Revenue", format: "currency" },
                   { key: "spend", label: "Spend", format: "currency" },
-                  { key: "roas", label: "ROAS", format: "number" },
+                  { key: "roas", label: "ROAS", format: "raw" },
                 ]}
+
               />
             </div>
           </div>
@@ -540,19 +632,20 @@ export default function Dashboard() {
                   {
                     key: "impressions",
                     label: "Impressions",
-                    format: "number",
+                    format: "raw",
                   },
-                  { key: "clicks", label: "Clicks", format: "number" },
+                  { key: "clicks", label: "Clicks", format: "raw" },
                   { key: "ctr", label: "CTR", format: "percent" },
                   {
                     key: "conversions",
                     label: "Conversions",
-                    format: "number",
+                    format: "raw",
                   },
                   { key: "revenue", label: "Revenue", format: "currency" },
                   { key: "spend", label: "Spend", format: "currency" },
-                  { key: "roas", label: "ROAS", format: "number" },
+                  { key: "roas", label: "ROAS", format: "raw" },
                 ]}
+
               />
             </div>
           </div>
@@ -722,20 +815,22 @@ export default function Dashboard() {
                   },
                   impressions: {
                     title: "Impressions",
-                    value: formatNumber(summaryMetrics?.total_impressions || 0),
+                    value: formatRawNumber(summaryMetrics?.total_impressions || 0),
                     trend: calcTrend(
                       summaryMetrics?.total_impressions,
                       prev?.total_impressions
                     ),
+
                     icon: Eye,
                   },
                   clicks: {
                     title: "Clicks",
-                    value: formatNumber(summaryMetrics?.total_clicks || 0),
+                    value: formatRawNumber(summaryMetrics?.total_clicks || 0),
                     trend: calcTrend(
                       summaryMetrics?.total_clicks,
                       prev?.total_clicks
                     ),
+
                     icon: MousePointer,
                   },
                   ctr: {
@@ -751,11 +846,12 @@ export default function Dashboard() {
                   },
                   conversions: {
                     title: "Conversions",
-                    value: formatNumber(summaryMetrics?.total_conversions || 0),
+                    value: formatRawNumber(summaryMetrics?.total_conversions || 0),
                     trend: calcTrend(
                       summaryMetrics?.total_conversions,
                       prev?.total_conversions
                     ),
+
                     icon: Target,
                   },
                 };

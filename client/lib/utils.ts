@@ -29,6 +29,14 @@ export function formatNumber(value: number): string {
   return value.toLocaleString();
 }
 
+// Helper to format raw numbers (no rounding/abbreviation)
+export function formatRawNumber(value: number): string {
+  if (value === undefined || value === null || isNaN(value)) return "-";
+  return value.toLocaleString("en-US", {
+    maximumFractionDigits: 20, // Allow high precision if needed, or stick to what input has
+  });
+}
+
 // Helper to format percentage
 export function formatPercent(value: number): string {
   if (value === undefined || value === null || isNaN(value)) return "-";

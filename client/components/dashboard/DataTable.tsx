@@ -9,15 +9,17 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { formatCurrency, formatNumber, formatPercent } from "@/lib/utils";
+import { formatCurrency, formatNumber, formatPercent, formatRawNumber } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+
 
 type SortDirection = "asc" | "desc" | null;
 
 interface Column {
   key: string;
   label: string;
-  format?: "currency" | "number" | "percent" | "text";
+  format?: "currency" | "number" | "percent" | "text" | "raw";
+
 }
 
 interface DataTableProps {
@@ -88,7 +90,10 @@ export default function DataTable({
         return formatNumber(value);
       case "percent":
         return formatPercent(value);
+      case "raw":
+        return formatRawNumber(value);
       default:
+
         return String(value);
     }
   };

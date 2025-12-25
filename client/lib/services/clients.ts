@@ -24,9 +24,13 @@ interface CpmSettingData {
 
 export const clientsService = {
     // Fetch all clients
-    getClients: async (skip = 0, limit = 100) => {
+    getClients: async (skip = 0, limit = 100, status?: "active" | "disabled") => {
+        let url = `/clients?skip=${skip}&limit=${limit}`;
+        if (status) {
+            url += `&status=${status}`;
+        }
         const response = await apiClient<{ total: number; clients: any[] }>(
-            `/clients?skip=${skip}&limit=${limit}`,
+            url,
             { method: "GET" }
         );
 

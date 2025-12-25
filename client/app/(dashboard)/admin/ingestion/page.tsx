@@ -60,8 +60,8 @@ export default function AdminIngestion() {
 
   // Fetch Clients for dropdown
   const { data: clientsData } = useQuery({
-    queryKey: ["admin", "clients"],
-    queryFn: () => clientsService.getClients(0, 100),
+    queryKey: ["admin", "clients", "active"],
+    queryFn: () => clientsService.getClients(0, 100, "active"),
   });
 
   // Fetch Logs
@@ -465,7 +465,7 @@ export default function AdminIngestion() {
                 className={cn(
                   "gap-2 cursor-pointer",
                   (!selectedClient || !selectedSource || !selectedFile) &&
-                    "opacity-50 cursor-not-allowed"
+                  "opacity-50 cursor-not-allowed"
                 )}
               >
                 {isUploading ? (

@@ -133,8 +133,8 @@ export default function Dashboard() {
 
   // Fetch Clients
   const { data: clientsData } = useQuery({
-    queryKey: ["clients"],
-    queryFn: () => clientsService.getClients(0, 100),
+    queryKey: ["clients", "active"],
+    queryFn: () => clientsService.getClients(0, 100, "active"),
     enabled: isAdmin && !simulatedClient,
   });
 

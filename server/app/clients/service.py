@@ -128,7 +128,7 @@ class ClientService:
     @staticmethod
     def delete_client(db: Session, client_id: uuid.UUID) -> bool:
         """
-        Delete a client (soft delete by setting status to disabled).
+        Delete a client and their associated user account.
         
         Args:
             db: Database session
@@ -142,13 +142,32 @@ class ClientService:
         if not client:
             return False
             
-        # Hard delete - Cascade constraints will handle related data (settings, campaigns, metrics, etc.)
-        # The user relationship (RESTRICT) doesn't block client deletion, only user deletion.
-        # Once client is deleted, the user can be safely deleted by the separate delete_user call.
+        user_id = client.user_id
+        client_name = client.name
+
+        # 1. Delete Client first 
+        # This removes the Foreign Key constraint that blocks User deletion (ON DELETE RESTRICT)
+        # It also triggers ON DELETE CASCADE for all client data (settings, campaigns, metrics, etc.)
         db.delete(client)
+        
+        # 2. Delete the associated User if it exists
+        # We must flush/commit the client deletion first? 
+        # Actually in SQLAlchemy session, order of operations matters. 
+        # db.delete(client) issues the DELETE CLIENT SQL.
+        # db.delete(user) issues the DELETE USER SQL.
+        # Since we are in a transaction, the constraint checks happen at the end (or immediately depending on DB config).
+        # Postgres constraints are usually immediate unless DEFERRABLE is set.
+        # But logically, deleting client row removes the referencing row. So deleting user row after should be fine in same transaction.
+        
+        if user_id:
+            user = db.query(User).filter(User.id == user_id).first()
+            if user:
+                db.delete(user)
+                logger.info(f"Deleted associated user for client {client_name} (User ID: {user_id})")
+
         db.commit()
         
-        logger.info(f"Deleted client: {client.name} (ID: {client_id})")
+        logger.info(f"Deleted client: {client_name} (ID: {client_id}) and cleaned up all data.")
         return True
     
     @staticmethod

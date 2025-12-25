@@ -10,6 +10,7 @@ from app.clients.schemas import (
     ClientCreate, ClientUpdate, ClientSettingsCreate, 
     ClientSettingsUpdate, ClientWithSettings
 )
+from app.auth.models import User
 from app.core.exceptions import ValidationError
 from app.core.logging import logger
 import uuid
@@ -110,6 +111,13 @@ class ClientService:
         
         if client_data.status is not None:
             client.status = client_data.status
+            
+            # Sync user active status
+            if client.user_id:
+                user = db.query(User).filter(User.id == client.user_id).first()
+                if user:
+                    user.is_active = (client_data.status == 'active')
+                    logger.info(f"Updated user {user.id} active status to {user.is_active} to match client {client.id}")
         
         db.commit()
         db.refresh(client)

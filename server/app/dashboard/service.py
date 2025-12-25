@@ -29,16 +29,14 @@ class DashboardService:
     """Service for dashboard data queries."""
     
     @staticmethod
-    def get_dashboard_summary(
+    def _get_aggregated_metrics(
         db: Session,
         client_id: uuid.UUID,
         start_date: date,
-        end_date: date
-    ) -> DashboardSummary:
-        """Get high-level dashboard summary."""
-        
-        # Aggregate metrics
-        result = db.query(
+        end_date: date,
+        source: Optional[str] = None
+    ):
+        query = db.query(
             func.sum(DailyMetrics.impressions).label('impressions'),
             func.sum(DailyMetrics.clicks).label('clicks'),
             func.sum(DailyMetrics.conversions).label('conversions'),
@@ -50,41 +48,88 @@ class DashboardService:
             DailyMetrics.client_id == client_id,
             DailyMetrics.date >= start_date,
             DailyMetrics.date <= end_date
-        ).first()
+        )
+
+        if source:
+            query = query.filter(DailyMetrics.source == source)
+
+        result = query.first()
         
         if not result or not result.impressions:
-            return DashboardSummary(
-                total_impressions=0,
-                total_clicks=0,
-                total_conversions=0,
-                total_revenue=Decimal('0'),
-                total_spend=Decimal('0'),
-                overall_ctr=Decimal('0'),
-                overall_cpc=None,
-                overall_cpa=None,
-                overall_roas=None,
-                active_campaigns=0,
-                data_sources=[]
-            )
-        
-        # Calculate metrics
+            return None
+            
         ctr = MetricsCalculator.calculate_ctr(result.impressions, result.clicks)
         cpc = MetricsCalculator.calculate_cpc(result.spend, result.clicks)
         cpa = MetricsCalculator.calculate_cpa(result.spend, result.conversions)
         roas = MetricsCalculator.calculate_roas(result.revenue, result.spend)
         
+        return {
+            "result": result,
+            "metrics": {
+                "total_impressions": result.impressions,
+                "total_clicks": result.clicks,
+                "total_conversions": result.conversions,
+                "total_revenue": result.revenue,
+                "total_spend": result.spend,
+                "overall_ctr": ctr,
+                "overall_cpc": cpc,
+                "overall_cpa": cpa,
+                "overall_roas": roas
+            }
+        }
+
+    @staticmethod
+    def get_dashboard_summary(
+        db: Session,
+        client_id: uuid.UUID,
+        start_date: date,
+        end_date: date,
+        source: Optional[str] = None
+    ) -> DashboardSummary:
+        """Get high-level dashboard summary with previous period comparison."""
+        
+        # 1. Current Period
+        current = DashboardService._get_aggregated_metrics(db, client_id, start_date, end_date, source=source)
+        
+        if not current:
+            # Return empty response
+            from app.dashboard.schemas import PeriodMetrics
+            empty_metrics = {
+                "total_impressions": 0,
+                "total_clicks": 0,
+                "total_conversions": 0,
+                "total_revenue": Decimal('0'),
+                "total_spend": Decimal('0'),
+                "overall_ctr": Decimal('0'),
+                "overall_cpc": None,
+                "overall_cpa": None,
+                "overall_roas": None
+            }
+            return DashboardSummary(
+                **empty_metrics,
+                active_campaigns=0,
+                data_sources=[],
+                previous_period=None
+            )
+
+        # 2. Previous Period (Same Duration, immediately preceding)
+        duration = (end_date - start_date).days
+        prev_end_date = start_date - timedelta(days=1)
+        prev_start_date = prev_end_date - timedelta(days=duration)
+        
+        prev = DashboardService._get_aggregated_metrics(db, client_id, prev_start_date, prev_end_date, source=source)
+        
+        previous_period_data = None
+        if prev:
+            from app.dashboard.schemas import PeriodMetrics
+            previous_period_data = PeriodMetrics(**prev["metrics"])
+
+        # 3. Construct Response
         return DashboardSummary(
-            total_impressions=result.impressions,
-            total_clicks=result.clicks,
-            total_conversions=result.conversions,
-            total_revenue=result.revenue,
-            total_spend=result.spend,
-            overall_ctr=ctr,
-            overall_cpc=cpc,
-            overall_cpa=cpa,
-            overall_roas=roas,
-            active_campaigns=result.active_campaigns or 0,
-            data_sources=[s for s in (result.sources or []) if s]
+            **current["metrics"],
+            active_campaigns=current["result"].active_campaigns or 0,
+            data_sources=[s for s in (current["result"].sources or []) if s],
+            previous_period=previous_period_data
         )
     
     @staticmethod

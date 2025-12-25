@@ -9,6 +9,7 @@ from app.metrics.models import IngestionLog
 from app.etl.staging import StagingService
 from app.etl.transformer import TransformerService
 from app.etl.loader import LoaderService
+from app.metrics.aggregator import AggregatorService
 from app.core.logging import logger
 from app.core.email import email_service
 
@@ -117,6 +118,21 @@ class ETLOrchestrator:
                 records=aggregated_records,
                 source=source
             )
+            
+            # Step 4: Trigger immediate aggregation
+            if loaded > 0 and aggregated_records:
+                try:
+                    # Find date range in the loaded records
+                    dates = [r['date'] for r in aggregated_records if 'date' in r]
+                    if dates:
+                        min_date = min(dates)
+                        max_date = max(dates)
+                        logger.info(f"Triggering immediate aggregation for {min_date} - {max_date}")
+                        AggregatorService.aggregate_date_range(self.db, client_id, min_date, max_date)
+                except Exception as agg_err:
+                    # Don't fail the whole ETL if aggregation fails, just log it
+                    logger.error(f"Immediate aggregation failed: {str(agg_err)}")
+
             
             # Update ingestion log
             ingestion_log.records_loaded = loaded

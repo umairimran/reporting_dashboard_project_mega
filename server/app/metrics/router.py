@@ -159,62 +159,55 @@ async def get_monthly_summaries(
     return [MonthlySummaryResponse.from_orm(s) for s in summaries]
 
 
-@router.get("/summary", response_model=MetricsSummary)
+from app.dashboard.service import DashboardService
+from app.dashboard.schemas import DashboardSummary
+
+# ... (API Routes)
+
+@router.get("/summary", response_model=DashboardSummary)
 async def get_metrics_summary(
     start_date: date = Query(...),
     end_date: date = Query(...),
     client_id: Optional[uuid.UUID] = Query(None),
+    source: Optional[str] = Query(None, description="Filter by source"),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """Get aggregated metrics summary for a date range."""
-    query = db.query(
-        func.sum(DailyMetrics.impressions).label('impressions'),
-        func.sum(DailyMetrics.clicks).label('clicks'),
-        func.sum(DailyMetrics.conversions).label('conversions'),
-        func.sum(DailyMetrics.conversion_revenue).label('revenue'),
-        func.sum(DailyMetrics.spend).label('spend')
-    ).filter(
-        DailyMetrics.date >= start_date,
-        DailyMetrics.date <= end_date
-    )
     
-    # Apply client filter
+    # Determine client ID
+    target_client_id = client_id
     if current_user.role == 'client':
         if not current_user.clients:
             raise HTTPException(status_code=403, detail="No client associated with user")
-        query = query.filter(DailyMetrics.client_id == current_user.clients[0].id)
-    elif client_id:
-        query = query.filter(DailyMetrics.client_id == client_id)
-    
-    result = query.first()
-    
-    if not result or not result.impressions:
-        return MetricsSummary(
+        target_client_id = current_user.clients[0].id
+    elif not target_client_id:
+        # For admin without client_id, we might need to handle differently or error?
+        # DashboardService usually expects a client_id.
+        # If client_id is optional in router but required in Service...
+        # The frontend always sends client_id (appliedClientId).
+        # But let's check Service: get_dashboard_summary(db, client_id, ...)
+        # It filters by client_id. If None is passed, it might match nothing or everything?
+        # Service logic: DailyMetrics.client_id == client_id.
+        # So we must provide one. Admin typically selects one.
+        # If admin doesn't provide client_id, we probably return empty or error.
+        # For now, let's assume it's provided or handle gracefully.
+        return DashboardSummary(
             total_impressions=0,
             total_clicks=0,
             total_conversions=0,
             total_revenue=Decimal('0'),
             total_spend=Decimal('0'),
-            avg_ctr=Decimal('0'),
-            avg_cpc=None,
-            avg_cpa=None,
-            avg_roas=None
+            overall_ctr=Decimal('0'),
+            overall_cpc=None,
+            overall_cpa=None,
+            overall_roas=None,
+            active_campaigns=0,
+            data_sources=[],
+            previous_period=None
         )
-    
-    from app.metrics.calculator import MetricsCalculator
-    
-    return MetricsSummary(
-        total_impressions=result.impressions,
-        total_clicks=result.clicks,
-        total_conversions=result.conversions,
-        total_revenue=result.revenue,
-        total_spend=result.spend,
-        avg_ctr=MetricsCalculator.calculate_ctr(result.impressions, result.clicks),
-        avg_cpc=MetricsCalculator.calculate_cpc(result.spend, result.clicks),
-        avg_cpa=MetricsCalculator.calculate_cpa(result.spend, result.conversions),
-        avg_roas=MetricsCalculator.calculate_roas(result.revenue, result.spend)
-    )
+
+    return DashboardService.get_dashboard_summary(db, target_client_id, start_date, end_date, source=source)
 
 
 @router.post("/aggregate/week")

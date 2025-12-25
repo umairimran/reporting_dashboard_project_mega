@@ -13,7 +13,6 @@ import { authService } from "@/lib/services/auth";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { mockClients } from "@/lib/mock-data";
 
 // Adapt User type if necessary to match Dashboard's expectation
 interface User extends AuthUser { }
@@ -122,11 +121,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // For Real backend: we need to fetch user's clients. 
   // For now we will assume 'mockClients' or fetch them. 
   // Ideally backend /me returns clients. Let's assume user object has them or we filter mockClients for now as temporary bridge.
-  const currentClient =
-    simulatedClient ||
-    (user?.role === "client"
-      ? mockClients.find((c) => c.userId === user.id) || null
-      : null);
+  const currentClient = simulatedClient || null; // Removed mockClients fallback
 
   const simulateAsClient = useCallback(
     (client: Client | null) => {

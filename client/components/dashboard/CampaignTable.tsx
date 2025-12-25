@@ -1,5 +1,5 @@
 import { CampaignPerformance, DataSource } from "@/types/dashboard";
-import { formatCurrency, formatNumber, formatPercent } from "@/lib/mock-data";
+import { formatCurrency, formatNumber, formatPercent } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 interface CampaignTableProps {
@@ -43,7 +43,6 @@ export default function CampaignTable({ campaigns }: CampaignTableProps) {
 
   return (
     <div className="overflow-x-auto">
-      \n{" "}
       <table className="w-full border-collapse">
         <thead>
           <tr>
@@ -74,7 +73,6 @@ export default function CampaignTable({ campaigns }: CampaignTableProps) {
           </tr>
         </thead>
         <tbody>
-          \n{" "}
           {campaigns.map((campaign, index) => (
             <tr
               key={campaign.campaignId}
@@ -118,8 +116,8 @@ export default function CampaignTable({ campaigns }: CampaignTableProps) {
                     campaign.roas >= 3
                       ? "text-green-400"
                       : campaign.roas >= 2
-                      ? "text-amber-600"
-                      : "text-red-400"
+                        ? "text-amber-600"
+                        : "text-red-400"
                   )}
                 >
                   {campaign.roas.toFixed(2)}x

@@ -8,8 +8,9 @@ from typing import List, Optional
 import uuid
 
 
-class DashboardSummary(BaseModel):
-    """High-level dashboard summary."""
+
+class PeriodMetrics(BaseModel):
+    """Base metrics for a period."""
     total_impressions: int
     total_clicks: int
     total_conversions: int
@@ -19,8 +20,13 @@ class DashboardSummary(BaseModel):
     overall_cpc: Optional[Decimal]
     overall_cpa: Optional[Decimal]
     overall_roas: Optional[Decimal]
+
+
+class DashboardSummary(PeriodMetrics):
+    """High-level dashboard summary with comparison."""
     active_campaigns: int
     data_sources: List[str]
+    previous_period: Optional[PeriodMetrics] = None
 
 
 class CampaignBreakdown(BaseModel):

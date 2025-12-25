@@ -33,12 +33,31 @@ export interface MetricsFetchOptions {
     offset?: number;
 }
 
+
+export interface PeriodMetrics {
+    total_impressions: number;
+    total_clicks: number;
+    total_conversions: number;
+    total_revenue: number;
+    total_spend: number;
+    overall_ctr: number;
+    overall_cpc: number | null;
+    overall_cpa: number | null;
+    overall_roas: number | null;
+}
+
+export interface DashboardSummaryResponse extends PeriodMetrics {
+    active_campaigns: number;
+    data_sources: string[];
+    previous_period: PeriodMetrics | null;
+}
+
 export const metricsService = {
     getDailyMetrics: async (options: MetricsFetchOptions) => {
         return apiClient<DailyMetric[]>("/metrics/daily", { params: options as any });
     },
 
     getSummary: async (options: MetricsFetchOptions) => {
-        return apiClient<any>("/metrics/summary", { params: options as any });
+        return apiClient<DashboardSummaryResponse>("/metrics/summary", { params: options as any });
     }
 };

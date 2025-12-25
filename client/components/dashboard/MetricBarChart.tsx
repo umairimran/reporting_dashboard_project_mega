@@ -10,8 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { cn } from "@/lib/utils";
-import { formatCurrency, formatNumber } from "@/lib/mock-data";
+import { cn, formatCurrency, formatNumber } from "@/lib/utils";
 
 type MetricType = "conversions" | "revenue" | "spend" | "clicks";
 
@@ -82,7 +81,10 @@ export default function MetricBarChart({ data, title }: MetricBarChartProps) {
     return formatNumber(value);
   };
 
-  // Show empty state if no data
+  // Check if there is data for the selected metric
+  const hasMetricData = data.some((item) => (item[selectedMetric] || 0) > 0);
+
+  // Show completely empty state if no data at all (no rows)
   if (!data || data.length === 0) {
     return (
       <div className="space-y-4">
@@ -109,7 +111,7 @@ export default function MetricBarChart({ data, title }: MetricBarChartProps) {
             No Data Available
           </p>
           <p className="text-sm text-slate-600">
-            There is no data to display for this metric at this time.
+            There is no data to display for this period.
           </p>
         </div>
       </div>
@@ -118,11 +120,9 @@ export default function MetricBarChart({ data, title }: MetricBarChartProps) {
 
   return (
     <div className="space-y-4">
-      \n{" "}
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
         <div className="flex items-center gap-2 p-1 bg-slate-100 rounded-lg">
-          \n{" "}
           {metrics.map((metric) => (
             <button
               key={metric.key}
@@ -139,42 +139,72 @@ export default function MetricBarChart({ data, title }: MetricBarChartProps) {
           ))}
         </div>
       </div>
+
       <div className="h-[400px] w-full">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart
-            data={data}
-            margin={{ top: 10, right: 10, left: 10, bottom: 60 }}
-          >
-            <CartesianGrid
-              strokeDasharray="3 3"
-              stroke="#e2e8f0"
-              opacity={0.5}
-            />
-            <XAxis
-              dataKey="name"
-              stroke="#64748b"
-              fontSize={12}
-              tickLine={false}
-              axisLine={false}
-              angle={-45}
-              textAnchor="end"
-              height={80}
-            />
-            <YAxis
-              stroke="#64748b"
-              fontSize={12}
-              tickLine={false}
-              axisLine={false}
-              tickFormatter={formatYAxis}
-            />
-            <Tooltip content={<CustomTooltip />} cursor={{ fill: "#f1f5f9" }} />
-            <Bar
-              dataKey={selectedMetric}
-              fill="#3b82f6"
-              radius={[4, 4, 0, 0]}
-            />
-          </BarChart>
-        </ResponsiveContainer>
+        {hasMetricData ? (
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={data}
+              margin={{ top: 10, right: 10, left: 10, bottom: 60 }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="#e2e8f0"
+                opacity={0.5}
+              />
+              <XAxis
+                dataKey="name"
+                stroke="#64748b"
+                fontSize={12}
+                tickLine={false}
+                axisLine={false}
+                angle={-45}
+                textAnchor="end"
+                height={80}
+              />
+              <YAxis
+                stroke="#64748b"
+                fontSize={12}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={formatYAxis}
+              />
+              <Tooltip
+                content={<CustomTooltip />}
+                cursor={{ fill: "#f1f5f9" }}
+              />
+              <Bar
+                dataKey={selectedMetric}
+                fill="#3b82f6"
+                radius={[4, 4, 0, 0]}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        ) : (
+          <div className="flex flex-col items-center justify-center h-full border border-dashed border-slate-200 rounded-lg bg-slate-50/50">
+            <div className="w-12 h-12 mb-3 rounded-full bg-slate-100 flex items-center justify-center">
+              <svg
+                className="w-6 h-6 text-slate-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
+              </svg>
+            </div>
+            <p className="font-medium text-slate-900">
+              No {metrics.find((m) => m.key === selectedMetric)?.label} Data
+            </p>
+            <p className="text-sm text-slate-500">
+              Try selecting a different metric.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

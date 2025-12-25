@@ -9,7 +9,6 @@ interface PlatformTabsProps {
 const platforms: { id: DataSource; label: string; color: string }[] = [
   { id: "surfside", label: "Surfside", color: "#3b82f6" },
   { id: "facebook", label: "Facebook", color: "#3b82f6" },
-  { id: "vibe", label: "Vibe", color: "#3b82f6" },
 ];
 
 export default function PlatformTabs({
@@ -31,9 +30,9 @@ export default function PlatformTabs({
           style={
             activeSource === platform.id
               ? {
-                  backgroundColor: platform.color,
-                  boxShadow: `0 10px 15px -3px ${platform.color}40, 0 4px 6px -4px ${platform.color}40, 0 0 20px ${platform.color}40`,
-                }
+                backgroundColor: platform.color,
+                boxShadow: `0 10px 15px -3px ${platform.color}40, 0 4px 6px -4px ${platform.color}40, 0 0 20px ${platform.color}40`,
+              }
               : {}
           }
         >

@@ -409,3 +409,34 @@ class AggregatorService:
         
         logger.info(f"Aggregated month {year}-{month:02d} for {len(summaries)} clients")
         return summaries
+    
+    @staticmethod
+    def aggregate_date_range(db: Session, client_id: uuid.UUID, start_date: date, end_date: date):
+        """
+        Trigger aggregation for all weeks and months covering the given date range.
+        This ensures summaries are kept in sync with daily metrics after ingestion.
+        """
+        logger.info(f"Triggering aggregation for range {start_date} to {end_date} for client {client_id}")
+        
+        # 1. Aggregate Months
+        # Start from the first day of the start month
+        current_date = date(start_date.year, start_date.month, 1)
+        end_month_date = date(end_date.year, end_date.month, 1)
+        
+        while current_date <= end_month_date:
+            AggregatorService.aggregate_month(db, client_id, current_date.year, current_date.month)
+            # Move to next month
+            if current_date.month == 12:
+                current_date = date(current_date.year + 1, 1, 1)
+            else:
+                current_date = date(current_date.year, current_date.month + 1, 1)
+                
+        # 2. Aggregate Weeks
+        # Start from the Monday of the week containing start_date
+        current_week_start = AggregatorService.get_week_start(start_date)
+        end_week_start = AggregatorService.get_week_start(end_date)
+        
+        while current_week_start <= end_week_start:
+            AggregatorService.aggregate_week(db, client_id, current_week_start)
+            current_week_start += timedelta(days=7)
+

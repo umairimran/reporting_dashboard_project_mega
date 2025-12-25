@@ -1,7 +1,7 @@
 """
 Metrics and aggregation models.
 """
-from sqlalchemy import Column, String, DateTime, Date, BigInteger, Numeric, ForeignKey, UniqueConstraint, Integer, Text
+from sqlalchemy import Column, String, DateTime, Date, BigInteger, Numeric, ForeignKey, UniqueConstraint, Integer, Text, Index
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import relationship
 from datetime import datetime
@@ -19,6 +19,8 @@ class DailyMetrics(Base):
             'placement_id', 'creative_id', 'source',
             name='uq_daily_metrics_full'
         ),
+        Index('idx_daily_metrics_client_date', 'client_id', 'date'),
+        Index('idx_daily_metrics_client_source_date', 'client_id', 'source', 'date'),
     )
     
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)

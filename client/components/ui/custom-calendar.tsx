@@ -61,6 +61,15 @@ export function CustomCalendar({
     return isSameDay(date, new Date());
   };
 
+  const isFuture = (date: Date | null) => {
+    if (!date) return false;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const compareDate = new Date(date);
+    compareDate.setHours(0, 0, 0, 0);
+    return compareDate > today;
+  };
+
   const isInRange = (date: Date | null) => {
     if (!date || mode !== "range" || typeof selected !== "object") return false;
     const range = selected as { from?: Date; to?: Date };
@@ -81,19 +90,52 @@ export function CustomCalendar({
   };
 
   const handleDayClick = (date: Date) => {
+    // Prevent selecting future dates
+    if (isFuture(date)) return;
+
     if (mode === "single") {
       onSelect?.(date);
     } else if (mode === "range") {
       const range = (selected as { from?: Date; to?: Date }) || {};
-      if (!range.from || (range.from && range.to)) {
-        // Start new range
-        onSelect?.({ from: date, to: undefined });
-      } else {
-        // Complete the range
-        if (date >= range.from) {
-          onSelect?.({ from: range.from, to: date });
+
+      if (!range.from || !range.to) {
+        // First click or completing the range
+        if (!range.from) {
+          // Start new range
+          onSelect?.({ from: date, to: undefined });
         } else {
-          onSelect?.({ from: date, to: range.from });
+          // Complete the range
+          if (date >= range.from) {
+            onSelect?.({ from: range.from, to: date });
+          } else {
+            onSelect?.({ from: date, to: range.from });
+          }
+        }
+      } else {
+        // Both dates are set - adjust the nearest boundary
+        const clickedTime = date.getTime();
+        const fromTime = range.from.getTime();
+        const toTime = range.to.getTime();
+
+        const distanceToFrom = Math.abs(clickedTime - fromTime);
+        const distanceToTo = Math.abs(clickedTime - toTime);
+
+        if (distanceToFrom < distanceToTo) {
+          // Closer to 'from' - move 'from' boundary
+          if (date <= range.to) {
+            onSelect?.({ from: date, to: range.to });
+          } else {
+            // Clicked after 'to', swap them
+            onSelect?.({ from: range.to, to: date });
+          }
+        } else {
+          // Closer to 'to' - move 'to' boundary
+          if (date >= range.from) {
+            onSelect?.({ from: range.from, to: date });
+          } else {
+            // Clicked before 'from', swap them
+            onSelect?.({ from: date, to: range.from });
+          }
         }
       }
     }
@@ -165,6 +207,7 @@ export function CustomCalendar({
             const inRange = isInRange(day);
             const rangeStart = isRangeStart(day);
             const rangeEnd = isRangeEnd(day);
+            const futureDate = isFuture(day);
 
             return (
               <div
@@ -177,13 +220,18 @@ export function CustomCalendar({
                 {day ? (
                   <button
                     onClick={() => handleDayClick(day)}
+                    disabled={futureDate}
                     className={cn(
                       "h-9 w-9 rounded-md text-sm font-normal transition-colors",
-                      "hover:bg-slate-100",
+                      futureDate
+                        ? "text-slate-300 cursor-not-allowed hover:bg-transparent"
+                        : "hover:bg-slate-100",
                       isSelected || rangeStart || rangeEnd
                         ? "bg-blue-600 text-white hover:bg-blue-600"
                         : isToday(day)
                         ? "bg-slate-100 font-semibold"
+                        : futureDate
+                        ? "text-slate-300"
                         : "text-slate-900"
                     )}
                   >

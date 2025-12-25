@@ -46,9 +46,15 @@ export default function DateRangePicker({
 
     // Handle range object
     if (typeof range === "object" && "from" in range) {
+      // Update the date range even if only 'from' is set (partial selection)
+      setActivePreset("custom");
+
+      // Update the range but keep popover open for further adjustments
       if (range.from && range.to) {
-        setActivePreset("custom");
         onDateRangeChange({ from: range.from, to: range.to });
+      } else if (range.from) {
+        // Only 'from' is set, keep popover open for user to select 'to'
+        onDateRangeChange({ from: range.from, to: range.from });
       }
     }
   };

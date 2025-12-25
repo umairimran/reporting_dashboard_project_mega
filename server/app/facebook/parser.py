@@ -13,7 +13,7 @@ class FacebookParser:
     
     # Required columns (normalized to lowercase for case-insensitive matching)
     REQUIRED_COLUMNS = [
-        # 'reporting starts',  # TODO: Awaiting client confirmation on date field
+        'day',  # Date field
         'campaign name',
         'ad set name',
         'ad name',

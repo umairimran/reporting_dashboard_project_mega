@@ -9,7 +9,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { formatCurrency, formatNumber, formatPercent } from "@/lib/mock-data";
+import { formatCurrency, formatNumber, formatPercent } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 type SortDirection = "asc" | "desc" | null;
@@ -78,6 +78,8 @@ export default function DataTable({
 
   const formatValue = (value: any, format?: string) => {
     if (value === null || value === undefined) return "-";
+    if (typeof value === "number" && isNaN(value)) return "-";
+    if (String(value) === "NaN") return "-";
 
     switch (format) {
       case "currency":

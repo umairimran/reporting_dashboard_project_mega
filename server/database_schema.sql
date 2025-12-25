@@ -230,6 +230,9 @@ CREATE INDEX idx_metrics_creative ON daily_metrics(creative_id);
 CREATE INDEX idx_metrics_date ON daily_metrics(date DESC);
 CREATE INDEX idx_metrics_source ON daily_metrics(source);
 
+CREATE INDEX idx_daily_metrics_client_date ON daily_metrics(client_id, date);
+CREATE INDEX idx_daily_metrics_client_source_date ON daily_metrics(client_id, source, date);
+
 CREATE TRIGGER update_daily_metrics_updated_at 
     BEFORE UPDATE ON daily_metrics 
     FOR EACH ROW 

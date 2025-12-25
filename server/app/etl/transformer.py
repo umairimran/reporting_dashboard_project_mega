@@ -271,9 +271,7 @@ class TransformerService:
         ctr = (clicks / impressions ) if impressions > 0 else 0
         
         return {
-            # TODO: Date field - awaiting client confirmation on which field to use
-            'date': TransformerService.parse_date(raw_record.get('reporting starts')),
-            # 'date': TransformerService.parse_date(raw_record.get('reporting ends')),  # Alternative
+            'date': TransformerService.parse_date(raw_record.get('day')),
             
             'campaign_name': campaign_name,
             'strategy_name': ad_set_name or "General Strategy",

@@ -11,7 +11,6 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { mockReports } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 import {
   format,
@@ -38,7 +37,7 @@ export default function Reports() {
   const [filterType, setFilterType] = useState<"all" | "weekly" | "monthly">(
     "all"
   );
-  const [reports, setReports] = useState<Report[]>(mockReports);
+  const [reports, setReports] = useState<Report[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [reportType, setReportType] = useState<"weekly" | "monthly">("weekly");
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -364,7 +363,7 @@ export default function Reports() {
                   "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize",
                   report.status === "ready" && "bg-green-500/20 text-green-400",
                   report.status === "generating" &&
-                    "bg-yellow-500/20 text-yellow-400",
+                  "bg-yellow-500/20 text-yellow-400",
                   report.status === "failed" && "bg-red-500/20 text-red-400"
                 )}
               >

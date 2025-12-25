@@ -180,16 +180,18 @@ class TransformerService:
         
         return {
             'date': TransformerService.parse_date(raw_record.get('Event Date')),
-            'campaign_name': strategy_name or "Surfside Campaign",  # Use Strategy Name as Campaign
+            'campaign_name': None,  # User requested no campaign for Surfside
             'strategy_name': strategy_name or "General Strategy",
             'placement_name': TransformerService.normalize_string(raw_record.get('Placement Name', '')) or "General Placement",
             'creative_name': TransformerService.normalize_string(raw_record.get('Creative Name', '')) or "General Creative",
+            'region_name': None,
             'impressions': impressions,
             'clicks': clicks,
             'conversions': TransformerService.parse_number(raw_record.get('Conversions', 0)),
             'conversion_revenue': TransformerService.parse_decimal(raw_record.get('Conversion Value', 0)),
             'ctr': ctr
         }
+
     
     @staticmethod
     def transform_vibe_record(raw_record: Dict) -> Dict:
@@ -229,8 +231,10 @@ class TransformerService:
             'clicks': clicks,  # Vibe: installs → clicks
             'conversions': TransformerService.parse_number(raw_record.get('number_of_purchases', 0)),  # Vibe: number_of_purchases → conversions
             'conversion_revenue': TransformerService.parse_decimal(raw_record.get('amount_of_purchases', 0)),  # Vibe: amount_of_purchases → revenue
-            'ctr': ctr
+            'ctr': ctr,
+            'region_name': None
         }
+
     
     @staticmethod
     def transform_facebook_record(raw_record: Dict) -> Dict:
@@ -272,21 +276,18 @@ class TransformerService:
         
         return {
             'date': TransformerService.parse_date(raw_record.get('day')),
-            
             'campaign_name': campaign_name,
-        'strategy_name': ad_set_name or "General Strategy",
-            'placement_name': placement_name or "General Placement",
+            'strategy_name': None, # User requested null strategy
+            'placement_name': None, # User requested null placement
             'creative_name': creative_name or "General Creative",
+            'region_name': region, # Extract region
             'impressions': impressions,
             'clicks': clicks,
-            
-            # TODO: Conversions - not in current CSV, awaiting client confirmation
-            'conversions': TransformerService.parse_number(raw_record.get('conversions', 0)),
-            
-            # TODO: Revenue - not in current CSV, awaiting client confirmation
-            'conversion_revenue': TransformerService.parse_decimal(raw_record.get('revenue', 0)),
+            'conversions': 0, # User requested removal
+            'conversion_revenue': Decimal('0'), # User requested removal
             'ctr': ctr
         }
+
     
     @staticmethod
     def validate_and_transform(
@@ -320,9 +321,16 @@ class TransformerService:
         if not transform_func:
             raise ValidationError(f"Unknown source: {source}")
         
-        required_fields = ['date', 'campaign_name', 'strategy_name', 'placement_name', 'creative_name']
+        # Dynamic required fields based on source
+        if source == 'facebook':
+            required_fields = ['date', 'campaign_name', 'creative_name']
+        elif source == 'surfside':
+            required_fields = ['date', 'strategy_name', 'placement_name', 'creative_name']
+        else:
+            required_fields = ['date', 'campaign_name', 'strategy_name', 'placement_name', 'creative_name']
         
         for idx, raw_record in enumerate(records):
+
             try:
                 # Transform record
                 transformed = transform_func(raw_record)
@@ -397,10 +405,11 @@ class TransformerService:
             # Create dimension key
             key = (
                 str(record['date']),
-                record['campaign_name'],
-                record['strategy_name'],
-                record['placement_name'],
-                record['creative_name']
+                record.get('campaign_name'),
+                record.get('strategy_name'),
+                record.get('placement_name'),
+                record['creative_name'],
+                record.get('region_name')
             )
             
             # Track count for this key
@@ -414,10 +423,11 @@ class TransformerService:
             
             # Store dimension values (same for all records with this key)
             aggregated[key]['date'] = record['date']
-            aggregated[key]['campaign_name'] = record['campaign_name']
-            aggregated[key]['strategy_name'] = record['strategy_name']
-            aggregated[key]['placement_name'] = record['placement_name']
+            aggregated[key]['campaign_name'] = record.get('campaign_name')
+            aggregated[key]['strategy_name'] = record.get('strategy_name')
+            aggregated[key]['placement_name'] = record.get('placement_name')
             aggregated[key]['creative_name'] = record['creative_name']
+            aggregated[key]['region_name'] = record.get('region_name')
             aggregated[key]['ctr'] = None  # Will be recalculated
         
         # Print aggregation details

@@ -302,6 +302,8 @@ export default function Dashboard() {
     const strategies: Record<string, any> = {};
     const placements: Record<string, any> = {};
     const creatives: Record<string, any> = {};
+    const regions: Record<string, any> = {};
+
 
     const initMetric = {
       impressions: 0,
@@ -359,6 +361,15 @@ export default function Dashboard() {
         };
       }
       accumulate(creatives[creatName], m);
+
+      // Region (Only if present)
+      if (m.region_name) {
+        const regName = m.region_name;
+        if (!regions[regName]) {
+          regions[regName] = { ...initMetric, name: regName, id: regName };
+        }
+        accumulate(regions[regName], m);
+      }
     });
 
     const calculateComputed = (item: any) => ({
@@ -372,6 +383,7 @@ export default function Dashboard() {
       strategies: Object.values(strategies).map(calculateComputed),
       placements: Object.values(placements).map(calculateComputed),
       creatives: Object.values(creatives).map(calculateComputed),
+      regions: Object.values(regions).map(calculateComputed),
     };
 
   }, [dailyMetrics]);
@@ -397,6 +409,9 @@ export default function Dashboard() {
       case "campaign":
         // ####### here we commented a working code for xyz section ####
         if (activeSource === "surfside") return null;
+
+        const campaignAllowedMetrics = activeSource === 'facebook' ? ['clicks', 'spend'] : undefined;
+
         return (
 
           <div key="campaign">
@@ -411,6 +426,7 @@ export default function Dashboard() {
                   clicks: item.clicks,
                 }))}
                 title="Campaign Performance"
+                allowedMetrics={campaignAllowedMetrics as any}
               />
             </div>
             <div className="mt-6 bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-xl p-6 opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]">
@@ -433,14 +449,12 @@ export default function Dashboard() {
                   },
                   { key: "clicks", label: "Clicks", format: "raw" },
                   { key: "ctr", label: "CTR", format: "percent" },
-                  {
-                    key: "conversions",
-                    label: "Conversions",
-                    format: "raw",
-                  },
-                  { key: "revenue", label: "Revenue", format: "currency" },
+                  ...(activeSource !== 'facebook' ? [
+                    { key: "conversions", label: "Conversions", format: "raw" } as any,
+                    { key: "revenue", label: "Revenue", format: "currency" } as any,
+                    { key: "roas", label: "ROAS", format: "raw" } as any,
+                  ] : []),
                   { key: "spend", label: "Spend", format: "currency" },
-                  { key: "roas", label: "ROAS", format: "raw" },
                 ]}
 
               />
@@ -448,11 +462,13 @@ export default function Dashboard() {
           </div>
         );
       case "strategy":
+        if (activeSource === "facebook") return null;
         return (
           <div key="strategy">
             <div className="mt-8 bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-xl p-6 opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]">
               <MetricBarChart
                 data={aggregatedData.strategies.map((item) => ({
+
                   id: item.id,
                   name: item.name,
                   conversions: item.conversions,
@@ -498,6 +514,7 @@ export default function Dashboard() {
           </div>
         );
       case "placement":
+        if (activeSource === "facebook") return null;
         return (
           <div key="placement">
             <div className="mt-8 bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-xl p-6 opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]">
@@ -550,12 +567,15 @@ export default function Dashboard() {
 
         // ####### here we commented a working code for xyz section ####
         if (activeSource === "surfside") return null;
+
+        const regionAllowedMetrics = activeSource === 'facebook' ? ['clicks', 'spend'] : undefined;
+
         return (
 
           <div key="region">
             <div className="mt-8 bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-xl p-6 opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]">
               <MetricBarChart
-                data={mockRegionPerformance.map((item) => ({
+                data={aggregatedData.regions.map((item) => ({
                   id: item.id,
                   name: item.name,
                   conversions: item.conversions,
@@ -563,7 +583,8 @@ export default function Dashboard() {
                   spend: item.spend,
                   clicks: item.clicks,
                 }))}
-                title="Region Performance (Mock Data)"
+                title="Region Performance"
+                allowedMetrics={regionAllowedMetrics as any}
               />
             </div>
             <div className="mt-6 bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-xl p-6 opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]">
@@ -572,11 +593,11 @@ export default function Dashboard() {
                   Region Details
                 </h3>
                 <span className="text-sm text-slate-600">
-                  Total: {mockRegionPerformance.length} records
+                  Total: {aggregatedData.regions.length} records
                 </span>
               </div>
               <DataTable
-                data={mockRegionPerformance}
+                data={aggregatedData.regions}
                 columns={[
                   { key: "name", label: "Region", format: "text" },
                   {
@@ -586,14 +607,12 @@ export default function Dashboard() {
                   },
                   { key: "clicks", label: "Clicks", format: "raw" },
                   { key: "ctr", label: "CTR", format: "percent" },
-                  {
-                    key: "conversions",
-                    label: "Conversions",
-                    format: "raw",
-                  },
-                  { key: "revenue", label: "Revenue", format: "currency" },
+                  ...(activeSource !== 'facebook' ? [
+                    { key: "conversions", label: "Conversions", format: "raw" } as any,
+                    { key: "revenue", label: "Revenue", format: "currency" } as any,
+                    { key: "roas", label: "ROAS", format: "raw" } as any,
+                  ] : []),
                   { key: "spend", label: "Spend", format: "currency" },
-                  { key: "roas", label: "ROAS", format: "raw" },
                 ]}
 
               />
@@ -601,6 +620,9 @@ export default function Dashboard() {
           </div>
         );
       case "creative":
+
+        const creativeAllowedMetrics = activeSource === 'facebook' ? ['clicks', 'spend'] : undefined;
+
         return (
           <div key="creative">
             <div className="mt-8 bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-xl p-6 opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]">
@@ -614,6 +636,7 @@ export default function Dashboard() {
                   clicks: item.clicks,
                 }))}
                 title="Creative Performance"
+                allowedMetrics={creativeAllowedMetrics as any}
               />
             </div>
             <div className="mt-6 bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-xl p-6 opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]">
@@ -636,14 +659,12 @@ export default function Dashboard() {
                   },
                   { key: "clicks", label: "Clicks", format: "raw" },
                   { key: "ctr", label: "CTR", format: "percent" },
-                  {
-                    key: "conversions",
-                    label: "Conversions",
-                    format: "raw",
-                  },
-                  { key: "revenue", label: "Revenue", format: "currency" },
+                  ...(activeSource !== 'facebook' ? [
+                    { key: "conversions", label: "Conversions", format: "raw" } as any,
+                    { key: "revenue", label: "Revenue", format: "currency" } as any,
+                    { key: "roas", label: "ROAS", format: "raw" } as any,
+                  ] : []),
                   { key: "spend", label: "Spend", format: "currency" },
-                  { key: "roas", label: "ROAS", format: "raw" },
                 ]}
 
               />
@@ -744,7 +765,14 @@ export default function Dashboard() {
           {/* KPI Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {kpis
-              .filter((kpi) => kpi.enabled)
+              .filter((kpi) => {
+                if (!kpi.enabled) return false;
+                if (activeSource === 'facebook') {
+                  // Hide revenue, conversions, roas, cpa for Facebook
+                  if (['revenue', 'conversions', 'roas', 'cpa'].includes(kpi.id)) return false;
+                }
+                return true;
+              })
               .sort((a, b) => a.order - b.order)
               .map((kpi, index) => {
                 // Calculate Trend

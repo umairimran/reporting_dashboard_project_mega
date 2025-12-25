@@ -27,7 +27,9 @@ class Campaign(Base):
     # Relationships
     client = relationship("Client", back_populates="campaigns")
     strategies = relationship("Strategy", back_populates="campaign", cascade="all, delete-orphan")
+    creatives = relationship("Creative", back_populates="campaign", cascade="all, delete-orphan") # New relationship
     daily_metrics = relationship("DailyMetrics", back_populates="campaign")
+
     
     def __repr__(self):
         return f"<Campaign {self.name} ({self.source})>"
@@ -79,16 +81,32 @@ class Placement(Base):
         return f"<Placement {self.name}>"
 
 
-class Creative(Base):
-    """Fourth-level creative entity."""
+class Region(Base):
+    """Region entity for geo-targeting."""
     
-    __tablename__ = "creatives"
-    __table_args__ = (
-        UniqueConstraint('placement_id', 'name', name='uq_creative_placement_name'),
-    )
+    __tablename__ = "regions"
     
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    placement_id = Column(UUID(as_uuid=True), ForeignKey('placements.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
+    name = Column(String(255), nullable=False, unique=True)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relationships
+    daily_metrics = relationship("DailyMetrics", back_populates="region")
+    
+    def __repr__(self):
+        return f"<Region {self.name}>"
+
+
+class Creative(Base):
+    """Fourth-level creative entity. Can belong to Placement (Surfside) or Campaign (Facebook)."""
+    
+    __tablename__ = "creatives"
+    # Unique constraint removed due to mixed hierarchy
+    
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    placement_id = Column(UUID(as_uuid=True), ForeignKey('placements.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=True)
+    campaign_id = Column(UUID(as_uuid=True), ForeignKey('campaigns.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=True) # New: direct link to campaign
     name = Column(String(255), nullable=False)
     preview_url = Column(Text)
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
@@ -96,7 +114,9 @@ class Creative(Base):
     
     # Relationships
     placement = relationship("Placement", back_populates="creatives")
+    campaign = relationship("Campaign", back_populates="creatives") # New relationship
     daily_metrics = relationship("DailyMetrics", back_populates="creative")
     
     def __repr__(self):
         return f"<Creative {self.name}>"
+

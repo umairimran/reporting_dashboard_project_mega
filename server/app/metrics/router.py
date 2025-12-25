@@ -41,7 +41,7 @@ async def get_daily_metrics(
     current_user: User = Depends(get_current_user)
 ):
     """Get daily metrics with optional filters."""
-    from app.campaigns.models import Campaign, Strategy, Placement, Creative
+    from app.campaigns.models import Campaign, Strategy, Placement, Creative, Region
     
     query = db.query(
         DailyMetrics,
@@ -49,12 +49,14 @@ async def get_daily_metrics(
         Campaign.name.label('campaign_name'),
         Strategy.name.label('strategy_name'),
         Placement.name.label('placement_name'),
-        Creative.name.label('creative_name')
+        Creative.name.label('creative_name'),
+        Region.name.label('region_name')
     ).join(Client, DailyMetrics.client_id == Client.id
     ).outerjoin(Campaign, DailyMetrics.campaign_id == Campaign.id
     ).outerjoin(Strategy, DailyMetrics.strategy_id == Strategy.id
     ).outerjoin(Placement, DailyMetrics.placement_id == Placement.id
-    ).outerjoin(Creative, DailyMetrics.creative_id == Creative.id)
+    ).outerjoin(Creative, DailyMetrics.creative_id == Creative.id
+    ).outerjoin(Region, DailyMetrics.region_id == Region.id)
     
     # Apply date range filter
     query = query.filter(
@@ -93,6 +95,7 @@ async def get_daily_metrics(
             strategy_name=strat_name,
             placement_name=place_name,
             creative_name=creat_name,
+            region_name=reg_name,
             date=m.date,
             impressions=m.impressions,
             clicks=m.clicks,
@@ -105,8 +108,9 @@ async def get_daily_metrics(
             roas=m.roas,
             source=m.source
         )
-        for m, c_name, camp_name, strat_name, place_name, creat_name in results
+        for m, c_name, camp_name, strat_name, place_name, creat_name, reg_name in results
     ]
+
 
 
 @router.get("/weekly", response_model=List[WeeklySummaryResponse])

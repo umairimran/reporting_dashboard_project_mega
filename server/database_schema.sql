@@ -104,6 +104,21 @@ COMMENT ON COLUMN client_settings.effective_date IS 'Timestamp when this CPM rat
 -- SECTION 4: CAMPAIGN HIERARCHY TABLES
 -- ============================================================================
 
+-- Regions table (New)
+CREATE TABLE regions (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(255) NOT NULL UNIQUE,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TRIGGER update_regions_updated_at 
+    BEFORE UPDATE ON regions 
+    FOR EACH ROW 
+    EXECUTE FUNCTION update_updated_at_column();
+
+COMMENT ON TABLE regions IS 'Geographic regions for ad targeting';
+
 -- Campaigns table
 CREATE TABLE campaigns (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -170,23 +185,26 @@ COMMENT ON TABLE placements IS 'Ad placements within strategies';
 -- Creatives table
 CREATE TABLE creatives (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    placement_id UUID NOT NULL REFERENCES placements(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    placement_id UUID REFERENCES placements(id) ON UPDATE CASCADE ON DELETE CASCADE, -- Made Nullable
+    campaign_id UUID REFERENCES campaigns(id) ON UPDATE CASCADE ON DELETE CASCADE,  -- Added Link to Campaign (for FB)
     name VARCHAR(255) NOT NULL,
     preview_url TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    UNIQUE(placement_id, name)
+    CONSTRAINT chk_creative_parent CHECK (placement_id IS NOT NULL OR campaign_id IS NOT NULL) -- Must have at least one parent
+    -- Unique constraint is tricky with mixed parents now. 
+    -- Maybe just index name + parent?
 );
 
-CREATE UNIQUE INDEX idx_creative_placement_name ON creatives(placement_id, name);
 CREATE INDEX idx_creatives_placement_id ON creatives(placement_id);
+CREATE INDEX idx_creatives_campaign_id ON creatives(campaign_id);
 
 CREATE TRIGGER update_creatives_updated_at 
     BEFORE UPDATE ON creatives 
     FOR EACH ROW 
     EXECUTE FUNCTION update_updated_at_column();
 
-COMMENT ON TABLE creatives IS 'Creative assets within placements';
+COMMENT ON TABLE creatives IS 'Creative assets linked to Placement (Surfside) or Campaign (Facebook)';
 
 -- ============================================================================
 -- SECTION 5: METRICS TABLES
@@ -197,10 +215,14 @@ CREATE TABLE daily_metrics (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     client_id UUID NOT NULL REFERENCES clients(id) ON UPDATE CASCADE ON DELETE CASCADE,
     date DATE NOT NULL,
-    campaign_id UUID NOT NULL REFERENCES campaigns(id) ON UPDATE CASCADE ON DELETE CASCADE,
-    strategy_id UUID NOT NULL REFERENCES strategies(id) ON UPDATE CASCADE ON DELETE CASCADE,
-    placement_id UUID NOT NULL REFERENCES placements(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    
+    -- Dimensions (Nullable to support varying levels)
+    campaign_id UUID REFERENCES campaigns(id) ON UPDATE CASCADE ON DELETE CASCADE, -- Nullable (Surfside)
+    strategy_id UUID REFERENCES strategies(id) ON UPDATE CASCADE ON DELETE CASCADE, -- Nullable (Facebook)
+    placement_id UUID REFERENCES placements(id) ON UPDATE CASCADE ON DELETE CASCADE, -- Nullable (Facebook)
     creative_id UUID NOT NULL REFERENCES creatives(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    region_id UUID REFERENCES regions(id) ON UPDATE CASCADE ON DELETE SET NULL, -- Added Region (Nullable)
+
     source VARCHAR(50) NOT NULL CHECK (source IN ('surfside', 'vibe', 'facebook')),
     
     -- Raw metrics
@@ -217,10 +239,13 @@ CREATE TABLE daily_metrics (
     roas DECIMAL(12,4) NOT NULL DEFAULT 0,
     
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
     
-    UNIQUE(client_id, date, campaign_id, strategy_id, placement_id, creative_id, source)
+    -- Unique constraint relaxed? Or complex unique index?
+    -- UNIQUE(client_id, date, campaign_id, strategy_id, placement_id, creative_id, region_id, source) -- All nullable is hard for unique constraint in some SQL dialects, but PG handles NULL as distinct usually.
+    -- Better to rely on logic or partial indexes if needed.
 );
+
 
 CREATE INDEX idx_metrics_client_date ON daily_metrics(client_id, date DESC);
 CREATE INDEX idx_metrics_campaign ON daily_metrics(campaign_id, date DESC);

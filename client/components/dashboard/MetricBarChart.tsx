@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   BarChart,
   Bar,
@@ -24,7 +24,9 @@ interface MetricBarChartProps {
     clicks: number;
   }>;
   title: string;
+  allowedMetrics?: MetricType[];
 }
+
 
 const metrics: { key: MetricType; label: string }[] = [
   { key: "conversions", label: "Conversions" },
@@ -33,9 +35,23 @@ const metrics: { key: MetricType; label: string }[] = [
   { key: "clicks", label: "Clicks" },
 ];
 
-export default function MetricBarChart({ data, title }: MetricBarChartProps) {
+export default function MetricBarChart({ data, title, allowedMetrics }: MetricBarChartProps) {
+  const availableMetrics = allowedMetrics
+    ? metrics.filter(m => allowedMetrics.includes(m.key))
+    : metrics;
+
+  // Ensure default selected metric is valid
   const [selectedMetric, setSelectedMetric] =
-    useState<MetricType>("conversions");
+    useState<MetricType>(availableMetrics[0]?.key || "conversions");
+
+  // Update selected metric if it becomes unavailable when allowedMetrics changes
+  useEffect(() => {
+    if (availableMetrics.length > 0 && !availableMetrics.find(m => m.key === selectedMetric)) {
+      setSelectedMetric(availableMetrics[0].key);
+    }
+  }, [allowedMetrics, selectedMetric]);
+
+
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (!active || !payload?.length) return null;
@@ -126,10 +142,11 @@ export default function MetricBarChart({ data, title }: MetricBarChartProps) {
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
         <div className="flex items-center gap-2 p-1 bg-slate-100 rounded-lg">
-          {metrics.map((metric) => (
+          {availableMetrics.map((metric) => (
             <button
               key={metric.key}
               onClick={() => setSelectedMetric(metric.key)}
+
               className={cn(
                 "px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200",
                 selectedMetric === metric.key
@@ -201,8 +218,9 @@ export default function MetricBarChart({ data, title }: MetricBarChartProps) {
               </svg>
             </div>
             <p className="font-medium text-slate-900">
-              No {metrics.find((m) => m.key === selectedMetric)?.label} Data
+              No {availableMetrics.find((m) => m.key === selectedMetric)?.label} Data
             </p>
+
             <p className="text-sm text-slate-500">
               Try selecting a different metric.
             </p>

@@ -157,6 +157,7 @@ export default function AdminClients() {
     mutationFn: clientsService.createClient,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "clients"] });
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
       toast.success("Client created successfully");
       setIsDialogOpen(false);
       form.reset();
@@ -171,6 +172,7 @@ export default function AdminClients() {
     mutationFn: ({ id, data }: { id: string; data: any }) => clientsService.updateClient(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "clients"] });
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
       toast.success("Client updated successfully");
       setIsDialogOpen(false);
       setEditingClient(null);
@@ -217,12 +219,12 @@ export default function AdminClients() {
         // Create
         // Use current admin user ID to satisfy FK constraint
         if (!user?.id) {
-            toast.error("User context missing. Cannot create client.");
-            // Generate a random UUID v4 placeholder as fallback if user.id is missing (should not happen for logged in admin)
-            // But better to fail than create invalid data? 
-            // The user requested: "if it is not available, update the backend function to use the client user."
-            // But backend requires a valid UUID that exists in users table. So we must use a valid ID.
-            return;
+          toast.error("User context missing. Cannot create client.");
+          // Generate a random UUID v4 placeholder as fallback if user.id is missing (should not happen for logged in admin)
+          // But better to fail than create invalid data? 
+          // The user requested: "if it is not available, update the backend function to use the client user."
+          // But backend requires a valid UUID that exists in users table. So we must use a valid ID.
+          return;
         }
 
         const newClient = await createClientMutation.mutateAsync({ name: values.name, user_id: user.id });

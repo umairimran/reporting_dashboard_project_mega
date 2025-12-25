@@ -26,10 +26,12 @@ class DailyMetrics(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     client_id = Column(UUID(as_uuid=True), ForeignKey('clients.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
     date = Column(Date, nullable=False, index=True)
-    campaign_id = Column(UUID(as_uuid=True), ForeignKey('campaigns.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
-    strategy_id = Column(UUID(as_uuid=True), ForeignKey('strategies.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
-    placement_id = Column(UUID(as_uuid=True), ForeignKey('placements.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
+    campaign_id = Column(UUID(as_uuid=True), ForeignKey('campaigns.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=True)
+    strategy_id = Column(UUID(as_uuid=True), ForeignKey('strategies.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=True)
+    placement_id = Column(UUID(as_uuid=True), ForeignKey('placements.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=True)
     creative_id = Column(UUID(as_uuid=True), ForeignKey('creatives.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
+    region_id = Column(UUID(as_uuid=True), ForeignKey('regions.id', onupdate='CASCADE', ondelete='SET NULL'), nullable=True)
+    
     source = Column(String(50), nullable=False, index=True)
     
     # Raw metrics
@@ -54,6 +56,8 @@ class DailyMetrics(Base):
     strategy = relationship("Strategy", back_populates="daily_metrics")
     placement = relationship("Placement", back_populates="daily_metrics")
     creative = relationship("Creative", back_populates="daily_metrics")
+    region = relationship("Region", back_populates="daily_metrics")
+
     
     def __repr__(self):
         return f"<DailyMetrics {self.date} - {self.source}>"

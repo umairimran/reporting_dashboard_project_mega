@@ -13,10 +13,12 @@ class DailyMetricsResponse(BaseModel):
     id: uuid.UUID
     client_id: uuid.UUID
     client_name: str
-    campaign_name: str
-    strategy_name: str
-    placement_name: str
+    campaign_name: Optional[str] = None
+    strategy_name: Optional[str] = None
+    placement_name: Optional[str] = None
     creative_name: str
+    region_name: Optional[str] = None
+
     date: date
     impressions: int
     clicks: int

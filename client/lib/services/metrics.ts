@@ -10,7 +10,9 @@ export interface DailyMetric {
     strategy_name?: string;
     placement_name?: string;
     creative_name?: string;
+    region_name?: string;
     date: string;
+
     impressions: number;
     clicks: number;
     conversions: number;

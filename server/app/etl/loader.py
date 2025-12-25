@@ -54,15 +54,16 @@ class LoaderService:
                 else:
                     cpm = cpm_settings.cpm
                 
-                # Create campaign hierarchy
-                campaign, strategy, placement, creative = CampaignService.create_full_hierarchy(
+                # Create campaign hierarchy (flexible)
+                campaign, strategy, placement, creative, region = CampaignService.create_hierarchy(
                     db=db,
                     client_id=client_id,
-                    campaign_name=record['campaign_name'],
-                    strategy_name=record['strategy_name'],
-                    placement_name=record['placement_name'],
+                    source=source,
+                    campaign_name=record.get('campaign_name'),
+                    strategy_name=record.get('strategy_name'),
+                    placement_name=record.get('placement_name'),
                     creative_name=record['creative_name'],
-                    source=source
+                    region_name=record.get('region_name')
                 )
                 
                 # Calculate metrics
@@ -78,7 +79,10 @@ class LoaderService:
                 if idx < 3 or (idx + 1) % 10 == 0:
                     print(f"  Record {idx + 1}: Metrics calculated")
                     print(f"    Date: {record['date']}")
-                    print(f"    Campaign: {record['campaign_name'][:40]}..." if len(record['campaign_name']) > 40 else f"    Campaign: {record['campaign_name']}")
+                    if record.get('campaign_name'):
+                        print(f"    Campaign: {record['campaign_name'][:40]}..." if len(record['campaign_name']) > 40 else f"    Campaign: {record['campaign_name']}")
+                    if region:
+                        print(f"    Region: {region.name}")
                     print(f"    Input Data:")
                     print(f"      Impressions: {record['impressions']:,}")
                     print(f"      Clicks: {record['clicks']:,}")
@@ -94,15 +98,35 @@ class LoaderService:
                     print()
                 
                 # Check if record already exists (duplicate detection)
-                existing = db.query(DailyMetrics).filter(
+                # Note: Filter conditions depend on what's available
+                query = db.query(DailyMetrics).filter(
                     DailyMetrics.client_id == client_id,
                     DailyMetrics.date == record['date'],
-                    DailyMetrics.campaign_id == campaign.id,
-                    DailyMetrics.strategy_id == strategy.id,
-                    DailyMetrics.placement_id == placement.id,
                     DailyMetrics.creative_id == creative.id,
                     DailyMetrics.source == source
-                ).first()
+                )
+                
+                if campaign:
+                    query = query.filter(DailyMetrics.campaign_id == campaign.id)
+                else:
+                    query = query.filter(DailyMetrics.campaign_id == None)
+                    
+                if strategy:
+                    query = query.filter(DailyMetrics.strategy_id == strategy.id)
+                else:
+                    query = query.filter(DailyMetrics.strategy_id == None)
+                    
+                if placement:
+                    query = query.filter(DailyMetrics.placement_id == placement.id)
+                else:
+                    query = query.filter(DailyMetrics.placement_id == None)
+                    
+                if region:
+                    query = query.filter(DailyMetrics.region_id == region.id)
+                else:
+                    query = query.filter(DailyMetrics.region_id == None)
+                    
+                existing = query.first()
                 
                 if existing:
                     # Update existing record
@@ -123,10 +147,11 @@ class LoaderService:
                     daily_metric = DailyMetrics(
                         client_id=client_id,
                         date=record['date'],
-                        campaign_id=campaign.id,
-                        strategy_id=strategy.id,
-                        placement_id=placement.id,
+                        campaign_id=campaign.id if campaign else None,
+                        strategy_id=strategy.id if strategy else None,
+                        placement_id=placement.id if placement else None,
                         creative_id=creative.id,
+                        region_id=region.id if region else None,
                         source=source,
                         impressions=record['impressions'],
                         clicks=record['clicks'],
@@ -142,6 +167,7 @@ class LoaderService:
                     logger.debug(f"Created new metric for {record['date']}")
                     if idx < 3:
                         print(f"    → Inserted new record into database\n")
+
                 
                 loaded += 1
                 

@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from typing import Optional, Tuple
 import uuid
-from app.campaigns.models import Campaign, Strategy, Placement, Creative
+from app.campaigns.models import Campaign, Strategy, Placement, Creative, Region
 from app.campaigns.schemas import CampaignUpdate, StrategyUpdate, PlacementUpdate, CreativeUpdate
 from app.core.logging import logger
 from app.core.exceptions import ValidationError
@@ -13,6 +13,23 @@ from app.core.exceptions import ValidationError
 
 class CampaignService:
     """Service for campaign hierarchy operations."""
+    
+    @staticmethod
+    def find_or_create_region(
+        db: Session,
+        region_name: str
+    ) -> Region:
+        """Find existing region or create new one."""
+        region = db.query(Region).filter(Region.name == region_name).first()
+        
+        if not region:
+            region = Region(name=region_name)
+            db.add(region)
+            db.flush()
+            logger.debug(f"Created region: {region_name}")
+            
+        return region
+
     
     @staticmethod
     def find_or_create_campaign(
@@ -207,8 +224,9 @@ class CampaignService:
     @staticmethod
     def find_or_create_creative(
         db: Session,
-        placement_id: uuid.UUID,
         creative_name: str,
+        placement_id: Optional[uuid.UUID] = None,
+        campaign_id: Optional[uuid.UUID] = None,
         preview_url: Optional[str] = None
     ) -> Creative:
         """
@@ -216,21 +234,30 @@ class CampaignService:
         
         Args:
             db: Database session
-            placement_id: Placement UUID
             creative_name: Creative name
+            placement_id: Optional Placement UUID (for Surfside)
+            campaign_id: Optional Campaign UUID (for Facebook)
             preview_url: Optional preview URL
             
         Returns:
             Creative entity
         """
-        creative = db.query(Creative).filter(
-            Creative.placement_id == placement_id,
-            Creative.name == creative_name
-        ).first()
+        if not placement_id and not campaign_id:
+            raise ValidationError("Creative must be linked to either a Placement or a Campaign")
+            
+        query = db.query(Creative).filter(Creative.name == creative_name)
+        
+        if placement_id:
+            query = query.filter(Creative.placement_id == placement_id)
+        if campaign_id:
+            query = query.filter(Creative.campaign_id == campaign_id)
+            
+        creative = query.first()
         
         if not creative:
             creative = Creative(
                 placement_id=placement_id,
+                campaign_id=campaign_id,
                 name=creative_name,
                 preview_url=preview_url
             )
@@ -271,50 +298,100 @@ class CampaignService:
         db.commit()
         return True
 
-    @staticmethod
-    def create_full_hierarchy(
+    def create_hierarchy(
         db: Session,
         client_id: uuid.UUID,
-        campaign_name: str,
-        strategy_name: str,
-        placement_name: str,
-        creative_name: str,
         source: str,
+        creative_name: str,
+        campaign_name: Optional[str] = None,
+        strategy_name: Optional[str] = None,
+        placement_name: Optional[str] = None,
+        region_name: Optional[str] = None,
         preview_url: Optional[str] = None
-    ) -> Tuple[Campaign, Strategy, Placement, Creative]:
+    ) -> Tuple[Optional[Campaign], Optional[Strategy], Optional[Placement], Creative, Optional[Region]]:
+
         """
-        Create complete campaign hierarchy in one operation.
+        Create hierarchy entities based on source logic.
         
-        Args:
-            db: Database session
-            client_id: Client UUID
-            campaign_name: Campaign name
-            strategy_name: Strategy name
-            placement_name: Placement name
-            creative_name: Creative name
-            source: Data source
-            preview_url: Optional creative preview URL
-            
         Returns:
-            Tuple of (campaign, strategy, placement, creative)
+            Tuple of (campaign, strategy, placement, creative, region)
         """
-        campaign = CampaignService.find_or_create_campaign(
-            db, client_id, campaign_name, source
-        )
+        campaign = None
+        strategy = None
+        placement = None
+        region = None
+        creative = None
         
-        strategy = CampaignService.find_or_create_strategy(
-            db, campaign.id, strategy_name
-        )
-        
-        placement = CampaignService.find_or_create_placement(
-            db, strategy.id, placement_name
-        )
-        
-        creative = CampaignService.find_or_create_creative(
-            db, placement.id, creative_name, preview_url
-        )
-        
-        return campaign, strategy, placement, creative
+        # 1. Handle Regions (Common)
+        if region_name:
+            region = CampaignService.find_or_create_region(db, region_name)
+            
+        # 2. Logic per Source
+        if source == 'facebook':
+            # Facebook: Campaign -> Region (via Metric) -> Creative (linked to Campaign)
+            # Strategy/Placement are None
+            if not campaign_name:
+                raise ValidationError("Facebook data requires campaign_name")
+                
+            campaign = CampaignService.find_or_create_campaign(db, client_id, campaign_name, source)
+            
+            # Creative linked to Campaign
+            creative = CampaignService.find_or_create_creative(
+                db=db,
+                creative_name=creative_name,
+                campaign_id=campaign.id,
+                preview_url=preview_url
+            )
+            
+        elif source == 'surfside':
+            # Surfside: (Campaign? NULL) -> Strategy -> Placement -> Creative
+            # Campaign is NULL for Surfside as requested.
+            
+            if not strategy_name or not placement_name:
+                # Fallback if missing? Or raise error? Assumed present.
+                 if not strategy_name: strategy_name = "Unknown Strategy"
+                 if not placement_name: placement_name = "Unknown Placement"
+
+            # Must have a parent campaign even if dummy?
+            # Model says Strategy needs CampaignID.
+            # User said "campaign name is also not avaiable for surfside".
+            # BUT Strategy model has `campaign_id` which is NOT NULL in original schema.
+            # I made `campaign_id` nullable in `daily_metrics`, but DID I make `campaign_id` nullable in `strategies`?
+            # Checking schema... `strategies.campaign_id` is NOT NULL REFERENCES campaigns(id).
+            # Constraint: We need a dummy campaign for Surfside strategies.
+            
+            dummy_campaign = CampaignService.find_or_create_campaign(db, client_id, "Surfside General", source)
+            
+            strategy = CampaignService.find_or_create_strategy(db, dummy_campaign.id, strategy_name)
+            placement = CampaignService.find_or_create_placement(db, strategy.id, placement_name)
+            
+            creative = CampaignService.find_or_create_creative(
+                db=db,
+                creative_name=creative_name,
+                placement_id=placement.id,
+                preview_url=preview_url
+            )
+            
+        else:
+            # Default/Fallback (legacy hierarchy)
+            if campaign_name:
+                campaign = CampaignService.find_or_create_campaign(db, client_id, campaign_name, source)
+                if strategy_name:
+                    strategy = CampaignService.find_or_create_strategy(db, campaign.id, strategy_name)
+                    if placement_name:
+                        placement = CampaignService.find_or_create_placement(db, strategy.id, placement_name)
+                        creative = CampaignService.find_or_create_creative(
+                            db=db,
+                            creative_name=creative_name,
+                            placement_id=placement.id,
+                            preview_url=preview_url
+                        )
+            
+            if not creative:
+                 # Minimal fallback if logic fails
+                 raise ValidationError(f"Could not construct hierarchy for source {source}")
+
+        return campaign, strategy, placement, creative, region
     
     @staticmethod
     def get_campaign_by_id(db: Session, campaign_id: uuid.UUID) -> Optional[Campaign]:

@@ -133,11 +133,14 @@ class ClientService:
         
         if not client:
             return False
-        
-        client.status = 'disabled'
+            
+        # Hard delete - Cascade constraints will handle related data (settings, campaigns, metrics, etc.)
+        # The user relationship (RESTRICT) doesn't block client deletion, only user deletion.
+        # Once client is deleted, the user can be safely deleted by the separate delete_user call.
+        db.delete(client)
         db.commit()
         
-        logger.info(f"Disabled client: {client.name} (ID: {client.id})")
+        logger.info(f"Deleted client: {client.name} (ID: {client_id})")
         return True
     
     @staticmethod

@@ -28,11 +28,13 @@ import { useAuth } from "@/contexts/AuthContext";
 interface GenerateReportDialogProps {
   children: React.ReactNode;
   onReportGenerated?: (report: Report) => void;
+  clientId?: string;
 }
 
 export default function GenerateReportDialog({
   children,
   onReportGenerated,
+  clientId: propClientId,
 }: GenerateReportDialogProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [reportType, setReportType] = useState<"weekly" | "monthly">("weekly");
@@ -45,14 +47,12 @@ export default function GenerateReportDialog({
   const { mutate: generateReport, isPending } = useMutation({
     mutationFn: (data: { type: "weekly" | "monthly"; source?: string; periodStart: string; periodEnd: string }) => {
       // Determine client ID
-      // If admin simulating, use simulatedClient.id
-      // If client user, we can pass null (backend handles it) or try to find it. 
-      // For legacy/safety, passing undefined lets backend rely on user context
-      const clientId = (isAdmin && simulatedClient?.id) ? simulatedClient.id : undefined;
+      // Priority: 1. Prop (from Dashboard selection), 2. Simulated (Admin Context), 3. Undefined (Client Context)
+      const targetClientId = propClientId || ((isAdmin && simulatedClient?.id) ? simulatedClient.id : undefined);
 
       return reportService.create({
         ...data,
-        clientId
+        clientId: targetClientId
       });
     },
     onSuccess: (data) => {
@@ -117,8 +117,9 @@ export default function GenerateReportDialog({
       }
     }
 
-    // Additional check for admin simulation
-    if (isAdmin && !simulatedClient) {
+    // Additional check for admin simulation or selection
+    const hasTargetClient = propClientId || simulatedClient;
+    if (isAdmin && !hasTargetClient) {
       setError("Please select a client to generate a report for.");
       return;
     }

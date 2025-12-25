@@ -25,17 +25,18 @@ interface MetricBarChartProps {
   }>;
   title: string;
   allowedMetrics?: MetricType[];
+  color?: string;
 }
 
 
-const metrics: { key: MetricType; label: string }[] = [
-  { key: "conversions", label: "Conversions" },
-  { key: "revenue", label: "Revenue" },
-  { key: "spend", label: "Spend" },
-  { key: "clicks", label: "Clicks" },
+const metrics: { key: MetricType; label: string; color: string }[] = [
+  { key: "conversions", label: "Conversions", color: "#8b5cf6" }, // Purple
+  { key: "revenue", label: "Revenue", color: "#10b981" }, // Green
+  { key: "spend", label: "Spend", color: "#3b82f6" }, // Blue
+  { key: "clicks", label: "Clicks", color: "#f59e0b" }, // Orange
 ];
 
-export default function MetricBarChart({ data, title, allowedMetrics }: MetricBarChartProps) {
+export default function MetricBarChart({ data, title, allowedMetrics, color }: MetricBarChartProps) {
   const availableMetrics = allowedMetrics
     ? metrics.filter(m => allowedMetrics.includes(m.key))
     : metrics;
@@ -61,30 +62,16 @@ export default function MetricBarChart({ data, title, allowedMetrics }: MetricBa
       <div className="bg-white border border-slate-200 rounded-lg shadow-lg p-3">
         <p className="text-sm font-medium text-slate-900 mb-2">{data.name}</p>
         <div className="space-y-1 text-xs">
-          <div className="flex justify-between gap-4">
-            <span className="text-slate-600">Conversions:</span>
-            <span className="font-medium text-slate-900">
-              {formatNumber(data.conversions)}
-            </span>
-          </div>
-          <div className="flex justify-between gap-4">
-            <span className="text-slate-600">Revenue:</span>
-            <span className="font-medium text-slate-900">
-              {formatCurrency(data.revenue)}
-            </span>
-          </div>
-          <div className="flex justify-between gap-4">
-            <span className="text-slate-600">Spend:</span>
-            <span className="font-medium text-slate-900">
-              {formatCurrency(data.spend)}
-            </span>
-          </div>
-          <div className="flex justify-between gap-4">
-            <span className="text-slate-600">Clicks:</span>
-            <span className="font-medium text-slate-900">
-              {formatNumber(data.clicks)}
-            </span>
-          </div>
+          {availableMetrics.map((metric) => (
+            <div key={metric.key} className="flex justify-between gap-4">
+              <span className="text-slate-600">{metric.label}:</span>
+              <span className="font-medium text-slate-900">
+                {metric.key === "revenue" || metric.key === "spend"
+                  ? formatCurrency(data[metric.key])
+                  : formatNumber(data[metric.key])}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -195,7 +182,11 @@ export default function MetricBarChart({ data, title, allowedMetrics }: MetricBa
               />
               <Bar
                 dataKey={selectedMetric}
-                fill="#3b82f6"
+                fill={
+                  color ||
+                  availableMetrics.find((m) => m.key === selectedMetric)
+                    ?.color || "#3b82f6"
+                }
                 radius={[4, 4, 0, 0]}
               />
             </BarChart>

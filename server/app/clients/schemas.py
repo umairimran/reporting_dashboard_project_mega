@@ -56,7 +56,8 @@ class ClientResponse(BaseModel):
     id: uuid.UUID
     name: str
     status: str
-    user_id: uuid.UUID
+    user_id: Optional[uuid.UUID]
+    user_role: Optional[str] = None
     created_at: datetime
     updated_at: datetime
     

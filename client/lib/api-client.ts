@@ -65,6 +65,10 @@ export const apiClient = async <T>(endpoint: string, options: FetchOptions = {})
     throw new Error(message);
   }
 
+  if (response.status === 204) {
+    return null as unknown as T;
+  }
+
   return response.json();
 };
 

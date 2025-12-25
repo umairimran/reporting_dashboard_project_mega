@@ -23,4 +23,12 @@ export const authService = {
     getMe: async () => {
         return apiClient<User>("/auth/me", { silent: true });
     },
+
+    register: async (data: any) => {
+        return apiClient<User>("/auth/register", { method: "POST", body: JSON.stringify(data) });
+    },
+
+    deleteUser: async (userId: string) => {
+        return apiClient(`/auth/users/${userId}`, { method: "DELETE" });
+    }
 };

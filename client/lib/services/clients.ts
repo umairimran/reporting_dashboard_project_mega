@@ -35,7 +35,8 @@ export const clientsService = {
             ...client,
             createdAt: client.created_at,
             updatedAt: client.updated_at,
-            userId: client.user_id
+            userId: client.user_id,
+            userRole: client.user_role
         })) as Client[];
 
         return {

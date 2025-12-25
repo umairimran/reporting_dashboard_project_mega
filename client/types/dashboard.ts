@@ -18,6 +18,7 @@ export interface Client {
   name: string;
   status: ClientStatus;
   userId?: string;
+  userRole?: string;
   createdAt: string;
   updatedAt: string;
 }

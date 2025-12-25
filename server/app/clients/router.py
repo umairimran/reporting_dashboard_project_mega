@@ -64,7 +64,25 @@ async def get_clients(
     clients = ClientService.get_all_clients(db, skip, limit, status)
     total = db.query(Client).count()
     
-    return {"total": total, "clients": clients}
+    # Manually map to schema to ensure user_role is populated
+    client_responses = []
+    for client in clients:
+        # Pydantic's from_attributes should handle most fields, but we need to ensure user relationship is loaded
+        # accessing client.user.role should work if relationship is eager loaded or we trigger lazy load
+        user_role = client.user.role if client.user else None
+        
+        client_dict = {
+            "id": client.id,
+            "name": client.name,
+            "status": client.status,
+            "user_id": client.user_id,
+            "user_role": user_role,
+            "created_at": client.created_at,
+            "updated_at": client.updated_at
+        }
+        client_responses.append(client_dict)
+    
+    return {"total": total, "clients": client_responses}
 
 
 @router.get("/id-by-name-and-user")

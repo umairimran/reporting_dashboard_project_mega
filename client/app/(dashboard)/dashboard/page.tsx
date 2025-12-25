@@ -427,6 +427,7 @@ export default function Dashboard() {
                 }))}
                 title="Campaign Performance"
                 allowedMetrics={campaignAllowedMetrics as any}
+                color="#3b82f6" // Blue
               />
             </div>
             <div className="mt-6 bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-xl p-6 opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]">
@@ -477,6 +478,7 @@ export default function Dashboard() {
                   clicks: item.clicks,
                 }))}
                 title="Strategy Performance"
+                color="#8b5cf6" // Purple
               />
             </div>
             <div className="mt-6 bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-xl p-6 opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]">
@@ -528,6 +530,7 @@ export default function Dashboard() {
                   clicks: item.clicks,
                 }))}
                 title="Placement Performance"
+                color="#14b8a6" // Teal
               />
             </div>
             <div className="mt-6 bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-xl p-6 opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]">
@@ -585,6 +588,7 @@ export default function Dashboard() {
                 }))}
                 title="Region Performance"
                 allowedMetrics={regionAllowedMetrics as any}
+                color="#f43f5e" // Rose
               />
             </div>
             <div className="mt-6 bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-xl p-6 opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]">
@@ -637,6 +641,7 @@ export default function Dashboard() {
                 }))}
                 title="Creative Performance"
                 allowedMetrics={creativeAllowedMetrics as any}
+                color="#f59e0b" // Orange
               />
             </div>
             <div className="mt-6 bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-xl p-6 opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]">
@@ -727,7 +732,7 @@ export default function Dashboard() {
                 : "Up to Date"}
           </Button>
 
-          <GenerateReportDialog>
+          <GenerateReportDialog clientId={appliedClientId}>
             <Button variant="outline" className="gap-2">
               <Download className="w-4 h-4" />
               Export

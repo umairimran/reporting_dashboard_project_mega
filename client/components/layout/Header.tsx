@@ -22,7 +22,7 @@ export default function Header() {
 
   const handleStopSimulation = () => {
     simulateAsClient(null);
-    router.push("/admin/clients");
+    router.push("/admin");
   };
 
   const isDashboard = pathname === "/dashboard";

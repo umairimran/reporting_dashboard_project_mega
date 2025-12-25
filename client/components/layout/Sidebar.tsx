@@ -87,7 +87,7 @@ export default function Sidebar() {
 
   const handleStopSimulation = () => {
     simulateAsClient(null);
-    router.push("/admin/clients");
+    router.push("/admin");
   };
 
   return (

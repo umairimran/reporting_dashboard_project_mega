@@ -10,6 +10,10 @@ import {
   DollarSign,
   Cloud,
   Loader2,
+  Trash2,
+  User as UserIcon,
+  Shield,
+  Key
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -25,7 +29,18 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import {
   Form,
   FormControl,
@@ -36,7 +51,8 @@ import {
 } from "@/components/ui/form";
 import { useAuth } from "@/contexts/AuthContext";
 import { clientsService } from "@/lib/services/clients";
-import { Client, ClientSettings } from "@/types/dashboard";
+import { authService } from "@/lib/services/auth";
+import { Client } from "@/types/dashboard";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -48,16 +64,25 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 const formSchema = z.object({
   name: z.string().min(2, "Client name must be at least 2 characters"),
+  email: z.string().email().optional().or(z.literal("")),
+  password: z.string().min(8, "Password must be at least 8 characters").optional().or(z.literal("")),
+
+  // CPM
   surfsideCpm: z.string().optional(),
   facebookCpm: z.string().optional(),
+
   // S3 Credentials
   s3BucketName: z.string().optional(),
   s3Region: z.string().optional(),
   s3AccessKeyId: z.string().optional(),
   s3SecretAccessKey: z.string().optional(),
+  status: z.boolean().optional(),
 });
 
 // Component to fetch and display CPM for a client/source
@@ -68,7 +93,6 @@ const CpmCell = ({ clientId, source }: { clientId: string, source: "surfside" | 
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
-  // Find latest setting for source
   const cpm = settings?.find((s) => s.source === source)?.cpm;
 
   return (
@@ -82,9 +106,12 @@ export default function AdminClients() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
-  const [formTab, setFormTab] = useState<"basic" | "credentials">("basic");
 
-  const { simulateAsClient, simulatedClient, isAdmin, user } = useAuth();
+  // Delete Dialog State
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [clientToDelete, setClientToDelete] = useState<Client | null>(null);
+
+  const { simulateAsClient, simulatedClient, isAdmin } = useAuth();
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -104,6 +131,8 @@ export default function AdminClients() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
+      email: "",
+      password: "",
       surfsideCpm: "",
       facebookCpm: "",
       s3BucketName: "",
@@ -113,87 +142,91 @@ export default function AdminClients() {
     },
   });
 
-  // Fetch settings when editing to pre-fill form
-  // We use a query enabled only when editingClient is set
+  // Fetch settings when editing
   const { data: editingSettings } = useQuery({
     queryKey: ["client-settings", editingClient?.id],
     queryFn: () => clientsService.getCpmSettings(editingClient!.id),
     enabled: !!editingClient,
   });
 
-  // Reset form when opening dialog or switching clients
+  // Reset/Populate form
   useEffect(() => {
     if (isDialogOpen) {
       if (editingClient) {
-        // Pre-fill form from editingClient + fetched settings
+        // Pre-fill form from editingClient
         const surfside = editingSettings?.find(s => s.source === "surfside")?.cpm;
         const facebook = editingSettings?.find(s => s.source === "facebook")?.cpm;
 
         form.reset({
           name: editingClient.name,
+          email: "", // User fetch logic skipped for simplicity as per requirement
+          password: "",
           surfsideCpm: surfside ? String(surfside) : "",
           facebookCpm: facebook ? String(facebook) : "",
-          s3BucketName: "", // Todo: Fetch these
+          s3BucketName: "",
           s3Region: "us-east-1",
           s3AccessKeyId: "",
           s3SecretAccessKey: "",
+          status: editingClient.status === 'active',
         });
       } else {
         form.reset({
           name: "",
+          email: "",
+          password: "",
           surfsideCpm: "",
           facebookCpm: "",
           s3BucketName: "",
           s3Region: "us-east-1",
           s3AccessKeyId: "",
           s3SecretAccessKey: "",
+          status: true,
         });
       }
     }
   }, [isDialogOpen, editingClient, editingSettings, form]);
 
-  // Mutations
+  // --- Mutations ---
+
   const createClientMutation = useMutation({
     mutationFn: clientsService.createClient,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin", "clients"] });
-      queryClient.invalidateQueries({ queryKey: ["clients"] });
-      toast.success("Client created successfully");
-      setIsDialogOpen(false);
-      form.reset();
-    },
-    onError: (error) => {
-      toast.error("Failed to create client");
-      console.error(error);
-    }
+  });
+
+  const registerUserMutation = useMutation({
+    mutationFn: authService.register,
   });
 
   const updateClientMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: any }) => clientsService.updateClient(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin", "clients"] });
-      queryClient.invalidateQueries({ queryKey: ["clients"] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["admin", "clients"] });
+      await queryClient.invalidateQueries({ queryKey: ["clients"] });
       toast.success("Client updated successfully");
       setIsDialogOpen(false);
       setEditingClient(null);
       form.reset();
     },
-    onError: (error) => {
-      toast.error("Failed to update client");
-      console.error(error);
-    }
+    onError: (error) => toast.error("Failed to update client")
   });
 
   const saveCpmMutation = useMutation({
     mutationFn: ({ clientId, source, cpm }: { clientId: string, source: "surfside" | "facebook", cpm: number }) =>
       clientsService.updateCpmSetting(clientId, { source, cpm }),
     onSuccess: (_, variables) => {
-      // Invalidate specific client settings to refresh the table cell
       queryClient.invalidateQueries({ queryKey: ["client-settings", variables.clientId] });
     }
   });
 
-  // Helper to sync multiple CPMs
+  const deleteClientMutation = useMutation({
+    mutationFn: clientsService.deleteClient,
+  });
+
+  const deleteUserMutation = useMutation({
+    mutationFn: authService.deleteUser,
+  });
+
+  // --- Handlers ---
+
   const syncCpms = async (clientId: string, values: z.infer<typeof formSchema>) => {
     const promises = [];
     if (values.surfsideCpm) {
@@ -212,28 +245,81 @@ export default function AdminClients() {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       if (editingClient) {
-        // Update
-        await updateClientMutation.mutateAsync({ id: editingClient.id, data: { name: values.name } });
+        // Update Client
+        await updateClientMutation.mutateAsync({
+          id: editingClient.id,
+          data: {
+            name: values.name,
+            status: values.status ? 'active' : 'disabled'
+          }
+        });
         await syncCpms(editingClient.id, values);
       } else {
-        // Create
-        // Use current admin user ID to satisfy FK constraint
-        if (!user?.id) {
-          toast.error("User context missing. Cannot create client.");
-          // Generate a random UUID v4 placeholder as fallback if user.id is missing (should not happen for logged in admin)
-          // But better to fail than create invalid data? 
-          // The user requested: "if it is not available, update the backend function to use the client user."
-          // But backend requires a valid UUID that exists in users table. So we must use a valid ID.
+        // Create Flow
+        if (!values.email || !values.password) {
+          toast.error("Email and Password are required for new clients");
           return;
         }
 
-        const newClient = await createClientMutation.mutateAsync({ name: values.name, user_id: user.id });
-        if (newClient) {
-          await syncCpms(newClient.id, values);
-        }
+        // 1. Create User
+        const newUser = await registerUserMutation.mutateAsync({
+          email: values.email,
+          password: values.password,
+          role: "client"
+        });
+
+        if (!newUser?.id) throw new Error("Failed to create user");
+
+        // 2. Create Client
+        const newClient = await createClientMutation.mutateAsync({
+          name: values.name,
+          user_id: newUser.id
+        });
+
+        // 3. Settings
+        await syncCpms(newClient.id, values);
+
+        await queryClient.invalidateQueries({ queryKey: ["admin", "clients"] });
+        await queryClient.invalidateQueries({ queryKey: ["clients"] });
+        toast.success("Client created successfully");
+        setIsDialogOpen(false);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error submitting form", error);
+      toast.error(error.message || "Failed to process request");
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!clientToDelete) return;
+
+    try {
+      const userId = clientToDelete.userId;
+
+      // 1. Delete Client (Must be first due to FK constraints if client points to user, or user points to client? 
+      // Actually DB schema: clients.user_id -> users.id (RESTRICT). 
+      // So we must delete CLIENT first to free the User.
+      await deleteClientMutation.mutateAsync(clientToDelete.id);
+
+      // 2. Delete User (Only if NOT admin)
+      if (userId) {
+        if (clientToDelete.userRole === 'admin') {
+          toast.info("Client deleted. Associated Admin user was preserved.");
+        } else {
+          await deleteUserMutation.mutateAsync(userId);
+          toast.success("Client and associated user deleted");
+        }
+      } else {
+        toast.success("Client deleted");
+      }
+
+      await queryClient.invalidateQueries({ queryKey: ["admin", "clients"] });
+      await queryClient.invalidateQueries({ queryKey: ["clients"] });
+      setIsDeleteDialogOpen(false);
+      setClientToDelete(null);
+    } catch (error) {
+      console.error("Delete failed", error);
+      toast.error("Failed to delete client or associated user");
     }
   };
 
@@ -266,7 +352,6 @@ export default function AdminClients() {
               className="gap-2 cursor-pointer"
               onClick={() => {
                 setEditingClient(null);
-                // Form reset is handled by effect
               }}
             >
               <Plus className="w-4 h-4" />
@@ -278,239 +363,216 @@ export default function AdminClients() {
               <DialogTitle>
                 {editingClient ? "Edit Client" : "Add New Client"}
               </DialogTitle>
+              <DialogDescription>
+                {editingClient ? "Update client settings." : "Create a new client account, user login, and settings."}
+              </DialogDescription>
             </DialogHeader>
 
-            {/* Tabs */}
-            <div className="flex items-center gap-2 p-1 bg-slate-100 rounded-xl mb-4 w-fit">
-              <button
-                type="button"
-                onClick={() => setFormTab("basic")}
-                className={cn(
-                  "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200",
-                  formTab === "basic"
-                    ? "bg-blue-500 text-white shadow-lg"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-200"
-                )}
-              >
-                Basic Info
-              </button>
-              <button
-                type="button"
-                onClick={() => setFormTab("credentials")}
-                className={cn(
-                  "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200",
-                  formTab === "credentials"
-                    ? "bg-blue-500 text-white shadow-lg"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-200"
-                )}
-              >
-                Credentials
-              </button>
-            </div>
-
             <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-4"
-              >
-                {/* Basic Info Tab */}
-                {formTab === "basic" && (
-                  <div className="space-y-4">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+
+                <Tabs defaultValue="profile" className="w-full">
+                  <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="profile">Profile</TabsTrigger>
+                    <TabsTrigger value="cpm">CPM Settings</TabsTrigger>
+                    <TabsTrigger value="credentials">Credentials</TabsTrigger>
+                  </TabsList>
+
+                  {/* Tab 1: Profile */}
+                  <TabsContent value="profile" className="space-y-4 pt-4">
                     <FormField
                       control={form.control}
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>
-                            Client Name <span className="text-red-500">*</span>
-                          </FormLabel>
+                          <FormLabel>Client Name <span className="text-red-500">*</span></FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="Acme Corp"
-                              className="bg-white"
-                              {...field}
-                            />
+                            <Input placeholder="Acme Corp" className="bg-white" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
 
-                    <div className="border-t border-slate-200 pt-4 mt-4">
-                      <h3 className="text-sm font-semibold text-slate-900 mb-4">
-                        Update CPM Settings (Optional)
-                      </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {!editingClient && (
+                      <>
+                        <div className="grid grid-cols-2 gap-4">
+                          <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Email (for Login) <span className="text-red-500">*</span></FormLabel>
+                                <FormControl>
+                                  <Input placeholder="client@example.com" className="bg-white" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="password"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Password <span className="text-red-500">*</span></FormLabel>
+                                <FormControl>
+                                  <Input type="password" placeholder="********" className="bg-white" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <div className="bg-blue-50 p-3 rounded-md flex gap-2 text-sm text-blue-700">
+                          <UserIcon className="w-4 h-4 mt-0.5 shrink-0" />
+                          <p>This will create a new user account with the "Client" role.</p>
+                        </div>
+                      </>
+                    )}
+                    {editingClient && (
+                      <div className="space-y-4">
                         <FormField
                           control={form.control}
-                          name="surfsideCpm"
+                          name="status"
                           render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Surfside CPM</FormLabel>
-                              <FormControl>
-                                <div className="relative">
-                                  <DollarSign className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-500" />
-                                  <Input
-                                    type="number"
-                                    step="0.01"
-                                    placeholder="0.00"
-                                    className="pl-9 bg-white"
-                                    {...field}
-                                  />
+                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 bg-white">
+                              <div className="space-y-0.5">
+                                <FormLabel className="text-base">Active Status</FormLabel>
+                                <div className="text-sm text-slate-500">
+                                  {field.value ? "Client can access the platform" : "Client access is disabled"}
                                 </div>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
                               </FormControl>
-                              <FormMessage />
                             </FormItem>
                           )}
                         />
-                        <FormField
-                          control={form.control}
-                          name="facebookCpm"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Facebook CPM</FormLabel>
-                              <FormControl>
-                                <div className="relative">
-                                  <DollarSign className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-500" />
-                                  <Input
-                                    type="number"
-                                    step="0.01"
-                                    placeholder="0.00"
-                                    className="pl-9 bg-white"
-                                    {...field}
-                                  />
-                                </div>
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+
+                      </div>
+                    )}
+                  </TabsContent>
+
+                  {/* Tab 2: CPM */}
+                  <TabsContent value="cpm" className="space-y-4 pt-4">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
+                        <DollarSign className="w-5 h-5 text-green-600" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-semibold text-slate-900">CPM Configuration</h3>
+                        <p className="text-xs text-slate-600">Set cost per mille for each data source</p>
                       </div>
                     </div>
-                  </div>
-                )}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="surfsideCpm"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Surfside CPM</FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <DollarSign className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-500" />
+                                <Input type="number" step="0.01" placeholder="0.00" className="pl-9 bg-white" {...field} />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="facebookCpm"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Facebook CPM</FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <DollarSign className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-500" />
+                                <Input type="number" step="0.01" placeholder="0.00" className="pl-9 bg-white" {...field} />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </TabsContent>
 
-                {/* Credentials Tab */}
-                {formTab === "credentials" && (
-                  <div className="space-y-6">
-                    <div>
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                          <Cloud className="w-5 h-5 text-blue-600" />
-                        </div>
-                        <div>
-                          <h3 className="text-sm font-semibold text-slate-900">
-                            S3 Configuration (Optional)
-                          </h3>
-                          <p className="text-xs text-slate-600">
-                            For Surfside data sync
-                          </p>
-                        </div>
+                  {/* Tab 3: Credentials */}
+                  <TabsContent value="credentials" className="space-y-4 pt-4">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                        <Cloud className="w-5 h-5 text-blue-600" />
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <FormField
-                          control={form.control}
-                          name="s3BucketName"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Bucket Name</FormLabel>
-                              <FormControl>
-                                <Input
-                                  placeholder="my-analytics-bucket"
-                                  className="bg-white"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="s3Region"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Region</FormLabel>
-                              <FormControl>
-                                <select
-                                  {...field}
-                                  className="w-full h-10 px-4 rounded-lg border border-slate-200 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
-                                >
-                                  <option value="us-east-1">
-                                    US East (N. Virginia)
-                                  </option>
-                                  <option value="us-west-2">
-                                    US West (Oregon)
-                                  </option>
-                                  <option value="eu-west-1">
-                                    EU (Ireland)
-                                  </option>
-                                  <option value="ap-south-1">
-                                    Asia Pacific (Mumbai)
-                                  </option>
-                                  <option value="ap-southeast-1">
-                                    Asia Pacific (Singapore)
-                                  </option>
-                                </select>
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="s3AccessKeyId"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Access Key ID</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="password"
-                                  placeholder="Enter Access Key ID"
-                                  className="bg-white"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="s3SecretAccessKey"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Secret Access Key</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="password"
-                                  placeholder="Enter Secret Access Key"
-                                  className="bg-white"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                      <div>
+                        <h3 className="text-sm font-semibold text-slate-900">S3 Configuration</h3>
+                        <p className="text-xs text-slate-600">Optional credentials for Surfside data sync</p>
                       </div>
                     </div>
-                  </div>
-                )}
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="s3BucketName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Bucket Name</FormLabel>
+                            <FormControl><Input placeholder="my-bucket" className="bg-white" {...field} /></FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="s3Region"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Region</FormLabel>
+                            <FormControl>
+                              <select {...field} className="w-full h-10 px-4 rounded-lg border border-slate-200 bg-white text-slate-900 text-sm">
+                                <option value="us-east-1">US East (N. Virginia)</option>
+                                <option value="us-west-2">US West (Oregon)</option>
+                              </select>
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="s3AccessKeyId"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Access Key ID</FormLabel>
+                            <FormControl><Input type="password" placeholder="Access Key" className="bg-white" {...field} /></FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="s3SecretAccessKey"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Secret Access Key</FormLabel>
+                            <FormControl><Input type="password" placeholder="Secret Key" className="bg-white" {...field} /></FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </TabsContent>
+                </Tabs>
 
-                <div className="flex justify-end gap-2 mt-6 pt-4 border-t border-slate-200">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => setIsDialogOpen(false)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button type="submit" variant="gold" disabled={createClientMutation.isPending || updateClientMutation.isPending}>
-                    {createClientMutation.isPending || updateClientMutation.isPending ? (
+                <div className="flex justify-end gap-2 pt-4 border-t border-slate-200">
+                  <Button type="button" variant="ghost" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
+                  <Button type="submit" variant="gold" disabled={createClientMutation.isPending || updateClientMutation.isPending || registerUserMutation.isPending}>
+                    {(createClientMutation.isPending || updateClientMutation.isPending || registerUserMutation.isPending) && (
                       <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                    ) : null}
-                    {editingClient ? "Save Changes" : "Add Client"}
+                    )}
+                    {editingClient ? "Save Changes" : "Create Client"}
                   </Button>
                 </div>
               </form>
@@ -519,20 +581,13 @@ export default function AdminClients() {
         </Dialog>
       </div>
 
-      {/* Search */}
       <div className="mb-6">
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600" />
-          <Input
-            placeholder="Search clients..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
+          <Input placeholder="Search clients..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10" />
         </div>
       </div>
 
-      {/* Clients Table */}
       <div className="bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-xl overflow-hidden">
         {isLoading ? (
           <div className="p-8 text-center text-slate-500">Loading clients...</div>
@@ -540,103 +595,81 @@ export default function AdminClients() {
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent border-b border-slate-200">
-                <TableHead className="text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto">
-                  Client
-                </TableHead>
-                <TableHead className="text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto">
-                  Status
-                </TableHead>
-                <TableHead className="text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto text-center">
-                  CPM - Surfside
-                </TableHead>
-                <TableHead className="text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto text-center">
-                  CPM - Facebook
-                </TableHead>
-                <TableHead className="text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto">
-                  Created
-                </TableHead>
-                <TableHead className="text-right text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto">
-                  Actions
-                </TableHead>
+                <TableHead className="font-bold text-slate-900 px-4 py-3">Client</TableHead>
+                <TableHead className="font-bold text-slate-900 px-4 py-3 text-center">Status</TableHead>
+                <TableHead className="font-bold text-slate-900 px-4 py-3 text-center">Surfside CPM</TableHead>
+                <TableHead className="font-bold text-slate-900 px-4 py-3 text-center">Facebook CPM</TableHead>
+                <TableHead className="font-bold text-slate-900 px-4 py-3">Created</TableHead>
+                <TableHead className="font-bold text-slate-900 px-4 py-3 text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredClients.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="h-24 text-center">
-                    No clients found.
+                <TableRow><TableCell colSpan={6} className="h-24 text-center">No clients found.</TableCell></TableRow>
+              ) : filteredClients.map((client, index) => (
+                <TableRow key={client.id} className="hover:bg-slate-50 border-b border-slate-200">
+                  <TableCell className="px-4 py-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                        <Building2 className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <span className="font-medium text-slate-900">{client.name}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-center">
+                    <span className={cn(
+                      "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium",
+                      client.status === 'active' ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                    )}>
+                      {client.status.charAt(0).toUpperCase() + client.status.slice(1)}
+                    </span>
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-center"><CpmCell clientId={client.id} source="surfside" /></TableCell>
+                  <TableCell className="px-4 py-3 text-center"><CpmCell clientId={client.id} source="facebook" /></TableCell>
+                  <TableCell className="px-4 py-3 text-slate-600 text-sm">{new Date(client.createdAt).toLocaleDateString()}</TableCell>
+                  <TableCell className="px-4 py-3 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <Button variant="ghost" size="sm" onClick={() => handleSimulate(client)} className="gap-2"><Eye className="w-4 h-4" /> View</Button>
+                      <Button variant="ghost" size="sm" onClick={() => { setEditingClient(client); setIsDialogOpen(true); }} className="gap-2"><Edit2 className="w-4 h-4" /> Edit</Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => { setClientToDelete(client); setIsDeleteDialogOpen(true); }}
+                        className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
-              ) : filteredClients.map((client, index) => {
-                return (
-                  <TableRow
-                    key={client.id}
-                    className="opacity-0 animate-[fadeIn_0.5s_ease-out_forwards] border-b border-slate-200 hover:bg-slate-100/50 transition-colors"
-                    style={{ animationDelay: `${index * 30}ms` }}
-                  >
-                    <TableCell className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                          <Building2 className="w-5 h-5 text-blue-600" />
-                        </div>
-                        <span className="font-medium text-slate-900">
-                          {client.name}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="px-4 py-3">
-                      <span
-                        className={cn(
-                          "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize",
-                          client.status === "active"
-                            ? "bg-green-500/20 text-green-600"
-                            : "bg-gray-500/20 text-gray-600"
-                        )}
-                      >
-                        {client.status}
-                      </span>
-                    </TableCell>
-                    <TableCell className="font-mono text-sm px-4 py-3 text-center">
-                      <CpmCell clientId={client.id} source="surfside" />
-                    </TableCell>
-                    <TableCell className="font-mono text-sm px-4 py-3 text-center">
-                      <CpmCell clientId={client.id} source="facebook" />
-                    </TableCell>
-                    <TableCell className="text-slate-600 text-sm px-4 py-3">
-                      {new Date(client.createdAt).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell className="text-right px-4 py-3">
-                      <div className="flex items-center justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleSimulate(client)}
-                          className="gap-2 cursor-pointer hover:bg-gray-200"
-                        >
-                          <Eye className="w-4 h-4" />
-                          View
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            setEditingClient(client);
-                            setIsDialogOpen(true);
-                          }}
-                          className="gap-2 cursor-pointer hover:bg-gray-200"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                          Edit
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
+              ))}
             </TableBody>
           </Table>
         )}
       </div>
+
+      {/* Delete Confirmation */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the client
+              <strong> {clientToDelete?.name}</strong> and their associated user account.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              Delete Client
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
     </div>
   );
 }

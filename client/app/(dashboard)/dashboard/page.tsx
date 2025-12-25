@@ -868,7 +868,7 @@ export default function Dashboard() {
                   },
                   ctr: {
                     title: "CTR",
-                    value: `${Number(summaryMetrics?.overall_ctr || 0).toFixed(
+                    value: `${(Number(summaryMetrics?.overall_ctr || 0) * 100).toFixed(
                       2
                     )}%`,
                     trend: calcTrend(

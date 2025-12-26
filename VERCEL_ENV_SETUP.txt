@@ -1,0 +1,22 @@
+VERCEL ENVIRONMENT VARIABLE SETUP
+==================================
+
+Add this to Vercel Dashboard:
+
+1. Go to: Settings → Environment Variables
+2. Add:
+   Key: NEXT_PUBLIC_API_URL
+   Value: http://54.209.251.230:8000/api/v1
+   Environments: ✅ Production ✅ Preview ✅ Development
+
+3. Save and Redeploy
+
+EXPLANATION:
+- No hardcoded values anywhere!
+- next.config.ts reads from NEXT_PUBLIC_API_URL
+- api-client.ts reads from NEXT_PUBLIC_API_URL
+- Proxy handles HTTPS→HTTP conversion automatically
+
+The proxy works like this:
+Browser (HTTPS) → /api/proxy/auth/login → Vercel Server → http://your-backend/api/v1/auth/login
+

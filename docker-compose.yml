@@ -5,10 +5,12 @@ services:
   db:
     image: postgres:15
     container_name: reporting_db
+    env_file:
+      - ./server/.env
     environment:
-      POSTGRES_DB: megaDB
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 03025202775Abc$
+      POSTGRES_DB: ${POSTGRES_DB:-megaDB}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
@@ -26,44 +28,11 @@ services:
       context: ./server
       dockerfile: Dockerfile
     container_name: reporting_backend
+    env_file:
+      - ./server/.env
     environment:
-      # Database
-      DATABASE_URL: postgresql://postgres:03025202775Abc$$@db:5432/megaDB
-      
-      # Security
-      SECRET_KEY: your-secret-key-change-this-in-production-32-chars-minimum
-      ENCRYPTION_KEY: 44p68_kzgH3OfCQsovZOFnk8PJGAuwS7V4kvkaCo7nY=
-      ALGORITHM: HS256
-      ACCESS_TOKEN_EXPIRE_MINUTES: 11520
-      
-      # AWS S3
-      AWS_ACCESS_KEY_ID: your_aws_access_key
-      AWS_SECRET_ACCESS_KEY: your_aws_secret_key
-      AWS_REGION: us-east-1
-      S3_BUCKET_NAME: your-surfside-bucket
-      
-      # Vibe API
-      VIBE_API_BASE_URL: https://clear-platform.vibe.co
-      VIBE_API_KEY: your_vibe_api_key_here
-      VIBE_ADVERTISER_ID: ""
-      VIBE_RATE_LIMIT_PER_HOUR: 15
-      
-      # Email SMTP
-      SMTP_HOST: smtp.gmail.com
-      SMTP_PORT: 587
-      SMTP_USERNAME: umairimran6277@gmail.com
-      SMTP_PASSWORD: jtawalawmbrppzss
-      SMTP_FROM_EMAIL: umairimran6277@gmail.com
-      SMTP_FROM_NAME: Dashboard Alerts
-      
-      # Uploads
-      UPLOAD_DIR: /app/uploads
-      MAX_UPLOAD_SIZE: 52428800
-      
-      DEBUG: "False"
-      
-      # CORS - Frontend URLs (MUST be valid JSON array string)
-      CORS_ORIGINS: '["https://reporting-dashboard-project-mega.vercel.app","http://localhost:3000"]'
+      # Override DATABASE_URL to use Docker's internal network (uses 'db' hostname instead of 'localhost')
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-megaDB}
       
     ports:
       - "8000:8000"

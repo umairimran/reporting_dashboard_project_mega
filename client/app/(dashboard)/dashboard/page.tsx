@@ -136,6 +136,9 @@ export default function Dashboard() {
     queryKey: ["clients", "active"],
     queryFn: () => clientsService.getClients(0, 100, "active"),
     enabled: isAdmin && !simulatedClient,
+    staleTime: 0, // Always fetch fresh data
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
   });
 
   const clients = clientsData?.clients || [];
@@ -219,6 +222,9 @@ export default function Dashboard() {
           limit: 100000,
         }),
       enabled: !!appliedClientId && !!formattedDateFrom && !!formattedDateTo,
+      staleTime: 0, // Always consider data stale
+      refetchOnMount: 'always', // Always refetch on mount
+      refetchOnWindowFocus: true, // Refetch when user returns to tab
     });
 
   const { data: surfsideSummary, isLoading: loadingSurfsideSummary } = useQuery(
@@ -239,6 +245,9 @@ export default function Dashboard() {
           source: "surfside",
         }),
       enabled: !!appliedClientId && !!formattedDateFrom && !!formattedDateTo,
+      staleTime: 0, // Always consider data stale
+      refetchOnMount: 'always', // Always refetch on mount
+      refetchOnWindowFocus: true, // Refetch when user returns to tab
     }
   );
 
@@ -262,6 +271,9 @@ export default function Dashboard() {
           limit: 100000,
         }),
       enabled: !!appliedClientId && !!formattedDateFrom && !!formattedDateTo,
+      staleTime: 0, // Always consider data stale
+      refetchOnMount: 'always', // Always refetch on mount
+      refetchOnWindowFocus: true, // Refetch when user returns to tab
     });
 
   const { data: facebookSummary, isLoading: loadingFacebookSummary } = useQuery(
@@ -282,6 +294,9 @@ export default function Dashboard() {
           source: "facebook",
         }),
       enabled: !!appliedClientId && !!formattedDateFrom && !!formattedDateTo,
+      staleTime: 0, // Always consider data stale
+      refetchOnMount: 'always', // Always refetch on mount
+      refetchOnWindowFocus: true, // Refetch when user returns to tab
     }
   );
 

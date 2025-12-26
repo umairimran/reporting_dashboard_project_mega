@@ -134,6 +134,10 @@ class ZstdMiddleware(BaseHTTPMiddleware):
         
         response = await call_next(request)
         
+        # Skip compression for OpenAPI/docs endpoints (browsers don't support zstd)
+        if request.url.path in ["/openapi.json", "/docs", "/redoc"]:
+            return response
+        
         # We only compress if it's a JSON response and reasonably large
         if "application/json" not in response.headers.get("Content-Type", ""):
             return response

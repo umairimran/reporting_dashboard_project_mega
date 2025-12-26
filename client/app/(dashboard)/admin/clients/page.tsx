@@ -299,16 +299,12 @@ export default function AdminClients() {
       // 1. Delete Client (Must be first due to FK constraints if client points to user, or user points to client? 
       // Actually DB schema: clients.user_id -> users.id (RESTRICT). 
       // So we must delete CLIENT first to free the User.
+      // 1. Delete Client (Backend now handles cascading user deletion)
       await deleteClientMutation.mutateAsync(clientToDelete.id);
 
-      // 2. Delete User (Only if NOT admin)
-      if (userId) {
-        if (clientToDelete.userRole === 'admin') {
-          toast.info("Client deleted. Associated Admin user was preserved.");
-        } else {
-          await deleteUserMutation.mutateAsync(userId);
-          toast.success("Client and associated user deleted");
-        }
+      // 2. Notify success
+      if (userId && clientToDelete.userRole !== 'admin') {
+        toast.success("Client and associated user deleted");
       } else {
         toast.success("Client deleted");
       }

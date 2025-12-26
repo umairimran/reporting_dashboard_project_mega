@@ -170,6 +170,9 @@ class StagingMediaRaw(Base):
     
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
     
+    # Relationships
+    client = relationship("Client", back_populates="staging_media")
+    
     def __repr__(self):
         return f"<StagingMediaRaw {self.source} - {self.date}>"
 
@@ -198,6 +201,9 @@ class IngestionLog(Base):
     resolved_by = Column(UUID(as_uuid=True), ForeignKey('users.id', onupdate='CASCADE', ondelete='SET NULL'))
     
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    
+    # Relationships
+    client = relationship("Client", back_populates="ingestion_logs")
     
     def __repr__(self):
         return f"<IngestionLog {self.source} - {self.run_date} ({self.status})>"

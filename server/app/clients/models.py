@@ -25,11 +25,13 @@ class Client(Base):
     user = relationship("User", back_populates="clients")
     settings = relationship("ClientSettings", back_populates="client", cascade="all, delete-orphan")
     campaigns = relationship("Campaign", back_populates="client", cascade="all, delete-orphan")
-    daily_metrics = relationship("DailyMetrics", back_populates="client")
-    weekly_summaries = relationship("WeeklySummary", back_populates="client")
-    monthly_summaries = relationship("MonthlySummary", back_populates="client")
+    daily_metrics = relationship("DailyMetrics", back_populates="client", cascade="all, delete-orphan")
+    weekly_summaries = relationship("WeeklySummary", back_populates="client", cascade="all, delete-orphan")
+    monthly_summaries = relationship("MonthlySummary", back_populates="client", cascade="all, delete-orphan")
     vibe_credentials = relationship("VibeCredentials", back_populates="client", cascade="all, delete-orphan")
-    uploaded_files = relationship("UploadedFile", back_populates="client")
+    uploaded_files = relationship("UploadedFile", back_populates="client", cascade="all, delete-orphan")
+    ingestion_logs = relationship("IngestionLog", back_populates="client", cascade="all, delete-orphan")
+    staging_media = relationship("StagingMediaRaw", back_populates="client", cascade="all, delete-orphan")
     
     def __repr__(self):
         return f"<Client {self.name}>"

@@ -38,11 +38,13 @@ class CSVExportService:
             Campaign.name.label('campaign_name'),
             Strategy.name.label('strategy_name'),
             Placement.name.label('placement_name'),
-            Creative.name.label('creative_name')
+            Creative.name.label('creative_name'),
+            Region.name.label('region_name')
         ).outerjoin(Campaign, DailyMetrics.campaign_id == Campaign.id
         ).outerjoin(Strategy, DailyMetrics.strategy_id == Strategy.id
         ).outerjoin(Placement, DailyMetrics.placement_id == Placement.id
         ).outerjoin(Creative, DailyMetrics.creative_id == Creative.id
+        ).outerjoin(Region, DailyMetrics.region_id == Region.id
         ).filter(
             DailyMetrics.client_id == client_id,
             DailyMetrics.date >= start_date,

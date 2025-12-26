@@ -62,8 +62,8 @@ services:
       
       DEBUG: "False"
       
-      # CORS - Single config point for frontend URLs (UPDATE WITH YOUR VERCEL URL!)
-      CORS_ORIGINS: '["http://localhost:3000","https://reporting-dashboard-project-mega.vercel.app"]'
+      # CORS - Frontend URLs (UPDATED!)
+      CORS_ORIGINS: '["https://reporting-dashboard-project-mega.vercel.app","http://localhost:3000"]'
       
     ports:
       - "8000:8000"

@@ -26,7 +26,8 @@ ENV/
 # OS
 .DS_Store
 Thumbs.db
-
+.pdf
+.csv
 # Uploads
 uploads/
 

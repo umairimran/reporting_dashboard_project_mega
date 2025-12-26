@@ -2,12 +2,15 @@
 import { toast } from "sonner";
 import { Report } from "@/types/dashboard";
 
-// MUST be set in environment variables - No hardcoded fallback!
+// Use proxy in browser to avoid mixed content errors (HTTPS -> HTTP)
+// Environment variable MUST be set - no hardcoded fallback
 if (!process.env.NEXT_PUBLIC_API_URL) {
   throw new Error("NEXT_PUBLIC_API_URL environment variable is required!");
 }
 
-const API_Base_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_Base_URL = typeof window !== 'undefined' 
+  ? '/api/proxy'  // Browser: use Next.js proxy (configured in next.config.ts)
+  : process.env.NEXT_PUBLIC_API_URL;  // Server: use env variable for SSR/SSG
 
 interface FetchOptions extends RequestInit {
   params?: Record<string, string>;

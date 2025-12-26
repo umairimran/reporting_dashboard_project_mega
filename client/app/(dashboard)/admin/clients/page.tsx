@@ -627,14 +627,15 @@ export default function AdminClients() {
                     <div className="flex items-center justify-end gap-2">
                       <Button variant="ghost" size="sm" onClick={() => handleSimulate(client)} className="gap-2"><Eye className="w-4 h-4" /> View</Button>
                       <Button variant="ghost" size="sm" onClick={() => { setEditingClient(client); setIsDialogOpen(true); }} className="gap-2"><Edit2 className="w-4 h-4" /> Edit</Button>
-                      <Button
+                      {/* DELETE BUTTON DISABLED - To re-enable, uncomment below */}
+                      {/* <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => { setClientToDelete(client); setIsDeleteDialogOpen(true); }}
                         className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
                       >
                         <Trash2 className="w-4 h-4" />
-                      </Button>
+                      </Button> */}
                     </div>
                   </TableCell>
                 </TableRow>
@@ -644,8 +645,8 @@ export default function AdminClients() {
         )}
       </div>
 
-      {/* Delete Confirmation */}
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      {/* DELETE CONFIRMATION DIALOG DISABLED - To re-enable, uncomment below */}
+      {/* <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
@@ -664,7 +665,7 @@ export default function AdminClients() {
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
-      </AlertDialog>
+      </AlertDialog> */}
 
     </div>
   );

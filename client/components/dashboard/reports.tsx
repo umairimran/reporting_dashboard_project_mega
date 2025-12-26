@@ -195,7 +195,8 @@ export default function Reports() {
                   PDF
                 </Button>
 
-                <Button
+                {/* CSV DOWNLOAD BUTTON DISABLED - To re-enable, uncomment below */}
+                {/* <Button
                   variant="outline"
                   size="sm"
                   className="flex-1 gap-2 border-green-200 hover:bg-green-50 hover:text-green-600 text-green-500"
@@ -204,7 +205,7 @@ export default function Reports() {
                 >
                   <Download className="w-4 h-4" />
                   CSV
-                </Button>
+                </Button> */}
               </div>
 
               {/* Error Message Display */}

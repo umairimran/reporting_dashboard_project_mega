@@ -202,5 +202,6 @@ export interface Report {
   pdfPath?: string;
   csvPath?: string;
   errorMessage?: string;
+  clientName?: string;
   // clientId: string; // From computed_field
 }

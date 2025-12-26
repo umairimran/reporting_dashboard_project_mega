@@ -2,7 +2,7 @@
 SQLAlchemy models for exports and reports.
 """
 from sqlalchemy import Column, String, Integer, ForeignKey, Date, DateTime, Text
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy.sql import func
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
@@ -30,4 +30,4 @@ class Report(Base):
     updated_at = Column(DateTime, nullable=False, default=func.now(), onupdate=func.now())
 
     # Relationships
-    client = relationship("Client", backref="reports")
+    client = relationship("Client", backref=backref("reports", cascade="all, delete-orphan", passive_deletes=True))

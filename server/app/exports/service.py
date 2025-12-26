@@ -116,13 +116,16 @@ class ReportService:
                 logger.error(f"Failed to update report failure status: {str(db_e)}")
 
     @staticmethod
-    def get_reports(db: Session, client_id: uuid.UUID, skip: int = 0, limit: int = 100) -> List[Report]:
+    def get_reports(db: Session, client_id: Optional[uuid.UUID] = None, skip: int = 0, limit: int = 100) -> List[Report]:
         """
-        Get all reports for a client.
+        Get all reports. If client_id is provided, filter by client.
         """
-        return db.query(Report).filter(
-            Report.client_id == client_id
-        ).order_by(Report.created_at.desc()).offset(skip).limit(limit).all()
+        query = db.query(Report)
+        
+        if client_id:
+            query = query.filter(Report.client_id == client_id)
+            
+        return query.order_by(Report.created_at.desc()).offset(skip).limit(limit).all()
 
     @staticmethod
     def get_report_file_path(db: Session, report_id: uuid.UUID, client_id: uuid.UUID, format: str = 'pdf') -> Optional[str]:

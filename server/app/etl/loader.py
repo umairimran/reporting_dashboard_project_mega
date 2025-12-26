@@ -37,8 +37,8 @@ class LoaderService:
         Returns:
             Tuple of (records_loaded, records_failed)
         """
-        print(f"[STEP 4.3] CALCULATING METRICS & LOADING DATA...")
-        print(f"Total records to load: {len(records)}\n")
+        # print(f"[STEP 4.3] CALCULATING METRICS & LOADING DATA...")
+        # print(f"Total records to load: {len(records)}\n")
         
         loaded = 0
         failed = 0
@@ -76,26 +76,26 @@ class LoaderService:
                 )
                 
                 # Print detailed metrics for first few records
-                if idx < 3 or (idx + 1) % 10 == 0:
-                    print(f"  Record {idx + 1}: Metrics calculated")
-                    print(f"    Date: {record['date']}")
-                    if record.get('campaign_name'):
-                        print(f"    Campaign: {record['campaign_name'][:40]}..." if len(record['campaign_name']) > 40 else f"    Campaign: {record['campaign_name']}")
-                    if region:
-                        print(f"    Region: {region.name}")
-                    print(f"    Input Data:")
-                    print(f"      Impressions: {record['impressions']:,}")
-                    print(f"      Clicks: {record['clicks']:,}")
-                    print(f"      Conversions: {record['conversions']:,}")
-                    print(f"      Revenue: ${record['conversion_revenue']:,.2f}")
-                    print(f"    CPM Rate: ${cpm}")
-                    print(f"    Calculated Metrics:")
-                    print(f"      Spend: ${metrics['spend']:,.2f} (Formula: Impressions {record['impressions']:,} ÷ 1000 × CPM ${cpm})")
-                    print(f"      CTR: {metrics['ctr']:.6f}")
-                    print(f"      CPC: ${metrics['cpc']:.4f}")
-                    print(f"      CPA: ${metrics['cpa']:.4f}" if record['conversions'] > 0 else f"      CPA: $0.0000 (no conversions)")
-                    print(f"      ROAS: {metrics['roas']:.4f}" if metrics['spend'] > 0 else f"      ROAS: 0.0000 (no spend)")
-                    print()
+                # if idx < 3 or (idx + 1) % 10 == 0:
+                    # print(f"  Record {idx + 1}: Metrics calculated")
+                    # print(f"    Date: {record['date']}")
+                    # if record.get('campaign_name'):
+                        # print(f"    Campaign: {record['campaign_name'][:40]}..." if len(record['campaign_name']) > 40 else f"    Campaign: {record['campaign_name']}")
+                    # if region:
+                        # print(f"    Region: {region.name}")
+                    # print(f"    Input Data:")
+                    # print(f"      Impressions: {record['impressions']:,}")
+                    # print(f"      Clicks: {record['clicks']:,}")
+                    # print(f"      Conversions: {record['conversions']:,}")
+                    # print(f"      Revenue: ${record['conversion_revenue']:,.2f}")
+                    # print(f"    CPM Rate: ${cpm}")
+                    # print(f"    Calculated Metrics:")
+                    # print(f"      Spend: ${metrics['spend']:,.2f} (Formula: Impressions {record['impressions']:,} ÷ 1000 × CPM ${cpm})")
+                    # print(f"      CTR: {metrics['ctr']:.6f}")
+                    # print(f"      CPC: ${metrics['cpc']:.4f}")
+                    # print(f"      CPA: ${metrics['cpa']:.4f}" if record['conversions'] > 0 else f"      CPA: $0.0000 (no conversions)")
+                    # print(f"      ROAS: {metrics['roas']:.4f}" if metrics['spend'] > 0 else f"      ROAS: 0.0000 (no spend)")
+                    # print()
                 
                 # Check if record already exists (duplicate detection)
                 # Note: Filter conditions depend on what's available
@@ -140,8 +140,8 @@ class LoaderService:
                     existing.cpa = metrics['cpa']
                     existing.roas = metrics['roas']
                     logger.debug(f"Updated existing metric for {record['date']}")
-                    if idx < 3:
-                        print(f"    → Updated existing record in database\n")
+                    # if idx < 3:
+                        # print(f"    → Updated existing record in database\n")
                 else:
                     # Create new record
                     daily_metric = DailyMetrics(
@@ -165,8 +165,8 @@ class LoaderService:
                     )
                     db.add(daily_metric)
                     logger.debug(f"Created new metric for {record['date']}")
-                    if idx < 3:
-                        print(f"    → Inserted new record into database\n")
+                    # if idx < 3:
+                        # print(f"    → Inserted new record into database\n")
 
                 
                 loaded += 1
@@ -179,12 +179,12 @@ class LoaderService:
         # Commit all changes
         try:
             db.commit()
-            print(f"\n✓ Data loading complete")
-            print(f"  Records loaded: {loaded}")
-            print(f"  Records failed: {failed}\n")
+            # print(f"\n✓ Data loading complete")
+            # print(f"  Records loaded: {loaded}")
+            # print(f"  Records failed: {failed}\n")
             logger.info(f"Loaded {loaded} records, {failed} failed")
         except Exception as e:
-            print(f"\n✗ Error committing to database: {str(e)}\n")
+            # print(f"\n✗ Error committing to database: {str(e)}\n")
             logger.error(f"Error committing records: {str(e)}")
             db.rollback()
             raise

@@ -54,7 +54,7 @@ async def process_facebook_upload_background(
         orchestrator = ETLOrchestrator(db)
 
         # Parse file
-        print("[STEP 4] PARSING FILE (BACKGROUND)...")
+        # print("[STEP 4] PARSING FILE (BACKGROUND)...")
         logger.info(f"Parsing Facebook file: {file_name}")
         
         try:
@@ -62,12 +62,12 @@ async def process_facebook_upload_background(
             uploaded_file.records_count = len(raw_records)
             db.commit()
             
-            print(f"✓ File parsed successfully")
-            print(f"  Total records found: {len(raw_records)}\n")
+            # print(f"✓ File parsed successfully")
+            # print(f"  Total records found: {len(raw_records)}\n")
             logger.info(f"Parsed {len(raw_records)} records from Facebook file")
             
             # Run ETL pipeline
-            print("[STEP 5] STARTING ETL PIPELINE (BACKGROUND)...\n")
+            # print("[STEP 5] STARTING ETL PIPELINE (BACKGROUND)...\n")
             ingestion_log = await orchestrator.run_etl_pipeline(
                 client_id=client_id,
                 client_name=client_name,
@@ -82,23 +82,23 @@ async def process_facebook_upload_background(
             # Update status based on ETL result
             if ingestion_log.status == 'success':
                 uploaded_file.upload_status = 'processed'
-                print("\n" + "="*80)
-                print("✓ FACEBOOK ETL PIPELINE COMPLETED SUCCESSFULLY")
-                print("="*80)
+                # print("\n" + "="*80)
+                # print("✓ FACEBOOK ETL PIPELINE COMPLETED SUCCESSFULLY")
+                # print("="*80)
             elif ingestion_log.status == 'partial':
                 uploaded_file.upload_status = 'processed'
                 uploaded_file.error_message = f"Partial success: {ingestion_log.message}"
-                print("\n" + "="*80)
-                print("⚠ FACEBOOK ETL PIPELINE COMPLETED WITH WARNINGS")
-                print(f"Message: {ingestion_log.message}")
-                print("="*80)
+                # print("\n" + "="*80)
+                # print("⚠ FACEBOOK ETL PIPELINE COMPLETED WITH WARNINGS")
+                # print(f"Message: {ingestion_log.message}")
+                # print("="*80)
             else:
                 uploaded_file.upload_status = 'failed'
                 uploaded_file.error_message = f"ETL failed: {ingestion_log.message}"
-                print("\n" + "="*80)
-                print("✗ FACEBOOK ETL PIPELINE FAILED")
-                print(f"Error: {ingestion_log.message}")
-                print("="*80)
+                # print("\n" + "="*80)
+                # print("✗ FACEBOOK ETL PIPELINE FAILED")
+                # print(f"Error: {ingestion_log.message}")
+                # print("="*80)
                 
         except Exception as e:
             uploaded_file.upload_status = 'failed'
@@ -185,25 +185,25 @@ class FacebookUploadHandler:
         Returns:
             UploadedFile record (status=processing)
         """
-        print("\n" + "="*80)
-        print(f"FACEBOOK UPLOAD STARTED (ASYNC)")
-        print("="*80)
-        print(f"Client: {client_name}")
-        print(f"File: {file.filename}")
-        print("="*80 + "\n")
+        # print("\n" + "="*80)
+        # print(f"FACEBOOK UPLOAD STARTED (ASYNC)")
+        # print("="*80)
+        # print(f"Client: {client_name}")
+        # print(f"File: {file.filename}")
+        # print("="*80 + "\n")
         
         logger.info(f"Initiating Facebook upload for client {client_name}: {file.filename}")
         
         # Validate file
-        print(f"[{datetime.utcnow()}] [STEP 1] VALIDATING FILE...")
+        # print(f"[{datetime.utcnow()}] [STEP 1] VALIDATING FILE...")
         await FacebookValidator.validate_upload(file)
-        print(f"[{datetime.utcnow()}] ✓ File validation passed\n")
+        # print(f"[{datetime.utcnow()}] ✓ File validation passed\n")
         
         # Get upload directory
         upload_dir = self._get_upload_directory(client_id)
         
         # Save file (Non-blocking)
-        print(f"[{datetime.utcnow()}] [STEP 2] SAVING FILE TO DISK...")
+        # print(f"[{datetime.utcnow()}] [STEP 2] SAVING FILE TO DISK...")
         import asyncio
         loop = asyncio.get_event_loop()
         file_path, file_size = await loop.run_in_executor(
@@ -212,8 +212,8 @@ class FacebookUploadHandler:
             file, 
             upload_dir
         )
-        print(f"[{datetime.utcnow()}] ✓ File saved: {file_path}")
-        print(f"  Size: {file_size:,} bytes\n")
+        # print(f"[{datetime.utcnow()}] ✓ File saved: {file_path}")
+        # print(f"  Size: {file_size:,} bytes\n")
         
         # Create upload record with 'processing' status
         uploaded_file = UploadedFile(
@@ -251,8 +251,8 @@ class FacebookUploadHandler:
         # NOTE: Background task is now handled by the 'upload_monitor' job which polls for 'processing' logs.
         # This decouples the upload request from the heavy ETL process completely.
         
-        print(f"[{datetime.utcnow()}] [STEP 3] LOG CREATED - HANDOFF TO MONITOR")
-        print("Returning immediate response to client.\n")
+        # print(f"[{datetime.utcnow()}] [STEP 3] LOG CREATED - HANDOFF TO MONITOR")
+        # print("Returning immediate response to client.\n")
         
         return uploaded_file
     

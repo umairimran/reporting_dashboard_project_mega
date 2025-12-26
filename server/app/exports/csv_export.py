@@ -39,10 +39,10 @@ class CSVExportService:
             Strategy.name.label('strategy_name'),
             Placement.name.label('placement_name'),
             Creative.name.label('creative_name')
-        ).join(Campaign, DailyMetrics.campaign_id == Campaign.id
-        ).join(Strategy, DailyMetrics.strategy_id == Strategy.id
-        ).join(Placement, DailyMetrics.placement_id == Placement.id
-        ).join(Creative, DailyMetrics.creative_id == Creative.id
+        ).outerjoin(Campaign, DailyMetrics.campaign_id == Campaign.id
+        ).outerjoin(Strategy, DailyMetrics.strategy_id == Strategy.id
+        ).outerjoin(Placement, DailyMetrics.placement_id == Placement.id
+        ).outerjoin(Creative, DailyMetrics.creative_id == Creative.id
         ).filter(
             DailyMetrics.client_id == client_id,
             DailyMetrics.date >= start_date,
@@ -81,10 +81,10 @@ class CSVExportService:
         for metric, campaign_name, strategy_name, placement_name, creative_name in results:
             writer.writerow([
                 metric.date.strftime('%Y-%m-%d'),
-                campaign_name,
-                strategy_name,
-                placement_name,
-                creative_name,
+                campaign_name or "",
+                strategy_name or "",
+                placement_name or "",
+                creative_name or "",
                 metric.source,
                 metric.impressions,
                 metric.clicks,

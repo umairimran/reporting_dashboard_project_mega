@@ -94,15 +94,35 @@ export default function DateRangePicker({
             ))}
           </div>
 
-          {/* Calendar */}
-          <div className="p-3 bg-white">
-            <CustomCalendar
-              mode="range"
-              selected={{ from: dateRange.from, to: dateRange.to }}
-              onSelect={handleCustomSelect}
-              numberOfMonths={2}
-              className="pointer-events-auto"
-            />
+          {/* Calendars Container */}
+          <div className="flex divide-x divide-slate-200">
+            {/* Start Date Calendar */}
+            <div className="p-3 bg-white">
+              <div className="text-xs font-semibold text-slate-500 mb-2 px-1">Start Date</div>
+              <CustomCalendar
+                mode="range"
+                selected={{ from: dateRange.from, to: dateRange.to }}
+                onSelect={handleCustomSelect}
+                numberOfMonths={1}
+                defaultMonth={dateRange.from}
+                forceSelection="start"
+                className="pointer-events-auto"
+              />
+            </div>
+
+            {/* End Date Calendar */}
+            <div className="p-3 bg-white">
+              <div className="text-xs font-semibold text-slate-500 mb-2 px-1">End Date</div>
+              <CustomCalendar
+                mode="range"
+                selected={{ from: dateRange.from, to: dateRange.to }}
+                onSelect={handleCustomSelect}
+                numberOfMonths={1}
+                defaultMonth={dateRange.to || dateRange.from || new Date()}
+                forceSelection="end"
+                className="pointer-events-auto"
+              />
+            </div>
           </div>
         </div>
       </PopoverContent>

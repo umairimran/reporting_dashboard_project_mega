@@ -192,7 +192,7 @@ class IngestionLog(Base):
     finished_at = Column(DateTime)
     file_name = Column(String(255))
     source = Column(String(50), nullable=False, index=True)
-    client_id = Column(UUID(as_uuid=True), ForeignKey('clients.id', onupdate='CASCADE', ondelete='SET NULL'))
+    client_id = Column(UUID(as_uuid=True), ForeignKey('clients.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
     
     # Error resolution tracking
     resolution_status = Column(String(20))  # 'unresolved', 'resolved', 'ignored'

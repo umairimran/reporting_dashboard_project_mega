@@ -391,7 +391,7 @@ CREATE TABLE ingestion_logs (
     finished_at TIMESTAMP,
     file_name VARCHAR(255),
     source VARCHAR(50) NOT NULL CHECK (source IN ('surfside', 'vibe', 'facebook')),
-    client_id UUID REFERENCES clients(id) ON UPDATE CASCADE ON DELETE SET NULL,
+    client_id UUID REFERENCES clients(id) ON UPDATE CASCADE ON DELETE CASCADE,
     
     -- Error resolution tracking
     resolution_status VARCHAR(20) CHECK (resolution_status IN ('unresolved', 'resolved', 'ignored')),

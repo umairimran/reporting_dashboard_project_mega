@@ -96,9 +96,9 @@ async def get_reports(
         # Admin can view reports for a specific client if provided
         target_client_id = client_id
     
-    if not target_client_id:
-        # If no client context, return empty list (or all reports? empty for safety)
-        return []
+    if current_user.role == 'client':
+        if not target_client_id:
+             return []
 
     return ReportService.get_reports(db, target_client_id, skip, limit)
 

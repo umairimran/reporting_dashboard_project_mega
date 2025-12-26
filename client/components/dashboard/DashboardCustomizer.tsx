@@ -25,9 +25,12 @@ export interface SectionConfig {
   order: number;
 }
 
+import { DataSource } from "@/types/dashboard";
+
 interface DashboardCustomizerProps {
   kpis: KPIConfig[];
   sections: SectionConfig[];
+  activeSource: DataSource;
   onKPIsChange: (kpis: KPIConfig[]) => void;
   onSectionsChange: (sections: SectionConfig[]) => void;
 }
@@ -35,6 +38,7 @@ interface DashboardCustomizerProps {
 export default function DashboardCustomizer({
   kpis,
   sections,
+  activeSource,
   onKPIsChange,
   onSectionsChange,
 }: DashboardCustomizerProps) {
@@ -43,6 +47,24 @@ export default function DashboardCustomizer({
   const [localSections, setLocalSections] = useState(sections);
   const [hoveredKPI, setHoveredKPI] = useState<string | null>(null);
   const [hoveredSection, setHoveredSection] = useState<string | null>(null);
+
+  // Filter Logic
+  const visibleKPIs = localKPIs.filter(kpi => {
+    if (activeSource === 'facebook') {
+      return !['revenue', 'conversions', 'roas', 'cpa'].includes(kpi.id);
+    }
+    return true;
+  });
+
+  const visibleSections = localSections.filter(section => {
+    if (activeSource === 'facebook') {
+      return !['strategy', 'placement'].includes(section.id);
+    }
+    if (activeSource === 'surfside') {
+      return !['campaign', 'region'].includes(section.id);
+    }
+    return true;
+  });
 
   useEffect(() => {
     setLocalKPIs(kpis);
@@ -140,7 +162,7 @@ export default function DashboardCustomizer({
                 Select which KPIs to display and reorder them
               </p>
               <div className="space-y-2">
-                {localKPIs.map((kpi, index) => (
+                {visibleKPIs.map((kpi, index) => (
                   <div
                     key={kpi.id}
                     className={cn(
@@ -185,7 +207,7 @@ export default function DashboardCustomizer({
                         size="sm"
                         className="h-8 w-8 p-0"
                         onClick={() => moveKPI(kpi.id, "down")}
-                        disabled={index === localKPIs.length - 1}
+                        disabled={index === visibleKPIs.length - 1}
                       >
                         <ChevronDown className="w-4 h-4" />
                       </Button>
@@ -204,7 +226,7 @@ export default function DashboardCustomizer({
                 Reorder the dashboard sections (all sections are required)
               </p>
               <div className="space-y-2">
-                {localSections.map((section, index) => (
+                {visibleSections.map((section, index) => (
                   <div
                     key={section.id}
                     className={cn(
@@ -240,7 +262,7 @@ export default function DashboardCustomizer({
                         size="sm"
                         className="h-8 w-8 p-0"
                         onClick={() => moveSection(section.id, "down")}
-                        disabled={index === localSections.length - 1}
+                        disabled={index === visibleSections.length - 1}
                       >
                         <ChevronDown className="w-4 h-4" />
                       </Button>

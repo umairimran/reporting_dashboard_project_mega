@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   DollarSign,
   TrendingUp,
@@ -63,6 +63,7 @@ const STORAGE_KEY_KPIS = "dashboard_kpis";
 const STORAGE_KEY_SECTIONS = "dashboard_sections";
 
 export default function Dashboard() {
+  const queryClient = useQueryClient();
   const { currentClient, isAdmin, simulatedClient } = useAuth();
 
   // 1. DRAFT STATE (UI Controls for Client & Date)
@@ -85,11 +86,12 @@ export default function Dashboard() {
   const [kpis, setKpis] = useState<KPIConfig[]>(DEFAULT_KPIS);
   const [sections, setSections] = useState<SectionConfig[]>(DEFAULT_SECTIONS);
 
-  // Load preferences from localStorage
+  // Load preferences from localStorage - RELOAD WHEN SOURCE CHANGES
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const savedKPIs = localStorage.getItem(STORAGE_KEY_KPIS);
-      const savedSections = localStorage.getItem(STORAGE_KEY_SECTIONS);
+      const sourceSuffix = activeSource === "surfside" ? "_surfside" : "_facebook";
+      const savedKPIs = localStorage.getItem(`${STORAGE_KEY_KPIS}${sourceSuffix}`);
+      const savedSections = localStorage.getItem(`${STORAGE_KEY_SECTIONS}${sourceSuffix}`);
 
       if (savedKPIs) {
         try {
@@ -103,33 +105,31 @@ export default function Dashboard() {
           console.error("Failed to parse KPIs from localStorage ", e);
           setKpis(DEFAULT_KPIS);
         }
+      } else {
+        // Reset to defaults if no saved prefs for this source
+        setKpis(DEFAULT_KPIS);
       }
 
       if (savedSections) {
         try {
           const parsed = JSON.parse(savedSections);
-          // Merge strategy: Start with defaults to ensure all required sections exist.
-          // If a section is in saved prefs, use its order/visibility (if we had visibility).
-          // Since sections only track order currently, we want to respect saved order but inject new available sections.
-
           // 1. Get all saved IDs
           const savedIds = new Set(parsed.map((s: SectionConfig) => s.id));
-
           // 2. Find any new default sections that aren't in saved
           const newSections = DEFAULT_SECTIONS.filter(s => !savedIds.has(s.id));
-
           // 3. Combine saved + new
-          // We append new sections at the end for now, or we could re-sort based on default order if preferred.
-          // A safer bet to keep user prefs is: keep saved, append new.
           setSections([...parsed, ...newSections]);
         } catch (e) {
           console.error("Failed to parse sections from localStorage ", e);
           setSections(DEFAULT_SECTIONS);
         }
+      } else {
+        // Reset to defaults if no saved prefs for this source
+        setSections(DEFAULT_SECTIONS);
       }
 
     }
-  }, []);
+  }, [activeSource]);
 
   // Fetch Clients
   const { data: clientsData } = useQuery({
@@ -392,14 +392,16 @@ export default function Dashboard() {
   const handleKPIsChange = (newKPIs: KPIConfig[]) => {
     setKpis(newKPIs);
     if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEY_KPIS, JSON.stringify(newKPIs));
+      const sourceSuffix = activeSource === "surfside" ? "_surfside" : "_facebook";
+      localStorage.setItem(`${STORAGE_KEY_KPIS}${sourceSuffix}`, JSON.stringify(newKPIs));
     }
   };
 
   const handleSectionsChange = (newSections: SectionConfig[]) => {
     setSections(newSections);
     if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEY_SECTIONS, JSON.stringify(newSections));
+      const sourceSuffix = activeSource === "surfside" ? "_surfside" : "_facebook";
+      localStorage.setItem(`${STORAGE_KEY_SECTIONS}${sourceSuffix}`, JSON.stringify(newSections));
     }
   };
 
@@ -732,7 +734,13 @@ export default function Dashboard() {
                 : "Up to Date"}
           </Button>
 
-          <GenerateReportDialog clientId={appliedClientId}>
+          <GenerateReportDialog
+            clientId={appliedClientId}
+            onReportGenerated={() => {
+              // Invalidate reports query to ensure fresh data when navigating to reports page
+              queryClient.invalidateQueries({ queryKey: ["reports"] });
+            }}
+          >
             <Button variant="outline" className="gap-2">
               <Download className="w-4 h-4" />
               Export
@@ -745,6 +753,7 @@ export default function Dashboard() {
       <div className="mb-8 flex items-center justify-between">
         <PlatformTabs activeSource={activeSource} onChange={setActiveSource} />
         <DashboardCustomizer
+          activeSource={activeSource}
           kpis={kpis}
           sections={sections}
           onKPIsChange={handleKPIsChange}

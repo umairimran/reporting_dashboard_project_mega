@@ -47,6 +47,13 @@ class ReportResponse(ReportBase):
     @property
     def clientId(self) -> str:
         return str(self.client_id)
+
+    @computed_field
+    @property
+    def clientName(self) -> Optional[str]:
+        if hasattr(self, 'client') and self.client:
+            return self.client.name
+        return None
     
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 

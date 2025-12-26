@@ -304,9 +304,9 @@ class TransformerService:
         Returns:
             Tuple of (valid_records, invalid_records)
         """
-        print(f"[STEP 4.1] TRANSFORMING RECORDS...")
-        print(f"Source: {source.upper()}")
-        print(f"Total records to transform: {len(records)}\n")
+        # print(f"[STEP 4.1] TRANSFORMING RECORDS...")
+        # print(f"Source: {source.upper()}")
+        # print(f"Total records to transform: {len(records)}\n")
         
         valid_records = []
         invalid_records = []
@@ -340,24 +340,24 @@ class TransformerService:
                 
                 if is_valid:
                     valid_records.append(transformed)
-                    if (idx + 1) % 10 == 0 or idx < 3:  # Print first 3 and every 10th
-                        print(f"  Row {idx + 1}: Transformed successfully")
-                        print(f"    Date: {transformed['date']}")
-                        print(f"    Campaign: {transformed['campaign_name']}")
-                        print(f"    Strategy: {transformed['strategy_name']}")
-                        print(f"    Placement: {transformed['placement_name']}")
-                        print(f"    Creative: {transformed['creative_name']}")
-                        print(f"    Impressions: {transformed['impressions']:,}")
-                        print(f"    Clicks: {transformed['clicks']:,}")
-                        print(f"    Conversions: {transformed['conversions']:,}")
-                        print(f"    Revenue: ${transformed['conversion_revenue']:,.2f}")
+                    # if (idx + 1) % 10 == 0 or idx < 3:  # Print first 3 and every 10th
+                    #     print(f"  Row {idx + 1}: Transformed successfully")
+                    #     print(f"    Date: {transformed['date']}")
+                    #     print(f"    Campaign: {transformed['campaign_name']}")
+                    #     print(f"    Strategy: {transformed['strategy_name']}")
+                    #     print(f"    Placement: {transformed['placement_name']}")
+                    #     print(f"    Creative: {transformed['creative_name']}")
+                    #     print(f"    Impressions: {transformed['impressions']:,}")
+                    #     print(f"    Clicks: {transformed['clicks']:,}")
+                    #     print(f"    Conversions: {transformed['conversions']:,}")
+                    #     print(f"    Revenue: ${transformed['conversion_revenue']:,.2f}")
                 else:
                     invalid_records.append({
                         'record_index': idx,
                         'error': error_msg,
                         'raw_data': raw_record
                     })
-                    print(f"  Row {idx + 1}: ✗ INVALID - {error_msg}")
+                    # print(f"  Row {idx + 1}: ✗ INVALID - {error_msg}")
             
             except Exception as e:
                 logger.error(f"Error transforming record {idx}: {str(e)}")
@@ -366,9 +366,9 @@ class TransformerService:
                     'error': str(e),
                     'raw_data': raw_record
                 })
-                print(f"  Row {idx + 1}: ✗ ERROR - {str(e)}")
+                # print(f"  Row {idx + 1}: ✗ ERROR - {str(e)}")
         
-        print(f"\n✓ Transformation complete: {len(valid_records)} valid, {len(invalid_records)} invalid\n")
+        # print(f"\n✓ Transformation complete: {len(valid_records)} valid, {len(invalid_records)} invalid\n")
         logger.info(f"Transformed {len(valid_records)} valid records, {len(invalid_records)} invalid records")
         
         return valid_records, invalid_records
@@ -389,8 +389,8 @@ class TransformerService:
         from collections import defaultdict
         from decimal import Decimal
         
-        print(f"[STEP 4.2] AGGREGATING RECORDS...")
-        print(f"Records before aggregation: {len(records)}\n")
+        # print(f"[STEP 4.2] AGGREGATING RECORDS...")
+        # print(f"Records before aggregation: {len(records)}\n")
         
         # Group records by dimension keys
         aggregated = defaultdict(lambda: {
@@ -434,17 +434,17 @@ class TransformerService:
         shown_count = 0
         for key, agg_record in aggregated.items():
             if agg_record['record_count'] > 1 and shown_count < 5:
-                print(f"  Aggregating {agg_record['record_count']} rows with same dimensions:")
-                print(f"    Date: {agg_record['date']}")
-                print(f"    Campaign: {agg_record['campaign_name']}")
-                print(f"    Strategy: {agg_record['strategy_name']}")
-                print(f"    Placement: {agg_record['placement_name']}")
-                print(f"    Creative: {agg_record['creative_name']}")
-                print(f"    → Combined Impressions: {agg_record['impressions']:,}")
-                print(f"    → Combined Clicks: {agg_record['clicks']:,}")
-                print(f"    → Combined Conversions: {agg_record['conversions']:,}")
-                print(f"    → Combined Revenue: ${agg_record['conversion_revenue']:,.2f}")
-                print()
+                # print(f"  Aggregating {agg_record['record_count']} rows with same dimensions:")
+                # print(f"    Date: {agg_record['date']}")
+                # print(f"    Campaign: {agg_record['campaign_name']}")
+                # print(f"    Strategy: {agg_record['strategy_name']}")
+                # print(f"    Placement: {agg_record['placement_name']}")
+                # print(f"    Creative: {agg_record['creative_name']}")
+                # print(f"    → Combined Impressions: {agg_record['impressions']:,}")
+                # print(f"    → Combined Clicks: {agg_record['clicks']:,}")
+                # print(f"    → Combined Conversions: {agg_record['conversions']:,}")
+                # print(f"    → Combined Revenue: ${agg_record['conversion_revenue']:,.2f}")
+                # print()
                 shown_count += 1
         
         # Remove record_count from final result
@@ -454,7 +454,7 @@ class TransformerService:
         # Convert back to list
         result = list(aggregated.values())
         
-        print(f"✓ Aggregation complete: {len(result)} unique dimension combinations\n")
+        # print(f"✓ Aggregation complete: {len(result)} unique dimension combinations\n")
         logger.info(f"Aggregated {len(records)} records into {len(result)} unique dimension combinations")
         
         return result

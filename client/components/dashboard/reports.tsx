@@ -171,6 +171,12 @@ export default function Reports() {
                 {report.type} Summary
               </h3>
 
+              {report.clientName && (
+                <p className="text-sm font-medium text-blue-600 mb-2">
+                  {report.clientName}
+                </p>
+              )}
+
               <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
                 <Calendar className="w-4 h-4" />
                 <span>

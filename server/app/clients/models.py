@@ -23,15 +23,16 @@ class Client(Base):
     
     # Relationships
     user = relationship("User", back_populates="clients")
-    settings = relationship("ClientSettings", back_populates="client", cascade="all, delete-orphan")
-    campaigns = relationship("Campaign", back_populates="client", cascade="all, delete-orphan")
-    daily_metrics = relationship("DailyMetrics", back_populates="client", cascade="all, delete-orphan")
-    weekly_summaries = relationship("WeeklySummary", back_populates="client", cascade="all, delete-orphan")
-    monthly_summaries = relationship("MonthlySummary", back_populates="client", cascade="all, delete-orphan")
-    vibe_credentials = relationship("VibeCredentials", back_populates="client", cascade="all, delete-orphan")
-    uploaded_files = relationship("UploadedFile", back_populates="client", cascade="all, delete-orphan")
-    ingestion_logs = relationship("IngestionLog", back_populates="client", cascade="all, delete-orphan")
-    staging_media = relationship("StagingMediaRaw", back_populates="client", cascade="all, delete-orphan")
+    settings = relationship("ClientSettings", back_populates="client", cascade="all, delete-orphan", passive_deletes=True)
+    campaigns = relationship("Campaign", back_populates="client", cascade="all, delete-orphan", passive_deletes=True)
+    daily_metrics = relationship("DailyMetrics", back_populates="client", cascade="all, delete-orphan", passive_deletes=True)
+    weekly_summaries = relationship("WeeklySummary", back_populates="client", cascade="all, delete-orphan", passive_deletes=True)
+    monthly_summaries = relationship("MonthlySummary", back_populates="client", cascade="all, delete-orphan", passive_deletes=True)
+    vibe_credentials = relationship("VibeCredentials", back_populates="client", cascade="all, delete-orphan", passive_deletes=True)
+    uploaded_files = relationship("UploadedFile", back_populates="client", cascade="all, delete-orphan", passive_deletes=True)
+    ingestion_logs = relationship("IngestionLog", back_populates="client", cascade="all, delete-orphan", passive_deletes=True)
+    staging_media = relationship("StagingMediaRaw", back_populates="client", cascade="all, delete-orphan", passive_deletes=True)
+
     
     def __repr__(self):
         return f"<Client {self.name}>"

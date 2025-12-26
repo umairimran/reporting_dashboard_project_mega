@@ -62,7 +62,7 @@ services:
       
       DEBUG: "False"
       
-      # CORS - Frontend URLs (UPDATED!)
+      # CORS - Frontend URLs (MUST be valid JSON array string)
       CORS_ORIGINS: '["https://reporting-dashboard-project-mega.vercel.app","http://localhost:3000"]'
       
     ports:

@@ -20,20 +20,34 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 11520  # 8 days (60 * 24 * 8)
     DEBUG: bool = False
     
-    # CORS Configuration - MUST be set in .env file (no defaults!)
-    # Example: CORS_ORIGINS=["https://your-app.vercel.app","http://localhost:3000"]
-    CORS_ORIGINS: str
+    # CORS Configuration - Read from environment variable or .env file
+    # Example: CORS_ORIGINS='["https://your-app.vercel.app","http://localhost:3000"]'
+    # Default for development (will be overridden by docker-compose.yml in production)
+    CORS_ORIGINS: str = '["http://localhost:3000"]'
     
     @property
     def cors_origins_list(self) -> List[str]:
-        """Parse CORS_ORIGINS string to list. REQUIRES .env configuration."""
+        """Parse CORS_ORIGINS string to list. REQUIRES environment variable configuration."""
         try:
+            # Debug: Print what we're trying to parse
+            print(f"[DEBUG] CORS_ORIGINS raw value: {repr(self.CORS_ORIGINS)}")
             origins = json.loads(self.CORS_ORIGINS)
             if not origins:
                 raise ValueError("CORS_ORIGINS cannot be empty")
+            print(f"[DEBUG] Parsed CORS origins: {origins}")
             return origins
+        except json.JSONDecodeError as e:
+            raise ValueError(
+                f"CORS_ORIGINS must be valid JSON array. "
+                f"Received: {repr(self.CORS_ORIGINS)}. "
+                f"JSON Error: {e}"
+            )
         except Exception as e:
-            raise ValueError(f"CORS_ORIGINS must be set in .env file as valid JSON array. Error: {e}")
+            raise ValueError(
+                f"CORS_ORIGINS parsing failed. "
+                f"Value: {repr(self.CORS_ORIGINS)}. "
+                f"Error: {type(e).__name__}: {e}"
+            )
     
     # AWS S3 (Surfside)
     AWS_ACCESS_KEY_ID: str
@@ -66,9 +80,11 @@ class Settings(BaseSettings):
     MONTHLY_AGGREGATION_HOUR: int = 5  # 1st of month 5:00 AM Eastern
     
     class Config:
-        env_file = ".env"
+        env_file = ".env"  # Will be ignored if file doesn't exist (Docker)
+        env_file_encoding = 'utf-8'
         case_sensitive = True
         extra = "ignore"
+        # Environment variables take precedence over .env file
 
 
 @lru_cache()

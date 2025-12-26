@@ -24,14 +24,14 @@ try:
     existing_admin = result.fetchone()
     
     if existing_admin:
-        print(f"Ok Admin user '{admin_email}' already exists")
+        print(f"✓ Admin user '{admin_email}' already exists")
     else:
         # Hash password
         hashed_password = bcrypt.hashpw(admin_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         
-        # Create admin user
+        # Create admin user - Column name is password_hash in database_schema.sql
         db.execute(text("""
-            INSERT INTO users (email, hashed_password, role, is_active)
+            INSERT INTO users (email, password_hash, role, is_active)
             VALUES (:email, :password, 'admin', true)
         """), {
             "email": admin_email,
@@ -39,7 +39,7 @@ try:
         })
         
         db.commit()
-        print(f"OK Admin user created successfully!")
+        print(f"✓ Admin user created successfully!")
         print(f"  Email: {admin_email}")
         print(f"  Password: {admin_password}")
     
@@ -48,5 +48,6 @@ try:
 except Exception as e:
     print(f"✗ Error creating admin user: {str(e)}")
     sys.exit(1)
+
 
 

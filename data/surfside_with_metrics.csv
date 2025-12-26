@@ -1,0 +1,497 @@
+date,campaign_name,strategy_name,placement_name,creative_name,source,impressions,clicks,conversions,conversion_revenue,cpm,spend,ctr,cpc,cpa,roas
+11/4/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 2,surfside,865,1,0,0.0,17.0,14.71,0.12,14.71,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 2,surfside,3409,0,0,0.0,17.0,57.95,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 2,surfside,107,0,0,0.0,17.0,1.82,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 2,surfside,264,2,0,0.0,17.0,4.49,0.76,2.25,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 2,surfside,211,0,0,0.0,17.0,3.59,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 2,surfside,128,0,0,0.0,17.0,2.18,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 2,surfside,659,3,0,0.0,17.0,11.2,0.46,3.73,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 2,surfside,3191,2,0,0.0,17.0,54.25,0.06,27.13,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 4,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/6/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 5,surfside,4,1,0,0.0,17.0,0.07,25.0,0.07,0.0,0.0
+11/6/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 5,surfside,5,1,0,0.0,17.0,0.09,20.0,0.09,0.0,0.0
+11/5/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 5,surfside,3,0,0,0.0,17.0,0.05,0.0,0.0,0.0,0.0
+11/5/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 5,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 5,surfside,3457,2,0,0.0,17.0,58.77,0.06,29.39,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 5,surfside,113,0,0,0.0,17.0,1.92,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 5,surfside,8405,9,0,0.0,17.0,142.89,0.11,15.88,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 5,surfside,204,0,0,0.0,17.0,3.47,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 5,surfside,941,2,0,0.0,17.0,16.0,0.21,8.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 5,surfside,697,0,0,0.0,17.0,11.85,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 5,surfside,195,0,0,0.0,17.0,3.32,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 5,surfside,6410,3,0,0.0,17.0,108.97,0.05,36.32,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 5,surfside,3126,4,0,0.0,17.0,53.14,0.13,13.29,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 5,surfside,141,0,0,0.0,17.0,2.4,0.0,0.0,0.0,0.0
+11/8/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 6,surfside,3,0,0,0.0,17.0,0.05,0.0,0.0,0.0,0.0
+11/7/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 6,surfside,2,0,1,68.75,17.0,0.03,0.0,0.0,0.03,2291.67
+11/6/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 6,surfside,0,1,1,172.75,17.0,0.0,0.0,0.0,0.0,0.0
+11/5/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 6,surfside,3,0,0,0.0,17.0,0.05,0.0,0.0,0.0,0.0
+11/5/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 6,surfside,0,0,1,69.25,17.0,0.0,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 6,surfside,115,0,0,0.0,17.0,1.96,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 6,surfside,3968,6,1,15.0,17.0,67.46,0.15,11.24,67.46,0.22
+11/4/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 6,surfside,954,3,0,0.0,17.0,16.22,0.31,5.41,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 6,surfside,190,0,0,0.0,17.0,3.23,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 6,surfside,9115,6,1,95.0,17.0,154.96,0.07,25.83,154.96,0.61
+11/3/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 6,surfside,124,1,0,0.0,17.0,2.11,0.81,2.11,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 6,surfside,343,0,0,0.0,17.0,5.83,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 6,surfside,3919,8,0,0.0,17.0,66.62,0.2,8.33,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 6,surfside,735,1,0,0.0,17.0,12.5,0.14,12.5,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 6,surfside,7194,3,1,95.0,17.0,122.3,0.04,40.77,122.3,0.78
+11/6/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 7,surfside,2,1,0,0.0,17.0,0.03,50.0,0.03,0.0,0.0
+11/5/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 7,surfside,4,0,0,0.0,17.0,0.07,0.0,0.0,0.0,0.0
+11/5/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 7,surfside,3,0,0,0.0,17.0,0.05,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 7,surfside,3373,5,0,0.0,17.0,57.34,0.15,11.47,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 7,surfside,269,0,0,0.0,17.0,4.57,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 7,surfside,8432,8,0,0.0,17.0,143.34,0.09,17.92,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 7,surfside,856,2,0,0.0,17.0,14.55,0.23,7.28,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 7,surfside,126,0,0,0.0,17.0,2.14,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 7,surfside,683,1,0,0.0,17.0,11.61,0.15,11.61,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 7,surfside,199,0,0,0.0,17.0,3.38,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 7,surfside,6490,2,0,0.0,17.0,110.33,0.03,55.17,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 7,surfside,141,0,0,0.0,17.0,2.4,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 7,surfside,3214,2,0,250.0,17.0,54.64,0.06,27.32,0.0,4.58
+11/9/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 8,surfside,1,0,1,99.0,17.0,0.02,0.0,0.0,0.02,4950.0
+11/8/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 8,surfside,3,0,0,0.0,17.0,0.05,0.0,0.0,0.0,0.0
+11/7/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 8,surfside,2,1,0,0.0,17.0,0.03,50.0,0.03,0.0,0.0
+11/6/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 8,surfside,1,0,2,93.0,17.0,0.02,0.0,0.0,0.01,4650.0
+11/6/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 8,surfside,2,1,1,159.5,17.0,0.03,50.0,0.03,0.03,5316.67
+11/5/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 8,surfside,4,0,0,0.0,17.0,0.07,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 8,surfside,929,3,0,0.0,17.0,15.79,0.32,5.26,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 8,surfside,196,0,0,0.0,17.0,3.33,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 8,surfside,3856,0,0,0.0,17.0,65.55,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 8,surfside,9034,8,0,0.0,17.0,153.58,0.09,19.2,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 8,surfside,116,0,0,0.0,17.0,1.97,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 8,surfside,7147,4,1,150.0,17.0,121.5,0.06,30.38,121.5,1.23
+11/3/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 8,surfside,693,1,0,0.0,17.0,11.78,0.14,11.78,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 8,surfside,3964,5,2,210.0,17.0,67.39,0.13,13.48,33.7,3.12
+11/3/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 8,surfside,207,3,0,0.0,17.0,3.52,1.45,1.17,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Cannabis Consumers,Creative 8,surfside,122,0,0,0.0,17.0,2.07,0.0,0.0,0.0,0.0
+11/8/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 1,surfside,2,0,0,0.0,17.0,0.03,0.0,0.0,0.0,0.0
+11/7/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 1,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/7/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 2,surfside,1,0,1,50.91,17.0,0.02,0.0,0.0,0.02,2545.5
+11/6/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 2,surfside,1,0,2,91.3,17.0,0.02,0.0,0.0,0.01,4565.0
+11/5/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 2,surfside,3,0,1,92.5,17.0,0.05,0.0,0.0,0.05,1850.0
+11/4/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 2,surfside,63,0,0,0.0,17.0,1.07,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 2,surfside,294,0,0,0.0,17.0,5.0,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 2,surfside,127,2,0,0.0,17.0,2.16,1.57,1.08,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 2,surfside,1944,6,3,556.0,17.0,33.05,0.31,5.51,11.02,16.82
+11/3/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 2,surfside,2357,3,0,0.0,17.0,40.07,0.13,13.36,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 2,surfside,91,0,0,0.0,17.0,1.55,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 2,surfside,353,0,0,0.0,17.0,6.0,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 2,surfside,149,0,0,0.0,17.0,2.53,0.0,0.0,0.0,0.0
+11/6/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 3,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/5/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 3,surfside,4,0,0,65.5,17.0,0.07,0.0,0.0,0.0,935.71
+11/3/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 3,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/5/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 4,surfside,2,0,0,0.0,17.0,0.03,0.0,0.0,0.0,0.0
+11/9/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 5,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/9/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 5,surfside,2,0,2,253.9,17.0,0.03,0.0,0.0,0.02,8463.33
+11/8/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 5,surfside,3,0,0,0.0,17.0,0.05,0.0,0.0,0.0,0.0
+11/8/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 5,surfside,3,0,0,0.0,17.0,0.05,0.0,0.0,0.0,0.0
+11/7/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 5,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/7/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 5,surfside,1,0,1,35.4,17.0,0.02,0.0,0.0,0.02,1770.0
+11/6/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 5,surfside,2,1,0,0.0,17.0,0.03,50.0,0.03,0.0,0.0
+11/6/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 5,surfside,1,0,1,110.25,17.0,0.02,0.0,0.0,0.02,5512.5
+11/5/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 5,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/5/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 5,surfside,1,0,1,56.0,17.0,0.02,0.0,0.0,0.02,2800.0
+11/4/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 5,surfside,326,1,0,0.0,17.0,5.54,0.31,5.54,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 5,surfside,122,0,0,0.0,17.0,2.07,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 5,surfside,3910,7,1,140.0,17.0,66.47,0.18,9.5,66.47,2.11
+11/4/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 5,surfside,1860,3,2,56.0,17.0,31.62,0.16,10.54,15.81,1.77
+11/4/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 5,surfside,53,0,0,0.0,17.0,0.9,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 5,surfside,145,0,0,0.0,17.0,2.47,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 5,surfside,2303,2,2,165.0,17.0,39.15,0.09,19.58,19.58,4.21
+11/3/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 5,surfside,4834,2,0,16.67,17.0,82.18,0.04,41.09,0.0,0.2
+11/3/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 5,surfside,375,0,1,56.0,17.0,6.38,0.0,0.0,6.38,8.78
+11/3/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 5,surfside,91,0,0,0.0,17.0,1.55,0.0,0.0,0.0,0.0
+11/5/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 6,surfside,2,0,1,127.5,17.0,0.03,0.0,0.0,0.03,4250.0
+11/5/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 6,surfside,1,0,1,71.5,17.0,0.02,0.0,0.0,0.02,3575.0
+11/4/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 6,surfside,371,1,0,0.0,17.0,6.31,0.27,6.31,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 6,surfside,2118,3,0,0.0,17.0,36.01,0.14,12.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 6,surfside,57,0,0,0.0,17.0,0.97,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 6,surfside,121,0,0,0.0,17.0,2.06,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 6,surfside,4025,2,0,0.0,17.0,68.43,0.05,34.22,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 6,surfside,2648,0,2,155.0,17.0,45.02,0.0,0.0,22.51,3.44
+11/3/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 6,surfside,5302,3,2,345.0,17.0,90.13,0.06,30.04,45.07,3.83
+11/3/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 6,surfside,383,1,0,0.0,17.0,6.51,0.26,6.51,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 6,surfside,90,0,0,0.0,17.0,1.53,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 6,surfside,149,0,0,0.0,17.0,2.53,0.0,0.0,0.0,0.0
+11/5/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 7,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 7,surfside,60,0,0,0.0,17.0,1.02,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 7,surfside,150,0,0,0.0,17.0,2.55,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 7,surfside,339,0,0,0.0,17.0,5.76,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 7,surfside,1868,3,0,0.0,17.0,31.76,0.16,10.59,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 7,surfside,3894,4,0,0.0,17.0,66.2,0.1,16.55,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 7,surfside,75,0,0,0.0,17.0,1.28,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 7,surfside,126,0,0,0.0,17.0,2.14,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 7,surfside,343,1,0,0.0,17.0,5.83,0.29,5.83,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 7,surfside,2339,1,0,0.0,17.0,39.76,0.04,39.76,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 7,surfside,4990,3,0,0.0,17.0,84.83,0.06,28.28,0.0,0.0
+11/9/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 8,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/7/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 8,surfside,1,0,2,156.0,17.0,0.02,0.0,0.0,0.01,7800.0
+11/5/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 8,surfside,0,0,0,0.0,17.0,0.0,0.0,0.0,0.0,0.0
+11/5/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 8,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 8,surfside,4115,1,1,161.0,17.0,69.96,0.02,69.96,69.96,2.3
+11/4/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 8,surfside,329,1,0,0.0,17.0,5.59,0.3,5.59,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 8,surfside,2147,3,1,180.0,17.0,36.5,0.14,12.17,36.5,4.93
+11/4/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 8,surfside,44,0,0,0.0,17.0,0.75,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 8,surfside,2,1,0,0.0,17.0,0.03,50.0,0.03,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 8,surfside,94,0,0,0.0,17.0,1.6,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 8,surfside,416,1,0,0.0,17.0,7.07,0.24,7.07,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 8,surfside,154,0,1,80.0,17.0,2.62,0.0,0.0,2.62,30.53
+11/3/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 8,surfside,2909,3,1,132.5,17.0,49.45,0.1,16.48,49.45,2.68
+11/3/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 8,surfside,82,0,0,0.0,17.0,1.39,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | CRM/POS-based Lookalike Audience,Creative 8,surfside,5293,5,3,457.0,17.0,89.98,0.09,18.0,29.99,5.08
+11/3/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 1,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 2,surfside,1645,0,0,0.0,17.0,27.97,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 2,surfside,121,0,0,0.0,17.0,2.06,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 2,surfside,57,0,0,0.0,17.0,0.97,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 2,surfside,435,0,0,0.0,17.0,7.4,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 2,surfside,2149,3,1,100.0,17.0,36.53,0.14,12.18,36.53,2.74
+11/3/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 2,surfside,130,0,0,0.0,17.0,2.21,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 2,surfside,99,0,1,344.0,17.0,1.68,0.0,0.0,1.68,204.76
+11/3/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 2,surfside,468,1,0,0.0,17.0,7.96,0.21,7.96,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 3,surfside,2,1,0,0.0,17.0,0.03,50.0,0.03,0.0,0.0
+11/6/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 4,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 4,surfside,1,0,3,1280.0,17.0,0.02,0.0,0.0,0.01,64000.0
+11/3/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 4,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/8/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 5,surfside,1,0,1,30.25,17.0,0.02,0.0,0.0,0.02,1512.5
+11/7/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 5,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/6/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 5,surfside,2,0,2,153.0,17.0,0.03,0.0,0.0,0.02,5100.0
+11/5/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 5,surfside,2,0,1,24.75,17.0,0.03,0.0,0.0,0.03,825.0
+11/4/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 5,surfside,1625,2,0,0.0,17.0,27.63,0.12,13.82,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 5,surfside,112,0,0,0.0,17.0,1.9,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 5,surfside,3861,4,0,0.0,17.0,65.64,0.1,16.41,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 5,surfside,425,0,0,0.0,17.0,7.23,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 5,surfside,53,0,0,0.0,17.0,0.9,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 5,surfside,96,0,0,0.0,17.0,1.63,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 5,surfside,135,1,0,0.0,17.0,2.3,0.74,2.3,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 5,surfside,4832,2,0,0.0,17.0,82.14,0.04,41.07,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 5,surfside,453,1,0,0.0,17.0,7.7,0.22,7.7,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 5,surfside,2185,0,2,102.0,17.0,37.15,0.0,0.0,18.58,2.75
+11/6/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 6,surfside,2,1,0,0.0,17.0,0.03,50.0,0.03,0.0,0.0
+11/6/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 6,surfside,2,0,0,0.0,17.0,0.03,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 6,surfside,1820,0,0,0.0,17.0,30.94,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 6,surfside,56,0,0,0.0,17.0,0.95,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 6,surfside,96,0,0,0.0,17.0,1.63,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 6,surfside,427,0,0,0.0,17.0,7.26,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 6,surfside,4245,2,0,0.0,17.0,72.17,0.05,36.09,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 6,surfside,209,1,0,0.0,17.0,3.55,0.48,3.55,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 6,surfside,104,0,0,0.0,17.0,1.77,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 6,surfside,5336,2,0,0.0,17.0,90.71,0.04,45.36,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 6,surfside,534,3,0,0.0,17.0,9.08,0.56,3.03,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 6,surfside,2586,3,1,28.0,17.0,43.96,0.12,14.65,43.96,0.64
+11/6/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 7,surfside,4,1,0,0.0,17.0,0.07,25.0,0.07,0.0,0.0
+11/6/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 7,surfside,2,2,0,0.0,17.0,0.03,100.0,0.02,0.0,0.0
+11/6/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 7,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/5/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 7,surfside,2,1,0,37.5,17.0,0.03,50.0,0.03,0.0,1250.0
+11/4/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 7,surfside,1678,2,0,0.0,17.0,28.53,0.12,14.27,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 7,surfside,142,0,0,0.0,17.0,2.41,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 7,surfside,415,1,0,0.0,17.0,7.06,0.24,7.06,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 7,surfside,51,0,0,0.0,17.0,0.87,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 7,surfside,3985,3,0,0.0,17.0,67.75,0.08,22.58,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 7,surfside,2223,2,0,0.0,17.0,37.79,0.09,18.9,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 7,surfside,124,0,0,0.0,17.0,2.11,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 7,surfside,478,0,1,120.0,17.0,8.13,0.0,0.0,8.13,14.76
+11/3/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 7,surfside,4836,3,0,0.0,17.0,82.21,0.06,27.4,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 7,surfside,102,0,0,0.0,17.0,1.73,0.0,0.0,0.0,0.0
+11/6/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 8,surfside,2,1,0,0.0,17.0,0.03,50.0,0.03,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 8,surfside,4381,8,0,0.0,17.0,74.48,0.18,9.31,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 8,surfside,454,4,0,0.0,17.0,7.72,0.88,1.93,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 8,surfside,36,0,0,0.0,17.0,0.61,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 8,surfside,120,0,0,0.0,17.0,2.04,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 8,surfside,1838,2,0,0.0,17.0,31.25,0.11,15.63,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 8,surfside,140,1,0,0.0,17.0,2.38,0.71,2.38,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 8,surfside,2578,2,0,10.0,17.0,43.83,0.08,21.92,0.0,0.23
+11/3/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 8,surfside,118,1,0,0.0,17.0,2.01,0.85,2.01,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 8,surfside,530,1,0,0.0,17.0,9.01,0.19,9.01,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Audience | Near-Market Cannabis Consumers,Creative 8,surfside,5173,3,0,0.0,17.0,87.94,0.06,29.31,0.0,0.0
+11/7/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 1,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/6/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 1,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 1,surfside,1,0,1,35.0,17.0,0.02,0.0,0.0,0.02,1750.0
+11/9/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 2,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/7/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 2,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/5/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 2,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 2,surfside,809,2,0,0.0,17.0,13.75,0.25,6.88,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 2,surfside,127,0,0,0.0,17.0,2.16,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 2,surfside,3323,5,0,0.0,17.0,56.49,0.15,11.3,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 2,surfside,199,1,0,0.0,17.0,3.38,0.5,3.38,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 2,surfside,224,1,0,0.0,17.0,3.81,0.45,3.81,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 2,surfside,677,1,0,0.0,17.0,11.51,0.15,11.51,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 2,surfside,122,0,0,0.0,17.0,2.07,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 2,surfside,3160,6,0,10.0,17.0,53.72,0.19,8.95,0.0,0.19
+11/8/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 3,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/7/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 3,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/6/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 3,surfside,2,0,0,0.0,17.0,0.03,0.0,0.0,0.0,0.0
+11/5/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 3,surfside,2,0,0,0.0,17.0,0.03,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 3,surfside,3,0,0,0.0,17.0,0.05,0.0,0.0,0.0,0.0
+11/5/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 4,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 4,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/8/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 5,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/7/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 5,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/6/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 5,surfside,6,3,1,30.74,17.0,0.1,50.0,0.03,0.1,307.4
+11/6/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 5,surfside,2,1,0,0.0,17.0,0.03,50.0,0.03,0.0,0.0
+11/5/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 5,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/5/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 5,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 5,surfside,3363,11,1,85.0,17.0,57.17,0.33,5.2,57.17,1.49
+11/4/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 5,surfside,118,2,0,0.0,17.0,2.01,1.69,1.01,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 5,surfside,190,1,0,0.0,17.0,3.23,0.53,3.23,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 5,surfside,8872,5,0,0.0,17.0,150.82,0.06,30.16,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 5,surfside,776,4,0,0.0,17.0,13.19,0.52,3.3,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 5,surfside,102,1,0,0.0,17.0,1.73,0.98,1.73,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 5,surfside,7082,6,2,262.5,17.0,120.39,0.08,20.07,60.2,2.18
+11/3/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 5,surfside,208,1,0,0.0,17.0,3.54,0.48,3.54,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 5,surfside,680,1,0,0.0,17.0,11.56,0.15,11.56,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 5,surfside,3204,1,0,0.0,17.0,54.47,0.03,54.47,0.0,0.0
+11/8/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 6,surfside,1,0,2,119.0,17.0,0.02,0.0,0.0,0.01,5950.0
+11/8/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 6,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/7/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 6,surfside,1,0,1,202.5,17.0,0.02,0.0,0.0,0.02,10125.0
+11/6/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 6,surfside,2,0,1,82.5,17.0,0.03,0.0,0.0,0.03,2750.0
+11/6/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 6,surfside,1,0,1,138.0,17.0,0.02,0.0,0.0,0.02,6900.0
+11/5/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 6,surfside,6,0,2,284.25,17.0,0.1,0.0,0.0,0.05,2842.5
+11/5/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 6,surfside,6,0,0,0.0,17.0,0.1,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 6,surfside,833,0,0,0.0,17.0,14.16,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 6,surfside,3642,2,0,0.0,17.0,61.91,0.05,30.96,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 6,surfside,9220,8,0,0.0,17.0,156.74,0.09,19.59,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 6,surfside,179,0,0,0.0,17.0,3.04,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 6,surfside,107,1,0,0.0,17.0,1.82,0.93,1.82,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 6,surfside,3593,2,0,0.0,17.0,61.08,0.06,30.54,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 6,surfside,7750,3,0,0.0,17.0,131.75,0.04,43.92,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 6,surfside,715,0,0,0.0,17.0,12.16,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 6,surfside,301,0,0,0.0,17.0,5.12,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 6,surfside,90,0,0,0.0,17.0,1.53,0.0,0.0,0.0,0.0
+11/9/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 7,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/9/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 7,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/8/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 7,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/6/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 7,surfside,2,0,0,0.0,17.0,0.03,0.0,0.0,0.0,0.0
+11/6/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 7,surfside,2,1,0,0.0,17.0,0.03,50.0,0.03,0.0,0.0
+11/6/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 7,surfside,3,1,0,0.0,17.0,0.05,33.33,0.05,0.0,0.0
+11/5/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 7,surfside,1,0,0,17.5,17.0,0.02,0.0,0.0,0.0,875.0
+11/5/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 7,surfside,2,0,0,17.5,17.0,0.03,0.0,0.0,0.0,583.33
+11/4/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 7,surfside,3235,3,2,475.0,17.0,55.0,0.09,18.33,27.5,8.64
+11/4/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 7,surfside,99,1,0,0.0,17.0,1.68,1.01,1.68,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 7,surfside,244,1,0,0.0,17.0,4.15,0.41,4.15,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 7,surfside,8951,9,1,110.0,17.0,152.17,0.1,16.91,152.17,0.72
+11/4/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 7,surfside,786,3,0,0.0,17.0,13.36,0.38,4.45,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 7,surfside,114,0,0,0.0,17.0,1.94,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 7,surfside,7015,8,0,0.0,17.0,119.26,0.11,14.91,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 7,surfside,715,2,1,160.0,17.0,12.16,0.28,6.08,12.16,13.16
+11/3/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 7,surfside,217,1,0,0.0,17.0,3.69,0.46,3.69,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 7,surfside,3166,3,0,0.0,17.0,53.82,0.09,17.94,0.0,0.0
+11/9/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 8,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/9/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 8,surfside,2,0,0,0.0,17.0,0.03,0.0,0.0,0.0,0.0
+11/8/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 8,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/6/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 8,surfside,2,1,1,129.25,17.0,0.03,50.0,0.03,0.03,4308.33
+11/6/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 8,surfside,2,1,1,28.0,17.0,0.03,50.0,0.03,0.03,933.33
+11/6/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 8,surfside,2,1,0,0.0,17.0,0.03,50.0,0.03,0.0,0.0
+11/5/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 8,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 8,surfside,3609,7,1,90.0,17.0,61.35,0.19,8.76,61.35,1.47
+11/4/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 8,surfside,9321,11,0,0.0,17.0,158.46,0.12,14.41,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 8,surfside,195,1,0,0.0,17.0,3.32,0.51,3.32,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 8,surfside,111,1,0,0.0,17.0,1.89,0.9,1.89,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 8,surfside,1,1,0,0.0,17.0,0.02,100.0,0.02,0.0,0.0
+11/4/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 8,surfside,750,3,1,100.0,17.0,12.75,0.4,4.25,12.75,7.84
+11/3/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 8,surfside,3622,3,1,230.0,17.0,61.57,0.08,20.52,61.57,3.74
+11/3/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 8,surfside,717,2,0,0.0,17.0,12.19,0.28,6.1,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 8,surfside,198,0,0,0.0,17.0,3.37,0.0,0.0,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 8,surfside,116,2,0,0.0,17.0,1.97,1.72,0.99,0.0,0.0
+11/3/2025,Prospecting,Prospecting,Location | Geo-Conquest Customers of Nearby Competitors,Creative 8,surfside,7734,1,1,85.0,17.0,131.48,0.01,131.48,131.48,0.65
+11/4/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 2,surfside,107,0,0,0.0,17.0,1.82,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 2,surfside,359,0,0,0.0,17.0,6.1,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 2,surfside,1244,1,0,0.0,17.0,21.15,0.08,21.15,0.0,0.0
+11/4/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 2,surfside,37,0,0,0.0,17.0,0.63,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 2,surfside,64,0,0,0.0,17.0,1.09,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 2,surfside,308,0,0,0.0,17.0,5.24,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 2,surfside,102,1,0,0.0,17.0,1.73,0.98,1.73,0.0,0.0
+11/3/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 2,surfside,1416,2,0,0.0,17.0,24.07,0.14,12.04,0.0,0.0
+11/6/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 6,surfside,2,1,0,0.0,17.0,0.03,50.0,0.03,0.0,0.0
+11/4/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 6,surfside,344,0,0,0.0,17.0,5.85,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 6,surfside,3284,2,0,0.0,17.0,55.83,0.06,27.92,0.0,0.0
+11/4/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 6,surfside,1398,0,1,80.0,17.0,23.77,0.0,0.0,23.77,3.37
+11/4/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 6,surfside,60,0,0,0.0,17.0,1.02,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 6,surfside,44,0,0,0.0,17.0,0.75,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 6,surfside,154,0,0,0.0,17.0,2.62,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 6,surfside,77,0,0,0.0,17.0,1.31,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 6,surfside,378,0,0,0.0,17.0,6.43,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 6,surfside,3723,1,0,0.0,17.0,63.29,0.03,63.29,0.0,0.0
+11/3/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 6,surfside,1759,3,0,0.0,17.0,29.9,0.17,9.97,0.0,0.0
+11/4/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 7,surfside,112,0,0,0.0,17.0,1.9,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 7,surfside,304,2,0,0.0,17.0,5.17,0.66,2.59,0.0,0.0
+11/4/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 7,surfside,3081,4,0,0.0,17.0,52.38,0.13,13.1,0.0,0.0
+11/4/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 7,surfside,1167,1,0,0.0,17.0,19.84,0.09,19.84,0.0,0.0
+11/4/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 7,surfside,36,0,0,0.0,17.0,0.61,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 7,surfside,64,0,0,0.0,17.0,1.09,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 7,surfside,3385,1,2,132.5,17.0,57.55,0.03,57.55,28.78,2.3
+11/3/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 7,surfside,1457,1,0,0.0,17.0,24.77,0.07,24.77,0.0,0.0
+11/3/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 7,surfside,93,0,0,0.0,17.0,1.58,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 7,surfside,338,0,0,0.0,17.0,5.75,0.0,0.0,0.0,0.0
+11/6/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 8,surfside,2,0,0,42.0,17.0,0.03,0.0,0.0,0.0,1400.0
+11/5/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 8,surfside,2,0,0,0.0,17.0,0.03,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 8,surfside,3164,1,0,42.5,17.0,53.79,0.03,53.79,0.0,0.79
+11/4/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 8,surfside,1314,3,0,0.0,17.0,22.34,0.23,7.45,0.0,0.0
+11/4/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 8,surfside,40,0,0,0.0,17.0,0.68,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 8,surfside,328,0,0,0.0,17.0,5.58,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 8,surfside,84,0,0,0.0,17.0,1.43,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 8,surfside,387,0,0,0.0,17.0,6.58,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 8,surfside,71,0,0,0.0,17.0,1.21,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 8,surfside,1827,3,0,0.0,17.0,31.06,0.16,10.35,0.0,0.0
+11/3/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 8,surfside,3729,1,1,100.0,17.0,63.39,0.03,63.39,63.39,1.58
+11/3/2025,Retention,Retention,Audience | Lapsed Purchasers (Last Purchased between 45 days and 12 months),Creative 8,surfside,79,0,0,0.0,17.0,1.34,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 2,surfside,22,0,0,0.0,17.0,0.37,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 2,surfside,226,0,0,0.0,17.0,3.84,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 2,surfside,40,0,0,0.0,17.0,0.68,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 2,surfside,1747,0,3,372.5,17.0,29.7,0.0,0.0,9.9,12.54
+11/3/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 2,surfside,53,0,0,0.0,17.0,0.9,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 2,surfside,247,0,0,0.0,17.0,4.2,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 2,surfside,56,1,0,0.0,17.0,0.95,1.79,0.95,0.0,0.0
+11/3/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 2,surfside,2100,1,4,910.0,17.0,35.7,0.05,35.7,8.93,25.49
+11/3/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 3,surfside,2,0,3,213.5,17.0,0.03,0.0,0.0,0.01,7116.67
+11/4/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 6,surfside,46,1,0,0.0,17.0,0.78,2.17,0.78,0.0,0.0
+11/4/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 6,surfside,2697,9,4,622.0,17.0,45.85,0.33,5.09,11.46,13.57
+11/4/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 6,surfside,25,0,0,20.0,17.0,0.43,0.0,0.0,0.0,46.51
+11/4/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 6,surfside,2055,5,2,407.5,17.0,34.94,0.24,6.99,17.47,11.66
+11/4/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 6,surfside,201,0,0,0.0,17.0,3.42,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 6,surfside,266,0,0,0.0,17.0,4.52,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 6,surfside,3049,2,3,440.33,17.0,51.83,0.07,25.92,17.28,8.5
+11/3/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 6,surfside,2446,1,4,615.5,17.0,41.58,0.04,41.58,10.4,14.8
+11/3/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 6,surfside,71,0,0,0.0,17.0,1.21,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 6,surfside,54,0,0,0.0,17.0,0.92,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 7,surfside,44,0,0,0.0,17.0,0.75,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 7,surfside,1708,0,2,266.0,17.0,29.04,0.0,0.0,14.52,9.16
+11/4/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 7,surfside,2465,10,4,387.5,17.0,41.91,0.41,4.19,10.48,9.25
+11/4/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 7,surfside,187,0,0,0.0,17.0,3.18,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 7,surfside,69,2,0,0.0,17.0,1.17,2.9,0.59,0.0,0.0
+11/3/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 7,surfside,2212,3,3,435.0,17.0,37.6,0.14,12.53,12.53,11.57
+11/3/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 7,surfside,63,0,0,0.0,17.0,1.07,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 7,surfside,2803,3,6,702.0,17.0,47.65,0.11,15.88,7.94,14.73
+11/3/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 7,surfside,228,0,0,0.0,17.0,3.88,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 7,surfside,46,0,0,0.0,17.0,0.78,0.0,0.0,0.0,0.0
+11/6/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 8,surfside,1,0,2,143.5,17.0,0.02,0.0,0.0,0.01,7175.0
+11/5/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 8,surfside,1,0,2,67.5,17.0,0.02,0.0,0.0,0.01,3375.0
+11/4/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 8,surfside,33,0,0,0.0,17.0,0.56,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 8,surfside,44,0,0,0.0,17.0,0.75,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 8,surfside,1945,1,2,220.0,17.0,33.07,0.05,33.07,16.54,6.65
+11/4/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 8,surfside,234,0,0,0.0,17.0,3.98,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 8,surfside,2543,6,3,619.0,17.0,43.23,0.24,7.21,14.41,14.32
+11/3/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 8,surfside,3060,3,5,655.0,17.0,52.02,0.1,17.34,10.4,12.59
+11/3/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 8,surfside,272,1,0,0.0,17.0,4.62,0.37,4.62,0.0,0.0
+11/3/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 8,surfside,36,0,0,0.0,17.0,0.61,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 8,surfside,2498,3,2,415.5,17.0,42.47,0.12,14.16,21.24,9.78
+11/3/2025,Retention,Retention,Audience | Recent Purchasers (Last Purchased within the last 45 days),Creative 8,surfside,67,1,0,0.0,17.0,1.14,1.49,1.14,0.0,0.0
+11/6/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 1,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/5/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 1,surfside,2,0,0,0.0,17.0,0.03,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 1,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 2,surfside,153,0,0,0.0,17.0,2.6,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 2,surfside,1908,2,1,59.33,17.0,32.44,0.1,16.22,32.44,1.83
+11/4/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 2,surfside,510,2,0,0.0,17.0,8.67,0.39,4.34,0.0,0.0
+11/4/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 2,surfside,64,0,0,0.0,17.0,1.09,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 2,surfside,129,0,0,0.0,17.0,2.19,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 2,surfside,643,1,0,0.0,17.0,10.93,0.16,10.93,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 2,surfside,2594,6,0,25.0,17.0,44.1,0.23,7.35,0.0,0.57
+11/3/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 2,surfside,169,2,0,0.0,17.0,2.87,1.18,1.44,0.0,0.0
+11/5/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 3,surfside,4,0,0,0.0,17.0,0.07,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 3,surfside,0,0,0,0.0,17.0,0.0,0.0,0.0,0.0,0.0
+11/5/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 4,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 4,surfside,3,0,0,0.0,17.0,0.05,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 4,surfside,2,0,1,93.0,17.0,0.03,0.0,0.0,0.03,3100.0
+11/6/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 6,surfside,2,1,1,33.0,17.0,0.03,50.0,0.03,0.03,1100.0
+11/4/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 6,surfside,5018,6,1,151.0,17.0,85.31,0.12,14.22,85.31,1.77
+11/4/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 6,surfside,2134,1,1,190.0,17.0,36.28,0.05,36.28,36.28,5.24
+11/4/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 6,surfside,565,0,0,0.0,17.0,9.61,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 6,surfside,137,0,0,0.0,17.0,2.33,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 6,surfside,45,0,0,0.0,17.0,0.77,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 6,surfside,7345,8,3,410.0,17.0,124.87,0.11,15.61,41.62,3.28
+11/3/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 6,surfside,127,0,0,0.0,17.0,2.16,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 6,surfside,645,0,0,0.0,17.0,10.97,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 6,surfside,282,1,0,0.0,17.0,4.79,0.35,4.79,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 6,surfside,3095,2,0,0.0,17.0,52.62,0.06,26.31,0.0,0.0
+11/8/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 7,surfside,2,0,0,0.0,17.0,0.03,0.0,0.0,0.0,0.0
+11/7/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 7,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/6/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 7,surfside,2,0,0,0.0,17.0,0.03,0.0,0.0,0.0,0.0
+11/6/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 7,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/5/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 7,surfside,1,0,1,75.0,17.0,0.02,0.0,0.0,0.02,3750.0
+11/4/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 7,surfside,52,0,0,0.0,17.0,0.88,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 7,surfside,495,1,1,28.0,17.0,8.42,0.2,8.42,8.42,3.33
+11/4/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 7,surfside,1843,2,2,421.0,17.0,31.33,0.11,15.67,15.67,13.44
+11/4/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 7,surfside,166,0,0,0.0,17.0,2.82,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 7,surfside,4620,5,0,0.0,17.0,78.54,0.11,15.71,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 7,surfside,2606,0,2,398.0,17.0,44.3,0.0,0.0,22.15,8.98
+11/3/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 7,surfside,168,1,0,0.0,17.0,2.86,0.6,2.86,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 7,surfside,574,0,0,0.0,17.0,9.76,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 7,surfside,168,0,0,0.0,17.0,2.86,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 7,surfside,6931,0,1,160.0,17.0,117.83,0.0,0.0,117.83,1.36
+11/6/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 8,surfside,2,1,0,0.0,17.0,0.03,50.0,0.03,0.0,0.0
+11/4/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 8,surfside,49,0,0,0.0,17.0,0.83,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 8,surfside,2060,3,1,35.0,17.0,35.02,0.15,11.67,35.02,1.0
+11/4/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 8,surfside,5073,3,0,0.0,17.0,86.24,0.06,28.75,0.0,0.0
+11/4/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 8,surfside,503,1,0,0.0,17.0,8.55,0.2,8.55,0.0,0.0
+11/4/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 8,surfside,113,0,0,0.0,17.0,1.92,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 8,surfside,681,0,0,0.0,17.0,11.58,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 8,surfside,171,2,0,0.0,17.0,2.91,1.17,1.46,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 8,surfside,160,1,0,0.0,17.0,2.72,0.63,2.72,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 8,surfside,2987,0,3,286.0,17.0,50.78,0.0,0.0,16.93,5.63
+11/3/2025,Retention,Retention,Retargeting	| Cart Abandoners,Creative 8,surfside,7438,8,0,0.0,17.0,126.45,0.11,15.81,0.0,0.0
+11/9/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 1,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/8/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 1,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/6/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 1,surfside,1,0,0,11.0,17.0,0.02,0.0,0.0,0.0,550.0
+11/5/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 1,surfside,3,0,0,0.0,17.0,0.05,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 1,surfside,2,0,0,0.0,17.0,0.03,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 1,surfside,3,0,0,0.0,17.0,0.05,0.0,0.0,0.0,0.0
+11/6/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 2,surfside,2,1,3,229.75,17.0,0.03,50.0,0.03,0.01,7658.33
+11/5/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 2,surfside,2,1,1,165.0,17.0,0.03,50.0,0.03,0.03,5500.0
+11/4/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 2,surfside,138,0,0,0.0,17.0,2.35,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 2,surfside,2265,0,1,100.0,17.0,38.51,0.0,0.0,38.51,2.6
+11/4/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 2,surfside,380,0,0,0.0,17.0,6.46,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 2,surfside,53,0,0,0.0,17.0,0.9,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 2,surfside,356,0,0,0.0,17.0,6.05,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 2,surfside,2566,1,2,562.5,17.0,43.62,0.04,43.62,21.81,12.9
+11/3/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 2,surfside,127,0,0,0.0,17.0,2.16,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 2,surfside,90,0,0,0.0,17.0,1.53,0.0,0.0,0.0,0.0
+11/5/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 3,surfside,1,0,0,41.0,17.0,0.02,0.0,0.0,0.0,2050.0
+11/5/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 4,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 4,surfside,2,1,1,60.0,17.0,0.03,50.0,0.03,0.03,2000.0
+11/8/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 6,surfside,1,0,1,55.0,17.0,0.02,0.0,0.0,0.02,2750.0
+11/7/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 6,surfside,1,0,1,127.58,17.0,0.02,0.0,0.0,0.02,6379.0
+11/5/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 6,surfside,3,1,2,271.75,17.0,0.05,33.33,0.05,0.03,5435.0
+11/5/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 6,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 6,surfside,4972,2,0,0.0,17.0,84.52,0.04,42.26,0.0,0.0
+11/4/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 6,surfside,65,0,0,0.0,17.0,1.11,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 6,surfside,2396,3,2,270.5,17.0,40.73,0.13,13.58,20.37,6.64
+11/4/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 6,surfside,137,0,0,0.0,17.0,2.33,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 6,surfside,393,0,0,0.0,17.0,6.68,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 6,surfside,6732,2,0,22.0,17.0,114.44,0.03,57.22,0.0,0.19
+11/3/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 6,surfside,267,0,0,0.0,17.0,4.54,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 6,surfside,91,0,0,0.0,17.0,1.55,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 6,surfside,369,3,0,0.0,17.0,6.27,0.81,2.09,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 6,surfside,2781,3,0,47.5,17.0,47.28,0.11,15.76,0.0,1.0
+11/9/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 7,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/9/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 7,surfside,1,0,1,104.0,17.0,0.02,0.0,0.0,0.02,5200.0
+11/6/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 7,surfside,2,0,2,183.0,17.0,0.03,0.0,0.0,0.02,6100.0
+11/6/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 7,surfside,2,1,0,0.0,17.0,0.03,50.0,0.03,0.0,0.0
+11/5/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 7,surfside,3,0,3,141.25,17.0,0.05,0.0,0.0,0.02,2825.0
+11/5/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 7,surfside,4,0,2,146.75,17.0,0.07,0.0,0.0,0.04,2096.43
+11/4/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 7,surfside,4624,3,0,0.0,17.0,78.61,0.06,26.2,0.0,0.0
+11/4/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 7,surfside,2136,1,1,85.0,17.0,36.31,0.05,36.31,36.31,2.34
+11/4/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 7,surfside,52,1,0,0.0,17.0,0.88,1.92,0.88,0.0,0.0
+11/4/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 7,surfside,390,0,0,0.0,17.0,6.63,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 7,surfside,166,0,0,0.0,17.0,2.82,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 7,surfside,2445,5,2,410.0,17.0,41.57,0.2,8.31,20.79,9.86
+11/3/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 7,surfside,121,0,0,0.0,17.0,2.06,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 7,surfside,95,0,0,0.0,17.0,1.62,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 7,surfside,6324,3,4,477.0,17.0,107.51,0.05,35.84,26.88,4.44
+11/3/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 7,surfside,366,1,0,0.0,17.0,6.22,0.27,6.22,0.0,0.0
+11/9/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 8,surfside,1,0,1,134.0,17.0,0.02,0.0,0.0,0.02,6700.0
+11/8/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 8,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/8/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 8,surfside,2,0,0,0.0,17.0,0.03,0.0,0.0,0.0,0.0
+11/7/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 8,surfside,1,0,2,286.5,17.0,0.02,0.0,0.0,0.01,14325.0
+11/5/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 8,surfside,1,0,2,227.55,17.0,0.02,0.0,0.0,0.01,11377.5
+11/5/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 8,surfside,1,0,0,0.0,17.0,0.02,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 8,surfside,368,1,0,0.0,17.0,6.26,0.27,6.26,0.0,0.0
+11/4/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 8,surfside,130,0,0,0.0,17.0,2.21,0.0,0.0,0.0,0.0
+11/4/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 8,surfside,4861,4,0,0.0,17.0,82.64,0.08,20.66,0.0,0.0
+11/4/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 8,surfside,2377,0,2,102.0,17.0,40.41,0.0,0.0,20.21,2.52
+11/4/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 8,surfside,73,1,0,0.0,17.0,1.24,1.37,1.24,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 8,surfside,108,0,0,0.0,17.0,1.84,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 8,surfside,6701,10,2,205.0,17.0,113.92,0.15,11.39,56.96,1.8
+11/3/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 8,surfside,123,0,0,0.0,17.0,2.09,0.0,0.0,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 8,surfside,404,1,0,0.0,17.0,6.87,0.25,6.87,0.0,0.0
+11/3/2025,Retention,Retention,Retargeting	| Website Visitors,Creative 8,surfside,2675,2,3,214.67,17.0,45.48,0.07,22.74,15.16,4.72

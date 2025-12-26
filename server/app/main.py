@@ -81,19 +81,10 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS middleware
-origins = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-]
-# If FRONTEND_URL is set in env, add it
-import os
-if os.getenv("FRONTEND_URL"):
-    origins.append(os.getenv("FRONTEND_URL"))
-
+# CORS middleware - Read from .env file (CORS_ORIGINS)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=settings.cors_origins_list,  # Single config point from .env!
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

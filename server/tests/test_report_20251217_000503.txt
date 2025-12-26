@@ -1,0 +1,88 @@
+COMPREHENSIVE PRODUCTION TEST REPORT
+================================================================================
+
+Date: 2025-12-17 00:05:03
+Total Tests: 19
+Passed: 17
+Failed: 2
+Pass Rate: 89.5%
+
+DETAILED RESULTS
+--------------------------------------------------------------------------------
+
+[PASS] Phase 0 - Server Running
+    Server is accessible
+    Duration: 2.32s
+
+[PASS] Phase 0 - Database Connection
+    Database is accessible
+    Duration: 0.11s
+
+[PASS] Phase 0 - Test Data Files
+    Surfside: True, Facebook: True
+    Duration: 0.00s
+
+[PASS] Phase 1 - Create Admin
+    Admin already exists
+    Duration: 0.08s
+
+[PASS] Phase 1 - Admin Login
+    Login successful
+    Duration: 7.25s
+
+[PASS] Phase 1 - Verify Token
+    Token valid, role: admin
+    Duration: 2.08s
+
+[PASS] Phase 1 - Invalid Login
+    Correctly rejected invalid credentials
+    Duration: 2.23s
+
+[FAIL] Phase 2 - Create Client User
+    Failed: {"detail":"Email already registered"}
+    Duration: 2.08s
+
+[PASS] Phase 3 - Surfside Upload
+    File uploaded, ID: ddde0dc3-19d8-4345-8580-94d3223a38cd, Status: processed
+    Duration: 4.68s
+
+[PASS] Phase 3 - Upload Processing
+    Processed successfully in 5s
+    Duration: 5.00s
+
+[PASS] Phase 3 - Surfside Upload History
+    Upload found in history (1 total)
+    Duration: 2.06s
+
+[PASS] Phase 3 - Verify Database
+    187 metrics records loaded
+    Duration: 0.13s
+
+[FAIL] Phase 3 - CPM Calculation
+    CPM calculation errors found
+    Duration: 0.06s
+
+[PASS] Phase 4 - Facebook Upload
+    File uploaded, ID: 92cd02aa-fc71-4511-96b6-60b741d13524, Status: processed
+    Duration: 2.42s
+
+[PASS] Phase 4 - Facebook Processing
+    Processed successfully in 5s
+    Duration: 5.00s
+
+[PASS] Phase 4 - Facebook Upload History
+    Upload found in history (1 total)
+    Duration: 2.04s
+
+[PASS] Phase 4 - Facebook ETL Complete
+    13 metrics records loaded
+    Duration: 0.19s
+
+[PASS] Phase 4 - Facebook CTR Calculation
+    All CTR calculations correct
+    Duration: 0.14s
+
+[PASS] Phase 5 - Vibe Credentials
+    Credentials stored successfully
+    Duration: 2.09s
+

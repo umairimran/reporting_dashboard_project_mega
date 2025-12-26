@@ -1,0 +1,92 @@
+COMPREHENSIVE PRODUCTION TEST REPORT
+================================================================================
+
+Date: 2025-12-17 02:36:53
+Total Tests: 20
+Passed: 14
+Failed: 6
+Pass Rate: 70.0%
+
+DETAILED RESULTS
+--------------------------------------------------------------------------------
+
+[PASS] Phase 0 - Server Running
+    Server is accessible
+    Duration: 2.14s
+
+[PASS] Phase 0 - Database Connection
+    Database is accessible
+    Duration: 0.25s
+
+[PASS] Phase 0 - Test Data Files
+    Surfside: True, Facebook: True
+    Duration: 0.00s
+
+[PASS] Phase 1 - Create Admin
+    Admin already exists
+    Duration: 0.22s
+
+[PASS] Phase 1 - Admin Login
+    Login successful
+    Duration: 4.23s
+
+[PASS] Phase 1 - Verify Token
+    Token valid, role: admin
+    Duration: 2.07s
+
+[PASS] Phase 1 - Invalid Login
+    Correctly rejected invalid credentials
+    Duration: 2.22s
+
+[FAIL] Phase 2 - Create Client User
+    Failed: {"detail":"Email already registered"}
+    Duration: 2.08s
+
+[FAIL] Phase 3 - Surfside Upload
+    Upload failed: {"detail":"Client not found: 04d87580-32d9-49e1-b32f-495c5bcf1479"}
+    Duration: 2.09s
+
+[FAIL] Phase 4 - Facebook Upload
+    Upload failed: {"detail":"Client not found: 04d87580-32d9-49e1-b32f-495c5bcf1479"}
+    Duration: 2.06s
+
+[FAIL] Phase 5 - Vibe Credentials
+    Failed: 404
+    Duration: 2.06s
+
+[PASS] Phase 6 - Daily Metrics
+    Retrieved 0 metrics
+    Duration: 2.14s
+
+[PASS] Phase 6 - Dashboard Summary
+    Summary retrieved successfully
+    Duration: 2.07s
+
+[PASS] Phase 6 - Campaign Breakdown
+    Retrieved 0 campaigns
+    Duration: 2.04s
+
+[PASS] Phase 6 - Top Performers
+    Top performers retrieved
+    Duration: 2.11s
+
+[PASS] Phase 7 - CSV Export
+    CSV exported (116 bytes)
+    Duration: 2.05s
+
+[FAIL] Phase 7 - PDF Export
+    Failed: 404
+    Duration: 2.04s
+
+[PASS] Phase 8 - Scheduler Status
+    3 jobs scheduled
+    Duration: 2.04s
+
+[PASS] Phase 9 - Invalid File Format
+    Correctly rejected invalid file
+    Duration: 2.07s
+
+[FAIL] Phase 9 - Default CPM
+    Upload failed: 404
+    Duration: 2.15s
+

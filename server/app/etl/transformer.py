@@ -454,7 +454,10 @@ class TransformerService:
         # Convert back to list
         result = list(aggregated.values())
         
-        print(f"✓ Aggregation complete: {len(result)} unique dimension combinations\n")
-        logger.info(f"Aggregated {len(records)} records into {len(result)} unique dimension combinations")
+        print(f"✓ Aggregation complete:")
+        print(f"  Excel rows processed: {len(records)}")
+        print(f"  Unique dimension combinations: {len(result)}")
+        print(f"  (Multiple Excel rows with same dimensions were combined into single database records)\n")
+        logger.info(f"Aggregated {len(records)} Excel rows into {len(result)} unique dimension combinations for daily_metrics")
         
         return result

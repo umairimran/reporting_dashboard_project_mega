@@ -2,7 +2,12 @@
 import { toast } from "sonner";
 import { Report } from "@/types/dashboard";
 
-const API_Base_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+// MUST be set in environment variables - No hardcoded fallback!
+if (!process.env.NEXT_PUBLIC_API_URL) {
+  throw new Error("NEXT_PUBLIC_API_URL environment variable is required!");
+}
+
+const API_Base_URL = process.env.NEXT_PUBLIC_API_URL;
 
 interface FetchOptions extends RequestInit {
   params?: Record<string, string>;

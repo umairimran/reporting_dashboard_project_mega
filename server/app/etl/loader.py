@@ -180,9 +180,9 @@ class LoaderService:
         try:
             db.commit()
             print(f"\n✓ Data loading complete")
-            print(f"  Records loaded: {loaded}")
-            print(f"  Records failed: {failed}\n")
-            logger.info(f"Loaded {loaded} records, {failed} failed")
+            print(f"  Database operations: {loaded} dimension combinations inserted/updated")
+            print(f"  Failed operations: {failed}\n")
+            logger.info(f"Loaded {loaded} dimension combinations into daily_metrics, {failed} failed")
         except Exception as e:
             print(f"\n✗ Error committing to database: {str(e)}\n")
             logger.error(f"Error committing records: {str(e)}")

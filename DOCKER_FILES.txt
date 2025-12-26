@@ -1,0 +1,108 @@
+================================================================================
+                    DOCKER FILES - SIMPLE SETUP
+================================================================================
+
+FILES CREATED FOR DOCKER:
+================================================================================
+
+1. docker-compose.yml          - Main Docker configuration (uses your .env creds)
+2. server/Dockerfile           - Backend container setup
+3. client/Dockerfile           - Frontend container setup  
+4. server/create_admin_docker.py - Creates admin user automatically
+5. .dockerignore               - Files to ignore in Docker
+6. start-docker.bat            - Windows: Double-click to START
+7. start-docker.sh             - Mac/Linux: Run to START
+8. stop-docker.bat             - Windows: Double-click to STOP
+9. stop-docker.sh              - Mac/Linux: Run to STOP
+10. DOCKER_SETUP.md            - Quick reference guide
+
+================================================================================
+HOW TO USE (FRONTEND ON VERCEL):
+================================================================================
+
+STEP 1: Install Docker Desktop
+Download from: https://www.docker.com/products/docker-desktop/
+
+STEP 2: Start Backend & Database
+
+   Windows:     Double-click start-docker.bat
+   Mac/Linux:   chmod +x start-docker.sh && ./start-docker.sh
+   Manual:      docker-compose up --build
+
+STEP 3: Wait 2-3 minutes (first time only)
+
+STEP 4: Update docker-compose.yml CORS with your Vercel URL
+
+STEP 5: Open your Vercel app URL
+
+   Login:
+   Email:    admin@gmail.com
+   Password: admin123
+
+Note: Frontend is on Vercel, only backend runs in Docker!
+      See VERCEL_SETUP.md for detailed instructions.
+
+================================================================================
+WHAT IT DOES AUTOMATICALLY:
+================================================================================
+
+✓ Creates PostgreSQL database (megaDB)
+✓ Runs database_schema.sql (creates all tables)
+✓ Creates admin user (admin@gmail.com / admin123)
+✓ Starts Backend API on http://localhost:8000
+
+Note: Frontend is deployed on Vercel (not started by Docker)
+
+================================================================================
+YOUR CREDENTIALS (FROM .ENV):
+================================================================================
+
+Database:
+  - Name: megaDB
+  - User: postgres
+  - Password: 03025202775Abc$
+
+Email (SMTP):
+  - Host: smtp.gmail.com
+  - User: umairimran6277@gmail.com
+  - Password: jtawalawmbrppzss
+
+Encryption Key: 44p68_kzgH3OfCQsovZOFnk8PJGAuwS7V4kvkaCo7nY=
+
+AWS & Vibe: Set to defaults (update in docker-compose.yml if needed)
+
+================================================================================
+COMMON COMMANDS:
+================================================================================
+
+Start:           start-docker.bat  (or docker-compose up --build)
+Stop:            stop-docker.bat   (or docker-compose down)
+View Logs:       docker-compose logs -f
+Rebuild:         docker-compose up --build
+Reset All:       docker-compose down -v && docker-compose up --build
+
+================================================================================
+URLS AFTER START:
+================================================================================
+
+Frontend:        https://your-app.vercel.app (Your Vercel URL)
+Backend API:     http://localhost:8000
+API Docs:        http://localhost:8000/docs
+
+IMPORTANT: Update CORS_ORIGINS in docker-compose.yml with your Vercel URL!
+
+================================================================================
+TROUBLESHOOTING:
+================================================================================
+
+Problem: Port already in use
+Solution: Stop other apps using ports 3000, 8000, 5432
+
+Problem: Docker not running
+Solution: Start Docker Desktop application
+
+Problem: Changes not showing
+Solution: docker-compose up --build
+
+================================================================================
+

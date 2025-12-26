@@ -171,6 +171,12 @@ export default function Reports() {
                 {report.type} Summary
               </h3>
 
+              <div className="mb-2">
+                <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-700 capitalize border border-slate-200">
+                  {report.source || "All Sources"}
+                </span>
+              </div>
+
               {report.clientName && (
                 <p className="text-sm font-medium text-blue-600 mb-2">
                   {report.clientName}

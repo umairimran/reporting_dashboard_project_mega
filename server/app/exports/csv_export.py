@@ -60,45 +60,46 @@ class CSVExportService:
         output = io.StringIO()
         writer = csv.writer(output)
         
+        # Define Columns with visibility rules
+        # Format: (Header, Extractor Function, Excluded Sources List)
+        columns_config = [
+            ("Date", lambda m, c, s, p, cr, r: m.date.strftime('%Y-%m-%d'), []),
+            ("Campaign", lambda m, c, s, p, cr, r: c or "", ["surfside"]),
+            ("Strategy", lambda m, c, s, p, cr, r: s or "", ["facebook"]),
+            ("Placement", lambda m, c, s, p, cr, r: p or "", ["facebook"]),
+            ("Creative", lambda m, c, s, p, cr, r: cr or "", ["surfside"]),
+            ("Region", lambda m, c, s, p, cr, r: r or "", ["surfside"]),
+            ("Source", lambda m, c, s, p, cr, r: m.source, []),
+            ("Impressions", lambda m, c, s, p, cr, r: m.impressions, []),
+            ("Clicks", lambda m, c, s, p, cr, r: m.clicks, []),
+            ("Conversions", lambda m, c, s, p, cr, r: m.conversions, ["facebook"]),
+            ("Revenue", lambda m, c, s, p, cr, r: m.conversion_revenue, ["facebook"]),
+            ("CTR (%)", lambda m, c, s, p, cr, r: m.ctr, []),
+            ("Spend", lambda m, c, s, p, cr, r: m.spend, []),
+            ("CPC", lambda m, c, s, p, cr, r: m.cpc if m.cpc is not None else 0, []),
+            ("CPA", lambda m, c, s, p, cr, r: m.cpa if m.cpa is not None else 0, ["surfside"]),
+            ("ROAS", lambda m, c, s, p, cr, r: m.roas if m.roas is not None else 0, ["surfside"])
+        ]
+
+        # Filter active columns based on source
+        active_columns = []
+        for header, extractor, excluded_sources in columns_config:
+            if source and source in excluded_sources:
+                continue
+            active_columns.append((header, extractor))
+            
         # Write header
-        writer.writerow([
-            'Date',
-            'Campaign',
-            'Strategy',
-            'Placement',
-            'Creative',
-            'Region',
-            'Source',
-            'Impressions',
-            'Clicks',
-            'Conversions',
-            'Revenue',
-            'CTR (%)',
-            'Spend',
-            'CPC',
-            'CPA',
-            'ROAS'
-        ])
+        writer.writerow([col[0] for col in active_columns])
         
         # Write data
-        for metric, campaign_name, strategy_name, placement_name, creative_name, region_name in results:
-            writer.writerow([
-                metric.date.strftime('%Y-%m-%d'),
-                campaign_name or "",
-                strategy_name or "",
-                placement_name or "",
-                creative_name or "",
-                metric.source,
-                metric.impressions,
-                metric.clicks,
-                metric.conversions,
-                f"{metric.conversion_revenue:.2f}",
-                f"{metric.ctr:.2f}",
-                f"{metric.spend:.2f}",
-                f"{metric.cpc:.2f}" if metric.cpc else "",
-                f"{metric.cpa:.2f}" if metric.cpa else "",
-                f"{metric.roas:.2f}" if metric.roas else ""
-            ])
+        for row_data in results:
+            metric, campaign_name, strategy_name, placement_name, creative_name, region_name = row_data
+            
+            row = []
+            for _, extractor in active_columns:
+                row.append(extractor(metric, campaign_name, strategy_name, placement_name, creative_name, region_name))
+            
+            writer.writerow(row)
         
         csv_content = output.getvalue()
         output.close()

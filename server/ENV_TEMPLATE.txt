@@ -1,0 +1,92 @@
+# =============================================================================
+# ENVIRONMENT CONFIGURATION - Paid Media Dashboard Backend
+# =============================================================================
+# Copy this to server/.env and update with your actual values
+# ALL settings are loaded from this single file!
+# =============================================================================
+
+# Application Settings
+APP_NAME=Dashboard Application
+APP_VERSION=1.0.0
+DEBUG=True
+ENVIRONMENT=development
+
+# Database Configuration
+# These are used by both Docker containers and local development
+POSTGRES_DB=megaDB
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=03025202775Abc$
+
+# For local development (uses localhost)
+DATABASE_URL=postgresql://postgres:03025202775Abc$@localhost:5432/megaDB
+# Note: Docker will auto-generate DATABASE_URL using 'db' hostname instead of 'localhost'
+
+# Security Keys
+SECRET_KEY=your-secret-key-change-this-in-production-32-chars-minimum
+ENCRYPTION_KEY=44p68_kzgH3OfCQsovZOFnk8PJGAuwS7V4kvkaCo7nY=
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=11520
+
+# CORS Configuration - CRITICAL FOR API ACCESS!
+# =============================================================================
+# IMPORTANT: Must be valid JSON array with double quotes!
+# 
+# For Testing (allow all origins):
+#   CORS_ORIGINS=["*"]
+#
+# For Production (specific origins):
+#   CORS_ORIGINS=["http://54.209.251.230:8000","https://your-frontend.com","http://localhost:3000"]
+#
+# Common scenarios:
+# - Backend only (Swagger UI): Include your server IP
+# - With frontend: Include both backend IP and frontend domain
+# - Local development: Include http://localhost:3000 and http://localhost:8000
+# =============================================================================
+CORS_ORIGINS=["*"]
+
+# AWS S3 Configuration (for Surfside data source)
+AWS_ACCESS_KEY_ID=your_aws_access_key
+AWS_SECRET_ACCESS_KEY=your_aws_secret_key
+AWS_REGION=us-east-1
+S3_BUCKET_NAME=your-surfside-bucket
+
+# Vibe API Configuration
+VIBE_API_BASE_URL=https://clear-platform.vibe.co
+VIBE_API_KEY=your_vibe_api_key_here
+VIBE_ADVERTISER_ID=
+VIBE_RATE_LIMIT_PER_HOUR=15
+
+# Email/SMTP Configuration (for alerts and notifications)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USERNAME=your_email@gmail.com
+SMTP_PASSWORD=your_app_password
+SMTP_FROM_EMAIL=your_email@gmail.com
+SMTP_FROM_NAME=Dashboard Alerts
+SMTP_USE_TLS=True
+
+# File Upload Configuration
+UPLOAD_DIR=/tmp/uploads
+MAX_UPLOAD_SIZE=52428800
+ALLOWED_UPLOAD_EXTENSIONS=.csv,.xlsx
+UPLOAD_TEMP_DIR=./uploads/temp
+
+# Scheduler Configuration (all times in Eastern Time)
+SURFSIDE_CRON_HOUR=5
+VIBE_CRON_HOUR=5
+ENABLE_SCHEDULER=True
+DAILY_INGESTION_HOUR=3
+DAILY_INGESTION_MINUTE=30
+WEEKLY_AGGREGATION_HOUR=5
+MONTHLY_AGGREGATION_HOUR=5
+
+# =============================================================================
+# NOTES:
+# =============================================================================
+# 1. NEVER commit .env file to git (it's in .gitignore)
+# 2. Update CORS_ORIGINS based on where you'll access the API
+# 3. For Gmail SMTP: Use App Password, not regular password
+# 4. DATABASE_URL uses %24 instead of $ in password (URL encoding)
+# 5. All changes to this file require Docker restart: docker-compose restart backend
+# =============================================================================
+

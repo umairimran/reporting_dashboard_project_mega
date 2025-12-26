@@ -1,0 +1,104 @@
+COMPREHENSIVE PRODUCTION TEST REPORT
+================================================================================
+
+Date: 2025-12-16 14:29:41
+Total Tests: 23
+Passed: 22
+Failed: 1
+Pass Rate: 95.7%
+
+DETAILED RESULTS
+--------------------------------------------------------------------------------
+
+[PASS] Phase 0 - Server Running
+    Server is accessible
+    Duration: 2.07s
+
+[PASS] Phase 0 - Database Connection
+    Database is accessible
+    Duration: 0.04s
+
+[PASS] Phase 0 - Test Data Files
+    Surfside: True, Facebook: True
+    Duration: 0.00s
+
+[PASS] Phase 1 - Create Admin
+    Admin already exists
+    Duration: 0.16s
+
+[PASS] Phase 1 - Admin Login
+    Login successful
+    Duration: 2.39s
+
+[PASS] Phase 1 - Verify Token
+    Token valid, role: admin
+    Duration: 2.06s
+
+[PASS] Phase 1 - Invalid Login
+    Correctly rejected invalid credentials
+    Duration: 2.24s
+
+[PASS] Phase 2 - Create Client User
+    User created: ec0592e2-9a57-44b1-909a-9b1cb3b6951b
+    Duration: 2.27s
+
+[PASS] Phase 2 - Create Client
+    Client created: 04d87580-32d9-49e1-b32f-495c5bcf1479
+    Duration: 2.08s
+
+[PASS] Phase 2 - Set CPM
+    CPM set to $5.50
+    Duration: 2.09s
+
+[PASS] Phase 2 - Client Login
+    Client login successful
+    Duration: 4.29s
+
+[PASS] Phase 2 - Access Control
+    Client correctly denied admin access
+    Duration: 2.04s
+
+[PASS] Phase 3 - Surfside Upload
+    File uploaded, ID: daf0c6e3-5366-4668-83ad-d0fd15d33c64, Status: processed
+    Duration: 5.22s
+
+[PASS] Phase 3 - Upload Processing
+    Processed successfully in 5s
+    Duration: 5.00s
+
+[PASS] Phase 3 - Surfside Upload History
+    Upload found in history (1 total)
+    Duration: 2.04s
+
+[PASS] Phase 3 - Verify Database
+    187 metrics records loaded
+    Duration: 0.33s
+
+[FAIL] Phase 3 - CPM Calculation
+    CPM calculation errors found
+    Duration: 0.04s
+
+[PASS] Phase 4 - Facebook Upload
+    File uploaded, ID: 7589ddef-301d-49c9-b1c1-7c287cb493fe, Status: processed
+    Duration: 2.30s
+
+[PASS] Phase 4 - Facebook Processing
+    Processed successfully in 5s
+    Duration: 5.00s
+
+[PASS] Phase 4 - Facebook Upload History
+    Upload found in history (1 total)
+    Duration: 2.05s
+
+[PASS] Phase 4 - Facebook ETL Complete
+    13 metrics records loaded
+    Duration: 0.19s
+
+[PASS] Phase 4 - Facebook CTR Calculation
+    All CTR calculations correct
+    Duration: 0.07s
+
+[PASS] Phase 5 - Vibe Credentials
+    Credentials stored successfully
+    Duration: 2.06s
+

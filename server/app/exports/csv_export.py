@@ -30,9 +30,9 @@ class CSVExportService:
         """
         logger.info(f"Exporting daily metrics for client {client_id}")
         
-        from app.campaigns.models import Campaign, Strategy, Placement, Creative
+        from app.campaigns.models import Campaign, Strategy, Placement, Creative, Region
         
-        # Query metrics with joins to get names
+        # Query metrics with LEFT OUTER joins to get names (handle nullable foreign keys)
         query = db.query(
             DailyMetrics,
             Campaign.name.label('campaign_name'),
@@ -65,6 +65,7 @@ class CSVExportService:
             'Strategy',
             'Placement',
             'Creative',
+            'Region',
             'Source',
             'Impressions',
             'Clicks',
@@ -78,7 +79,7 @@ class CSVExportService:
         ])
         
         # Write data
-        for metric, campaign_name, strategy_name, placement_name, creative_name in results:
+        for metric, campaign_name, strategy_name, placement_name, creative_name, region_name in results:
             writer.writerow([
                 metric.date.strftime('%Y-%m-%d'),
                 campaign_name or "",
@@ -120,23 +121,26 @@ class CSVExportService:
         from sqlalchemy import func
         from app.metrics.calculator import MetricsCalculator
         from decimal import Decimal
+        from app.campaigns.models import Campaign
         
         logger.info(f"Exporting campaign summary for client {client_id}")
         
-        # Aggregate by campaign
+        # Aggregate by campaign with LEFT OUTER JOIN to handle NULL campaigns
         results = db.query(
-            DailyMetrics.campaign_name,
+            Campaign.name.label('campaign_name'),
             func.sum(DailyMetrics.impressions).label('impressions'),
             func.sum(DailyMetrics.clicks).label('clicks'),
             func.sum(DailyMetrics.conversions).label('conversions'),
             func.sum(DailyMetrics.conversion_revenue).label('revenue'),
             func.sum(DailyMetrics.spend).label('spend')
+        ).outerjoin(
+            Campaign, DailyMetrics.campaign_id == Campaign.id
         ).filter(
             DailyMetrics.client_id == client_id,
             DailyMetrics.date >= start_date,
             DailyMetrics.date <= end_date
         ).group_by(
-            DailyMetrics.campaign_name
+            Campaign.name
         ).order_by(
             func.sum(DailyMetrics.impressions).desc()
         ).all()
@@ -167,7 +171,7 @@ class CSVExportService:
             roas = MetricsCalculator.calculate_roas(Decimal(str(r.revenue)), Decimal(str(r.spend)))
             
             writer.writerow([
-                r.campaign_name,
+                r.campaign_name or 'No Campaign',  # Handle NULL campaigns
                 r.impressions,
                 r.clicks,
                 r.conversions,

@@ -3,7 +3,8 @@ Configuration management using environment variables.
 """
 from pydantic_settings import BaseSettings
 from functools import lru_cache
-from typing import Optional
+from typing import Optional, List
+import json
 
 
 class Settings(BaseSettings):
@@ -18,6 +19,21 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 11520  # 8 days (60 * 24 * 8)
     DEBUG: bool = False
+    
+    # CORS Configuration - MUST be set in .env file (no defaults!)
+    # Example: CORS_ORIGINS=["https://your-app.vercel.app","http://localhost:3000"]
+    CORS_ORIGINS: str
+    
+    @property
+    def cors_origins_list(self) -> List[str]:
+        """Parse CORS_ORIGINS string to list. REQUIRES .env configuration."""
+        try:
+            origins = json.loads(self.CORS_ORIGINS)
+            if not origins:
+                raise ValueError("CORS_ORIGINS cannot be empty")
+            return origins
+        except Exception as e:
+            raise ValueError(f"CORS_ORIGINS must be set in .env file as valid JSON array. Error: {e}")
     
     # AWS S3 (Surfside)
     AWS_ACCESS_KEY_ID: str

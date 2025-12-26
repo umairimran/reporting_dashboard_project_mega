@@ -644,7 +644,6 @@ export default function AdminClients() {
         )}
       </div>
 
-      {/* Delete Confirmation */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>

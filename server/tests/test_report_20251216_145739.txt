@@ -1,0 +1,48 @@
+COMPREHENSIVE PRODUCTION TEST REPORT
+================================================================================
+
+Date: 2025-12-16 14:57:39
+Total Tests: 9
+Passed: 8
+Failed: 1
+Pass Rate: 88.9%
+
+DETAILED RESULTS
+--------------------------------------------------------------------------------
+
+[PASS] Phase 0 - Server Running
+    Server is accessible
+    Duration: 2.09s
+
+[PASS] Phase 0 - Database Connection
+    Database is accessible
+    Duration: 0.05s
+
+[PASS] Phase 0 - Test Data Files
+    Surfside: True, Facebook: True
+    Duration: 0.00s
+
+[PASS] Phase 1 - Create Admin
+    Admin already exists
+    Duration: 0.04s
+
+[PASS] Phase 1 - Admin Login
+    Login successful
+    Duration: 7.89s
+
+[PASS] Phase 1 - Verify Token
+    Token valid, role: admin
+    Duration: 2.04s
+
+[PASS] Phase 1 - Invalid Login
+    Correctly rejected invalid credentials
+    Duration: 2.23s
+
+[FAIL] Phase 2 - Create Client User
+    Failed: {"detail":"Email already registered"}
+    Duration: 2.07s
+
+[PASS] Phase 8 - Scheduler Status
+    3 jobs scheduled
+    Duration: 2.05s
+

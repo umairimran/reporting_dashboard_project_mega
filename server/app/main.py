@@ -54,6 +54,18 @@ async def lifespan(app: FastAPI):
     logger.info("=" * 60)
     logger.info("APPLICATION STARTUP COMPLETE")
     logger.info("=" * 60)
+    logger.info("")
+    logger.info("🚀 API Documentation available at:")
+    logger.info("   - Swagger UI: http://0.0.0.0:8000/docs")
+    logger.info("   - ReDoc: http://0.0.0.0:8000/redoc")
+    logger.info("   - OpenAPI JSON: http://0.0.0.0:8000/openapi.json")
+    logger.info("")
+    logger.info("💡 If you see CORS errors:")
+    logger.info("   1. Check that your access URL is in CORS_ORIGINS (.env)")
+    logger.info("   2. For testing, you can use: CORS_ORIGINS=[\"*\"]")
+    logger.info("   3. Check logs above for loaded CORS origins")
+    logger.info("")
+    logger.info("=" * 60)
     
     yield
     
@@ -81,23 +93,31 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS middleware
-origins = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-]
-# If FRONTEND_URL is set in env, add it
-import os
-if os.getenv("FRONTEND_URL"):
-    origins.append(os.getenv("FRONTEND_URL"))
+# CORS middleware - Read from .env file (CORS_ORIGINS)
+# Log CORS configuration for debugging
+logger.info("=" * 60)
+logger.info("CORS CONFIGURATION")
+logger.info("=" * 60)
+try:
+    cors_origins = settings.cors_origins_list
+    logger.info(f"✓ CORS Origins loaded: {cors_origins}")
+    logger.info(f"  Total allowed origins: {len(cors_origins)}")
+    for idx, origin in enumerate(cors_origins, 1):
+        logger.info(f"  [{idx}] {origin}")
+except Exception as e:
+    logger.error(f"✗ CORS configuration error: {str(e)}")
+    logger.error("  Check your .env file - CORS_ORIGINS must be valid JSON array")
+    raise
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=settings.cors_origins_list,  # Single config point from .env!
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+logger.info("✓ CORS middleware configured successfully")
+logger.info("=" * 60)
 
 # Zstd Compression Middleware (Custom)
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
@@ -113,6 +133,10 @@ class ZstdMiddleware(BaseHTTPMiddleware):
         accept_encoding = request.headers.get("Accept-Encoding", "")
         
         response = await call_next(request)
+        
+        # Skip compression for OpenAPI/docs endpoints (browsers don't support zstd)
+        if request.url.path in ["/openapi.json", "/docs", "/redoc"]:
+            return response
         
         # We only compress if it's a JSON response and reasonably large
         if "application/json" not in response.headers.get("Content-Type", ""):
@@ -151,6 +175,32 @@ class ZstdMiddleware(BaseHTTPMiddleware):
         )
 
 app.add_middleware(ZstdMiddleware)
+
+
+# Request logging middleware for debugging
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request
+import time
+
+class RequestLoggingMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        start_time = time.time()
+        
+        # Log incoming request
+        origin = request.headers.get("origin", "N/A")
+        logger.info(f"→ {request.method} {request.url.path} | Origin: {origin} | Client: {request.client.host if request.client else 'N/A'}")
+        
+        response = await call_next(request)
+        
+        # Log response
+        process_time = (time.time() - start_time) * 1000
+        logger.info(f"← {request.method} {request.url.path} | Status: {response.status_code} | Time: {process_time:.2f}ms")
+        
+        return response
+
+app.add_middleware(RequestLoggingMiddleware)
+logger.info("✓ Request logging middleware configured")
+
 
 # Include all routers
 app.include_router(auth_router, prefix="/api/v1")

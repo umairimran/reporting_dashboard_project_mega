@@ -1,0 +1,128 @@
+COMPREHENSIVE PRODUCTION TEST REPORT
+================================================================================
+
+Date: 2025-12-16 15:06:50
+Total Tests: 29
+Passed: 25
+Failed: 4
+Pass Rate: 86.2%
+
+DETAILED RESULTS
+--------------------------------------------------------------------------------
+
+[PASS] Phase 0 - Server Running
+    Server is accessible
+    Duration: 2.05s
+
+[PASS] Phase 0 - Database Connection
+    Database is accessible
+    Duration: 0.04s
+
+[PASS] Phase 0 - Test Data Files
+    Surfside: True, Facebook: True
+    Duration: 0.00s
+
+[PASS] Phase 1 - Create Admin
+    Admin already exists
+    Duration: 0.05s
+
+[PASS] Phase 1 - Admin Login
+    Login successful
+    Duration: 5.58s
+
+[PASS] Phase 1 - Verify Token
+    Token valid, role: admin
+    Duration: 2.05s
+
+[PASS] Phase 1 - Invalid Login
+    Correctly rejected invalid credentials
+    Duration: 2.28s
+
+[FAIL] Phase 2 - Create Client User
+    Failed: {"detail":"Email already registered"}
+    Duration: 2.08s
+
+[PASS] Phase 3 - Surfside Upload
+    File uploaded, ID: aa383d95-5abc-4551-be62-e0762b54e7b9, Status: processed
+    Duration: 5.15s
+
+[PASS] Phase 3 - Upload Processing
+    Processed successfully in 5s
+    Duration: 5.00s
+
+[PASS] Phase 3 - Surfside Upload History
+    Upload found in history (2 total)
+    Duration: 2.07s
+
+[PASS] Phase 3 - Verify Database
+    187 metrics records loaded
+    Duration: 0.18s
+
+[FAIL] Phase 3 - CPM Calculation
+    CPM calculation errors found
+    Duration: 0.06s
+
+[PASS] Phase 4 - Facebook Upload
+    File uploaded, ID: 07022807-5961-40ec-acfb-636f0a0b74f6, Status: processed
+    Duration: 2.26s
+
+[PASS] Phase 4 - Facebook Processing
+    Processed successfully in 5s
+    Duration: 5.00s
+
+[PASS] Phase 4 - Facebook Upload History
+    Upload found in history (2 total)
+    Duration: 2.05s
+
+[PASS] Phase 4 - Facebook ETL Complete
+    13 metrics records loaded
+    Duration: 0.16s
+
+[PASS] Phase 4 - Facebook CTR Calculation
+    All CTR calculations correct
+    Duration: 0.04s
+
+[PASS] Phase 5 - Vibe Credentials
+    Credentials stored successfully
+    Duration: 2.10s
+
+[FAIL] Phase 5 - Vibe Data Ingestion
+    Ingestion failed: 500 - {"detail":"Vibe ETL failed: Failed to create report: {\"message\":\"Cannot POST /rest/reporting/v1/rest/reporting/v1/create_async_report\",\"error\":\"Not Found\",\"statusCode\":404}"}
+    Duration: 3.18s
+
+[PASS] Phase 6 - Daily Metrics
+    Retrieved 100 metrics
+    Duration: 2.06s
+
+[PASS] Phase 6 - Dashboard Summary
+    Summary retrieved successfully
+    Duration: 2.07s
+
+[PASS] Phase 6 - Campaign Breakdown
+    Retrieved 6 campaigns
+    Duration: 2.05s
+
+[PASS] Phase 6 - Top Performers
+    Top performers retrieved
+    Duration: 2.08s
+
+[PASS] Phase 7 - CSV Export
+    CSV exported (26773 bytes)
+    Duration: 2.10s
+
+[PASS] Phase 7 - PDF Export
+    PDF exported (3796 bytes)
+    Duration: 2.12s
+
+[PASS] Phase 8 - Scheduler Status
+    3 jobs scheduled
+    Duration: 2.03s
+
+[PASS] Phase 9 - Invalid File Format
+    Correctly rejected invalid file
+    Duration: 2.05s
+
+[FAIL] Phase 9 - Default CPM
+    CPM mismatch: 5.51
+    Duration: 15.13s
+

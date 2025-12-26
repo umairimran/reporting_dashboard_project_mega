@@ -99,6 +99,7 @@ class ETLOrchestrator:
             # Step 1.5: Aggregate records with same dimensions (important for Surfside)
             # This prevents duplicate key violations when multiple rows exist for same
             # date/campaign/strategy/placement/creative (e.g., different creative sizes)
+            original_record_count = len(valid_records)  # Track original Excel row count
             aggregated_records = TransformerService.aggregate_records(valid_records)
             
             # Step 2: Stage records
@@ -135,16 +136,17 @@ class ETLOrchestrator:
 
             
             # Update ingestion log
-            ingestion_log.records_loaded = loaded
-            ingestion_log.records_failed = failed + len(invalid_records)
+            # Use original_record_count (from Excel file) instead of loaded (aggregated count)
+            ingestion_log.records_loaded = original_record_count
+            ingestion_log.records_failed = len(invalid_records)
             ingestion_log.finished_at = datetime.utcnow()
             
-            if failed == 0 and len(invalid_records) == 0:
+            if len(invalid_records) == 0:
                 ingestion_log.status = 'success'
-                ingestion_log.message = f"Successfully processed {loaded} records"
-            elif loaded > 0:
+                ingestion_log.message = f"Successfully processed {original_record_count} records from file ({len(aggregated_records)} unique dimension combinations inserted into daily_metrics)"
+            elif original_record_count > 0:
                 ingestion_log.status = 'partial'
-                ingestion_log.message = f"Processed {loaded} records, {failed + len(invalid_records)} failed"
+                ingestion_log.message = f"Processed {original_record_count} records, {len(invalid_records)} failed validation"
             else:
                 ingestion_log.status = 'failed'
                 ingestion_log.message = "All records failed to process"

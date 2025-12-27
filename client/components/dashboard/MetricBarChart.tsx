@@ -97,7 +97,7 @@ export default function MetricBarChart({ data, title, allowedMetrics, color }: M
     const lines: string[] = [];
     let currentLine = "";
 
-    words.forEach((word) => {
+    words.forEach((word: string) => {
       const testLine = currentLine ? `${currentLine} ${word}` : word;
       if (testLine.length > maxCharsPerLine && currentLine) {
         lines.push(currentLine);

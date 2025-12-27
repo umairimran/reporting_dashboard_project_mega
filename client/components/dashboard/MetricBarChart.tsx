@@ -87,6 +87,50 @@ export default function MetricBarChart({ data, title, allowedMetrics, color }: M
     return formatNumber(value);
   };
 
+  // Custom tick component to wrap long text
+  const CustomXAxisTick = ({ x, y, payload }: any) => {
+    const text = payload.value || "";
+    const maxCharsPerLine = 15; // Maximum characters per line
+    
+    // Split text into words
+    const words = text.split(" ");
+    const lines: string[] = [];
+    let currentLine = "";
+
+    words.forEach((word) => {
+      const testLine = currentLine ? `${currentLine} ${word}` : word;
+      if (testLine.length > maxCharsPerLine && currentLine) {
+        lines.push(currentLine);
+        currentLine = word;
+      } else {
+        currentLine = testLine;
+      }
+    });
+    
+    if (currentLine) {
+      lines.push(currentLine);
+    }
+
+    return (
+      <g transform={`translate(${x},${y})`}>
+        {lines.map((line, index) => (
+          <text
+            key={index}
+            x={0}
+            y={0}
+            dy={index * 14 + 10}
+            textAnchor="middle"
+            fill="#64748b"
+            fontSize={11}
+            fontWeight={400}
+          >
+            {line}
+          </text>
+        ))}
+      </g>
+    );
+  };
+
   // Check if there is data for the selected metric
   const hasMetricData = data.some((item) => (item[selectedMetric] || 0) > 0);
 
@@ -165,9 +209,9 @@ export default function MetricBarChart({ data, title, allowedMetrics, color }: M
                 fontSize={12}
                 tickLine={false}
                 axisLine={false}
-                angle={-45}
-                textAnchor="end"
-                height={80}
+                height={100}
+                tick={<CustomXAxisTick />}
+                interval={0}
               />
               <YAxis
                 stroke="#64748b"

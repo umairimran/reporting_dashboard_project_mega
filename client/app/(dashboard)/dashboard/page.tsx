@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   DollarSign,
   TrendingUp,
@@ -64,6 +64,7 @@ const STORAGE_KEY_SECTIONS = "dashboard_sections";
 
 export default function Dashboard() {
   const { currentClient, isAdmin, simulatedClient } = useAuth();
+  const queryClient = useQueryClient();
 
   // 1. DRAFT STATE (UI Controls for Client & Date)
   const [selectedClientId, setSelectedClientId] = useState<string>("");
@@ -78,6 +79,9 @@ export default function Dashboard() {
     from: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
     to: new Date(),
   });
+  
+  // Refresh key to force new API calls every time button is clicked
+  const [refreshKey, setRefreshKey] = useState<number>(0);
 
   // 3. VIEW STATE (Source Tab - Instant Switch)
   const [activeSource, setActiveSource] = useState<DataSource>("surfside");
@@ -165,15 +169,21 @@ export default function Dashboard() {
   }, [currentClient, isAdmin, simulatedClient]);
 
   // Check if filters have changed (Dirty State) - ONLY Client and Date
+  // NOTE: This is kept for display purposes but no longer used to disable the button
   const hasChanges =
     selectedClientId !== appliedClientId ||
     selectedDateRange.from?.getTime() !== appliedDateRange.from?.getTime() ||
     selectedDateRange.to?.getTime() !== appliedDateRange.to?.getTime();
 
-  // Apply Filters Handler
+  // Apply Filters Handler - Always triggers API call
   const handleApplyFilters = () => {
+    // Update applied state
     setAppliedClientId(selectedClientId);
     setAppliedDateRange(selectedDateRange);
+    
+    // Increment refresh key to force new API calls
+    // This ensures React Query treats it as a new query and makes a fresh API call
+    setRefreshKey(prev => prev + 1);
   };
 
   const showSelector = isAdmin && !simulatedClient;
@@ -200,7 +210,7 @@ export default function Dashboard() {
   // =========================================================================
 
   // 1. SURFSIDE QUERIES
-  const { data: surfsideDaily = [], isLoading: loadingSurfsideDaily } =
+  const { data: surfsideDaily = [], isLoading: loadingSurfsideDaily, refetch: refetchSurfsideDaily } =
     useQuery({
       queryKey: [
         "metrics",
@@ -209,6 +219,7 @@ export default function Dashboard() {
         "surfside",
         formattedDateFrom,
         formattedDateTo,
+        refreshKey, // Include refresh key to force new queries
       ],
       queryFn: () =>
         metricsService.getDailyMetrics({
@@ -221,7 +232,7 @@ export default function Dashboard() {
       enabled: !!appliedClientId && !!formattedDateFrom && !!formattedDateTo,
     });
 
-  const { data: surfsideSummary, isLoading: loadingSurfsideSummary } = useQuery(
+  const { data: surfsideSummary, isLoading: loadingSurfsideSummary, refetch: refetchSurfsideSummary } = useQuery(
     {
       queryKey: [
         "metrics",
@@ -230,6 +241,7 @@ export default function Dashboard() {
         "surfside",
         formattedDateFrom,
         formattedDateTo,
+        refreshKey, // Include refresh key to force new queries
       ],
       queryFn: () =>
         metricsService.getSummary({
@@ -243,7 +255,7 @@ export default function Dashboard() {
   );
 
   // 2. FACEBOOK QUERIES
-  const { data: facebookDaily = [], isLoading: loadingFacebookDaily } =
+  const { data: facebookDaily = [], isLoading: loadingFacebookDaily, refetch: refetchFacebookDaily } =
     useQuery({
       queryKey: [
         "metrics",
@@ -252,6 +264,7 @@ export default function Dashboard() {
         "facebook",
         formattedDateFrom,
         formattedDateTo,
+        refreshKey, // Include refresh key to force new queries
       ],
       queryFn: () =>
         metricsService.getDailyMetrics({
@@ -264,7 +277,7 @@ export default function Dashboard() {
       enabled: !!appliedClientId && !!formattedDateFrom && !!formattedDateTo,
     });
 
-  const { data: facebookSummary, isLoading: loadingFacebookSummary } = useQuery(
+  const { data: facebookSummary, isLoading: loadingFacebookSummary, refetch: refetchFacebookSummary } = useQuery(
     {
       queryKey: [
         "metrics",
@@ -273,6 +286,7 @@ export default function Dashboard() {
         "facebook",
         formattedDateFrom,
         formattedDateTo,
+        refreshKey, // Include refresh key to force new queries
       ],
       queryFn: () =>
         metricsService.getSummary({
@@ -718,18 +732,11 @@ export default function Dashboard() {
 
           <Button
             onClick={handleApplyFilters}
-            disabled={!hasChanges || isLoading}
-            className={`transition-all duration-300 ${hasChanges
-              ? "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-200"
-              : ""
-              }`}
+            disabled={isLoading}
+            className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-200 transition-all duration-300"
             size="default"
           >
-            {isLoading
-              ? "Updating..."
-              : hasChanges
-                ? "Apply Changes"
-                : "Up to Date"}
+            {isLoading ? "Updating..." : "Apply Changes"}
           </Button>
 
           <GenerateReportDialog clientId={appliedClientId}>

@@ -206,10 +206,10 @@ export default function Dashboard() {
 
   // =========================================================================
   // SIMULTANEOUS FETCHING
-  // We fetch BOTH Surfside and Facebook data whenever Applied filters change
+  // We fetch BOTH CTV (Surfside) and Facebook data whenever Applied filters change
   // =========================================================================
 
-  // 1. SURFSIDE QUERIES
+  // 1. CTV (SURFSIDE) QUERIES
   const { data: surfsideDaily = [], isLoading: loadingSurfsideDaily, refetch: refetchSurfsideDaily } =
     useQuery({
       queryKey: [

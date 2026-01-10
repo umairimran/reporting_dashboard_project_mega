@@ -42,3 +42,11 @@ export function formatPercent(value: number): string {
   if (value === undefined || value === null || isNaN(value)) return "-";
   return value.toFixed(2) + "%";
 }
+
+// Helper to get display name for data source (maps surfside to CTV)
+export function getSourceDisplayName(source: string): string {
+  if (source.toLowerCase() === "surfside") {
+    return "CTV";
+  }
+  return source.charAt(0).toUpperCase() + source.slice(1);
+}

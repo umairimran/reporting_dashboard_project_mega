@@ -204,7 +204,7 @@ export default function GenerateReportDialog({
               >
                 <option value="all">All Sources (Aggregated)</option>
                 <option value="facebook">Facebook</option>
-                <option value="surfside">Surfside</option>
+                <option value="surfside">CTV</option>
               </select>
             </div>
           </div>

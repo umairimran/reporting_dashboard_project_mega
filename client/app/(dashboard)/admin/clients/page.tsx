@@ -470,7 +470,7 @@ export default function AdminClients() {
                         name="surfsideCpm"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Surfside CPM</FormLabel>
+                            <FormLabel>CTV CPM</FormLabel>
                             <FormControl>
                               <div className="relative">
                                 <DollarSign className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-500" />
@@ -508,7 +508,7 @@ export default function AdminClients() {
                       </div>
                       <div>
                         <h3 className="text-sm font-semibold text-slate-900">S3 Configuration</h3>
-                        <p className="text-xs text-slate-600">Optional credentials for Surfside data sync</p>
+                        <p className="text-xs text-slate-600">Optional credentials for CTV data sync</p>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -593,7 +593,7 @@ export default function AdminClients() {
               <TableRow className="hover:bg-transparent border-b border-slate-200">
                 <TableHead className="font-bold text-slate-900 px-4 py-3">Client</TableHead>
                 <TableHead className="font-bold text-slate-900 px-4 py-3 text-center">Status</TableHead>
-                <TableHead className="font-bold text-slate-900 px-4 py-3 text-center">Surfside CPM</TableHead>
+                <TableHead className="font-bold text-slate-900 px-4 py-3 text-center">CTV CPM</TableHead>
                 <TableHead className="font-bold text-slate-900 px-4 py-3 text-center">Facebook CPM</TableHead>
                 <TableHead className="font-bold text-slate-900 px-4 py-3">Created</TableHead>
                 <TableHead className="font-bold text-slate-900 px-4 py-3 text-right">Actions</TableHead>

@@ -12,7 +12,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, getSourceDisplayName } from "@/lib/utils";
 import { format, parseISO } from "date-fns";
 import { Report } from "@/types/dashboard";
 import { useAuth } from "@/contexts/AuthContext";
@@ -172,8 +172,8 @@ export default function Reports() {
               </h3>
 
               <div className="mb-2">
-                <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-700 capitalize border border-slate-200">
-                  {report.source || "All Sources"}
+                <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200">
+                  {report.source ? getSourceDisplayName(report.source) : "All Sources"}
                 </span>
               </div>
 

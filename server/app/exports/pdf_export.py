@@ -155,6 +155,18 @@ class PDFExportService:
         ))
         elements.append(Spacer(1, 0.3 * inch))
         
+        # Helper function to get display name for source
+        def get_source_display_name(source_name: str) -> str:
+            """Map source name to display name (surfside -> CTV)."""
+            if source_name and source_name.lower() == "surfside":
+                return "CTV"
+            return source_name.upper() if source_name else "All Sources"
+        
+        # Format data sources for display
+        formatted_data_sources = [
+            get_source_display_name(src) for src in dashboard.summary.data_sources
+        ] if dashboard.summary.data_sources else ["All Sources"]
+        
         # Summary Section
         elements.append(Paragraph("Executive Summary", heading_style))
         
@@ -170,7 +182,7 @@ class PDFExportService:
             ['Overall CPA', PDFExportService._format_currency(dashboard.summary.overall_cpa)],
             ['Overall ROAS', PDFExportService._format_number(dashboard.summary.overall_roas)],
             ['Active Campaigns', str(dashboard.summary.active_campaigns)],
-            ['Data Sources', ', '.join(dashboard.summary.data_sources)]
+            ['Data Sources', ', '.join(formatted_data_sources)]
         ]
         
         summary_table = Table(summary_data, colWidths=[3 * inch, 3 * inch])
@@ -250,7 +262,7 @@ class PDFExportService:
             
             for source in dashboard.sources:
                 source_data.append([
-                    source.source.upper(),
+                    get_source_display_name(source.source),
                     PDFExportService._format_number(source.impressions),
                     PDFExportService._format_number(source.clicks),
                     PDFExportService._format_number(source.conversions),

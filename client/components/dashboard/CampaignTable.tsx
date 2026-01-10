@@ -1,5 +1,5 @@
 import { CampaignPerformance, DataSource } from "@/types/dashboard";
-import { formatCurrency, formatNumber, formatPercent } from "@/lib/utils";
+import { formatCurrency, formatNumber, formatPercent, getSourceDisplayName } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 interface CampaignTableProps {
@@ -87,11 +87,11 @@ export default function CampaignTable({ campaigns }: CampaignTableProps) {
               <td className="px-4 py-3">
                 <span
                   className={cn(
-                    "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize",
+                    "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium",
                     sourceColors[campaign.source]
                   )}
                 >
-                  {campaign.source}
+                  {getSourceDisplayName(campaign.source)}
                 </span>
               </td>
               <td className="text-right font-mono text-sm px-4 py-3 text-slate-900">

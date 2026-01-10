@@ -25,7 +25,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ingestionService } from "@/lib/services/ingestion";
 import { clientsService } from "@/lib/services/clients";
-import { cn } from "@/lib/utils";
+import { cn, getSourceDisplayName } from "@/lib/utils";
 import { IngestionStatus } from "@/types/dashboard";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -92,11 +92,11 @@ export default function AdminIngestion() {
     mutationFn: ({ clientId, file }: { clientId: string; file: File }) =>
       ingestionService.uploadSurfside(clientId, file),
     onSuccess: () => {
-      toast.success("Surfside data uploaded successfully");
+      toast.success("CTV data uploaded successfully");
       resetUploadForm();
       queryClient.invalidateQueries({ queryKey: ["admin", "logs"] });
     },
-    onError: (error) => toast.error("Surfside upload failed: " + error),
+    onError: (error) => toast.error("CTV upload failed: " + error),
   });
 
   const resetUploadForm = () => {
@@ -218,13 +218,14 @@ export default function AdminIngestion() {
               Refresh Logs
             </Button>
           </div>
-          <div className="bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-xl overflow-hidden">
+          <div className="bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-xl overflow-x-auto">
             {isLogsLoading ? (
               <div className="p-8 text-center text-slate-500">
                 Loading logs...
               </div>
             ) : (
-              <Table>
+              <div className="min-w-full">
+                <Table>
                 <TableHeader>
                   <TableRow className="hover:bg-transparent border-b border-slate-200">
                     <TableHead className="text-left text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto">
@@ -242,7 +243,7 @@ export default function AdminIngestion() {
                     <TableHead className="text-left text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto">
                       Records
                     </TableHead>
-                    <TableHead className="text-left text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto">
+                    <TableHead className="text-left text-xs font-bold text-slate-900 uppercase tracking-wide px-4 py-3 h-auto min-w-[300px]">
                       Message
                     </TableHead>
                   </TableRow>
@@ -300,8 +301,8 @@ export default function AdminIngestion() {
                             </div>
                           </TableCell>
                           <TableCell className="px-4 py-3">
-                            <span className="text-sm text-slate-900 capitalize">
-                              {log.source}
+                            <span className="text-sm text-slate-900">
+                              {getSourceDisplayName(log.source)}
                             </span>
                           </TableCell>
                           <TableCell className="text-sm text-slate-600 px-4 py-3">
@@ -321,8 +322,10 @@ export default function AdminIngestion() {
                               </span>
                             )}
                           </TableCell>
-                          <TableCell className="text-sm text-muted-foreground max-w-50 truncate px-4 py-3">
-                            {log.error_message || log.message || "-"}
+                          <TableCell className="text-sm text-muted-foreground px-4 py-3 min-w-[300px] break-words">
+                            <span className="whitespace-normal break-words">
+                              {log.error_message || log.message || "-"}
+                            </span>
                           </TableCell>
                         </TableRow>
                       );
@@ -330,6 +333,7 @@ export default function AdminIngestion() {
                   )}
                 </TableBody>
               </Table>
+              </div>
             )}
           </div>
         </div>
@@ -384,7 +388,7 @@ export default function AdminIngestion() {
               >
                 <option value="">Choose a source...</option>
                 <option value="facebook">Facebook (Upload)</option>
-                <option value="surfside">Surfside (Upload)</option>
+                <option value="surfside">CTV (Upload)</option>
               </select>
             </div>
           </div>

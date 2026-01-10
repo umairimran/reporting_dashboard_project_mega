@@ -64,7 +64,7 @@ export default function Login() {
             Paid Media Analytics
           </h1>
           <p className="text-slate-600 text-center text-lg max-w-md">
-            Unified performance tracking across Surfside, Facebook, and Vibe
+            Unified performance tracking across CTV, Facebook, and Vibe
             platforms.
           </p>
         </div>

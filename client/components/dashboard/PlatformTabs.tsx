@@ -7,7 +7,7 @@ interface PlatformTabsProps {
 }
 
 const platforms: { id: DataSource; label: string; color: string }[] = [
-  { id: "surfside", label: "Surfside", color: "#3b82f6" },
+  { id: "surfside", label: "CTV", color: "#3b82f6" },
   { id: "facebook", label: "Facebook", color: "#3b82f6" },
 ];
 

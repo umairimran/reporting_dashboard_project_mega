@@ -5,7 +5,7 @@ import { Providers } from "@/components/Providers";
 export const metadata: Metadata = {
   title: "Gold Standard - Analytics Dashboard",
   description:
-    "Paid Media Analytics for Surfside, Facebook, and Vibe platforms",
+    "Paid Media Analytics for CTV, Facebook, and Vibe platforms",
 };
 
 export default function RootLayout({

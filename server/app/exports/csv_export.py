@@ -15,6 +15,13 @@ class CSVExportService:
     """Service for exporting data to CSV format."""
     
     @staticmethod
+    def _get_source_display_name(source_name: str) -> str:
+        """Map source name to display name (surfside -> CTV)."""
+        if source_name and source_name.lower() == "surfside":
+            return "CTV"
+        return source_name.upper() if source_name else "All Sources"
+    
+    @staticmethod
     def export_daily_metrics(
         db: Session,
         client_id: uuid.UUID,
@@ -69,7 +76,7 @@ class CSVExportService:
             ("Placement", lambda m, c, s, p, cr, r: p or "", ["facebook"]),
             ("Creative", lambda m, c, s, p, cr, r: cr or "", ["surfside"]),
             ("Region", lambda m, c, s, p, cr, r: r or "", ["surfside"]),
-            ("Source", lambda m, c, s, p, cr, r: m.source, []),
+            ("Source", lambda m, c, s, p, cr, r: CSVExportService._get_source_display_name(m.source), []),
             ("Impressions", lambda m, c, s, p, cr, r: m.impressions, []),
             ("Clicks", lambda m, c, s, p, cr, r: m.clicks, []),
             ("Conversions", lambda m, c, s, p, cr, r: m.conversions, ["facebook"]),
